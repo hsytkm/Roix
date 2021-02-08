@@ -34,7 +34,7 @@ namespace Roix.Core
         public Func<T, T, T> Add => _add ??= Expression.Lambda<Func<T, T, T>>(Expression.Add(_p1, _p2), _p1, _p2).Compile();
         private Func<T, T, T>? _add = null;
 
-        //public Func<T, T, T> Subtract => _subtract ??= Expression.Lambda<Func<T, T, T>>(Expression.Subtract(_p1, _p2), _p1, _p2).Compile();
-        //private Func<T, T, T>? _subtract = null;
+        public Func<T, T, T> Subtract => _subtract ??= Expression.Lambda<Func<T, T, T>>(Expression.Subtract(_p1, _p2), _p1, _p2).Compile();
+        private Func<T, T, T>? _subtract = null;
     }
 }

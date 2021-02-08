@@ -20,10 +20,10 @@ namespace Roix.Core
         public T Top => Y;
         public T Bottom => _op.Add(Y, Height);
 
-        public RoixPoint<T> LeffTop => new(Left, Top);
-        public RoixPoint<T> RightTop => new(Right, Top);
-        public RoixPoint<T> RightBottom => new(Right, Bottom);
-        public RoixPoint<T> LeftBottom => new(Left, Bottom);
+        public virtual RoixPoint<T> TopLeft => new(Left, Top);
+        public virtual RoixPoint<T> TopRight => new(Right, Top);
+        public virtual RoixPoint<T> BottomRight => new(Right, Bottom);
+        public virtual RoixPoint<T> BottomLeft => new(Left, Bottom);
 
         public void Deconstruct(out T x, out T y, out T width, out T height) => (x, y, width, height) = (X, Y, Width, Height);
     }
@@ -41,8 +41,18 @@ namespace Roix.Core
 
     public record RoixRectDouble : RoixRect<double>
     {
+        public static RoixRectDouble Zero { get; } = new(0, 0, 0, 0);
+
+        public RoixRectDouble(RoixRect<double> roix) : base(roix.X, roix.Y, roix.Width, roix.Height) { }
         public RoixRectDouble(RoixSizeDouble size) : base(RoixPointDouble.Zero, size) { }
+        public RoixRectDouble(RoixPointDouble point, RoixVectorDouble vector) : base(point, (point + vector)) { }   //◆未実装
         public RoixRectDouble(double x, double y, double width, double height) : base(x, y, width, height) { }
+
+        public override RoixPointDouble TopLeft => new(base.TopLeft);
+        public override RoixPointDouble TopRight => new(base.TopRight);
+        public override RoixPointDouble BottomRight => new(base.BottomRight);
+        public override RoixPointDouble BottomLeft => new(base.BottomLeft);
+
     }
 
 }

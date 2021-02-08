@@ -46,16 +46,16 @@ namespace Roix.Core.Tests
             size.Height.Is(y);
         }
 
-        [Fact]
-        public void GetReverse()
-        {
-            var point0 = new RoixPointInt(12, -34);
-            var point1 = point0.GetReverse().GetReverse();
+        //[Fact]
+        //public void GetReverse()
+        //{
+        //    var point0 = new RoixPointInt(12, -34);
+        //    var point1 = point0.GetReverse().GetReverse();
 
-            point0.Is(point1);
-            point0.Equals(point1).IsTrue();   // because of record
-            (point0 == point1).IsTrue();      // because of record
-        }
+        //    point0.Is(point1);
+        //    point0.Equals(point1).IsTrue();   // because of record
+        //    (point0 == point1).IsTrue();      // because of record
+        //}
 
     }
 }

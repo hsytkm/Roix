@@ -57,7 +57,7 @@ namespace Roix.Core
 
     public record RoixSizeInt : RoixSize<int>
     {
-        //public static RoixSizeInt Zero { get; } = new(0, 0);
+        public static RoixSizeInt Zero { get; } = new(0, 0);
 
         public RoixSizeInt(int width, int height) : base(width, height) { }
 
@@ -69,9 +69,10 @@ namespace Roix.Core
 
     public record RoixSizeDouble : RoixSize<double>
     {
-        //public static RoixSizeDouble Zero { get; } = new(0, 0);
+        public static RoixSizeDouble Zero { get; } = new(0, 0);
 
         public RoixSizeDouble(double width, double height) : base(width, height) { }
+        public RoixSizeDouble(RoixSize<double> roix) : base(roix.Width, roix.Height) { }
 
         public static explicit operator RoixSizeInt(RoixSizeDouble s) => new(MathExtension.RoundToInt(s.Width), MathExtension.RoundToInt(s.Height));
         public static explicit operator RoixPointDouble(RoixSizeDouble s) => new(s.Width, s.Height);

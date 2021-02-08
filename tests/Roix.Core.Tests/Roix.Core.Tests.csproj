@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Roix.Core\Roix.Core.csproj" />
+    <ProjectReference Include="..\..\src\Roix.Core\Roix.Core.csproj" />
   </ItemGroup>
 
 </Project>
