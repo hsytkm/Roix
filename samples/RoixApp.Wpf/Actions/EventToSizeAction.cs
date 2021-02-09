@@ -24,7 +24,7 @@ namespace Roix.Wpf.Actions
             }
             else if (AssociatedObject is FrameworkElement fe)
             {
-                ControlSize = new RoixSizeDouble(fe.ActualWidth, fe.ActualHeight);
+                ControlSize = fe.ToRoixSizeDouble();
             }
             else
             {

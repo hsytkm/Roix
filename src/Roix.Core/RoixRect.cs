@@ -37,6 +37,8 @@ namespace Roix.Core
     {
         public RoixRectInt(RoixSizeInt size) : base(RoixPointInt.Zero, size) { }
         public RoixRectInt(int x, int y, int width, int height) : base(x, y, width, height) { }
+
+        public override string ToString() => $"{nameof(RoixRectInt)} {{ ({nameof(X)}, {nameof(Y)}, {nameof(Width)}, {nameof(Height)}) = ({Point.X}, {Point.Y}, {Size.Width}, {Size.Height}) }}";
     }
 
     public record RoixRectDouble : RoixRect<double>
@@ -45,7 +47,18 @@ namespace Roix.Core
 
         public RoixRectDouble(RoixRect<double> roix) : base(roix.X, roix.Y, roix.Width, roix.Height) { }
         public RoixRectDouble(RoixSizeDouble size) : base(RoixPointDouble.Zero, size) { }
-        public RoixRectDouble(RoixPointDouble point, RoixVectorDouble vector) : base(point, (point + vector)) { }   //◆未実装
+        public RoixRectDouble(RoixPointDouble point1, RoixPointDouble point2) : base(RoixPointDouble.Zero, RoixSizeDouble.Zero)
+        {
+            var x = Math.Min(point1.X, point2.X);
+            var y = Math.Min(point1.Y, point2.Y);
+            Point = new(x, y);
+
+            //  Max with 0 to prevent double weirdness from causing us to be (-epsilon..0)
+            var width = Math.Max(Math.Max(point1.X, point2.X) - x, 0);
+            var height = Math.Max(Math.Max(point1.Y, point2.Y) - y, 0);
+            Size = new(width, height);
+        }
+        public RoixRectDouble(RoixPointDouble point, RoixVectorDouble vector) : this(point, (RoixPointDouble)(point + vector)) { }
         public RoixRectDouble(double x, double y, double width, double height) : base(x, y, width, height) { }
 
         public override RoixPointDouble TopLeft => new(base.TopLeft);
@@ -53,6 +66,7 @@ namespace Roix.Core
         public override RoixPointDouble BottomRight => new(base.BottomRight);
         public override RoixPointDouble BottomLeft => new(base.BottomLeft);
 
+        public override string ToString() => $"{nameof(RoixRectDouble)} {{ ({nameof(X)}, {nameof(Y)}, {nameof(Width)}, {nameof(Height)}) = ({Point.X}, {Point.Y}, {Size.Width}, {Size.Height}) }}";
     }
 
 }

@@ -72,48 +72,15 @@ namespace Roix.Wpf
 
             // 選択枠のプレビュー
             draggingVector
-                .Skip(1)
-                .Select(v => new Rect(MouseDownPoint.Value.ToPoint(), v.ToVector()).ToRoixRectDouble()) // ◆未実装
-                .Select(r => ClipRectangle(r, ViewBorderSize.Value))
+                .Where(v => !v.IsZero)
+                .Select(v => ClipRectangle(new(MouseDownPoint.Value, v), ViewBorderSize.Value))
                 .Subscribe(r => SelectedRectangle.Value = r);
 
         }
 
         /// <summary>引数の四角形を指定範囲に制限する</summary>
-        private static RoixRectDouble ClipRectangle(in RoixRectDouble rect, in RoixSizeDouble bounds)
-        {
-            static double Clamp(double value, double min, double max) => Math.Max(min, Math.Min(max, value));
-            static double GetSizeOffset(double value, double min, double max)
-            {
-                if (value < min) return value - min;
-                if (value > max) return value - max;
-                return 0;
-            }
-
-            var x = Clamp(rect.X, 0, bounds.Width - 1);
-            var y = Clamp(rect.Y, 0, bounds.Height - 1);
-            var width = Clamp(rect.Width + GetSizeOffset(rect.X, 0, bounds.Width - 1), 1, bounds.Width - x);
-            var height = Clamp(rect.Height + GetSizeOffset(rect.Y, 0, bounds.Height - 1), 1, bounds.Height - y);
-            return new RoixRectDouble(x, y, width, height);
-        }
-
-        /// <summary>引数の四角形を指定範囲に制限する</summary>
-        //private static Rect ClipRectangle(in Rect rect, in Size sizeMax)
-        //{
-        //    static double Clamp(double value, double min, double max) => Math.Max(min, Math.Min(max, value));
-        //    static double GetSizeOffset(double value, double min, double max)
-        //    {
-        //        if (value < min) return value - min;
-        //        if (value > max) return value - max;
-        //        return 0;
-        //    }
-
-        //    var x = Clamp(rect.X, 0, sizeMax.Width - 1);
-        //    var y = Clamp(rect.Y, 0, sizeMax.Height - 1);
-        //    var width = Clamp(rect.Width + GetSizeOffset(rect.X, 0, sizeMax.Width - 1), 1, sizeMax.Width - x);
-        //    var height = Clamp(rect.Height + GetSizeOffset(rect.Y, 0, sizeMax.Height - 1), 1, sizeMax.Height - y);
-        //    return new Rect(x, y, width, height);
-        //}
+        private static RoixRectDouble ClipRectangle(in RoixRectDouble roi, in RoixSizeDouble bounds)
+            => new RoixBoundsRoiDouble(roi, bounds).GetClippedRoi();
 
     }
 
