@@ -1,5 +1,6 @@
 using Roix.Wpf;
 using System;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -11,6 +12,8 @@ namespace Roix.WPF.Tests
         [InlineData(1.1, 2.2, 3.3, 4.4)]
         public void Ctor(double x, double y, double width, double height)
         {
+            Marshal.SizeOf<RoixGaugePoint>().Is(40);
+
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);
             var gp1 = new RoixGaugePoint(point, size);
@@ -41,8 +44,8 @@ namespace Roix.WPF.Tests
             var size = new RoixSize(3.3, 4.4);
             var gp = new RoixGaugePoint(point, size);
             var (roi, canvas) = gp;
-            roi.Equals(point);
-            canvas.Equals(size);
+            roi.Is(point);
+            canvas.Is(size);
         }
 
         [Fact]
@@ -60,6 +63,7 @@ namespace Roix.WPF.Tests
             p1.Equals(obj2).IsTrue();
         }
 
+        #region Properties
         [Theory]
         [InlineData(0.5)]
         [InlineData(4.0)]
@@ -72,7 +76,7 @@ namespace Roix.WPF.Tests
 
             var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
             var gp2 = gp1.ConvertToNewGauge(newSize);
-            gp2.Roi.Equals(new RoixPoint(point.X * ratio, point.Y * ratio));
+            gp2.Roi.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
 
             Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(RoixSize.Empty));
             Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(new RoixSize(0, 0)));
@@ -87,13 +91,28 @@ namespace Roix.WPF.Tests
         [InlineData(-10, 2, 10, 10, 0, 2)]
         [InlineData(5, -2, 10, 10, 5, 0)]
         [InlineData(-1, -2, 10, 10, 0, 0)]
-        public void GetClippedRoi(double x, double y, double width, double height, double answerX, double answerY)
+        public void ClippedRoi(double x, double y, double width, double height, double answerX, double answerY)
         {
-            var gp = new RoixGaugePoint(x, y, width, height);
-            var roi = gp.GetClippedRoi();
+            var roi = new RoixGaugePoint(x, y, width, height).ClippedRoi;
             roi.X.Is(answerX);
             roi.Y.Is(answerY);
         }
+
+        [Theory]
+        [InlineData(0, 0, 1, 1, true)]
+        [InlineData(1, 1, 1, 1, true)]
+        [InlineData(5, 5, 10, 10, true)]
+        [InlineData(11, 0, 10, 10, false)]
+        [InlineData(0, 11, 10, 10, false)]
+        [InlineData(-1, 0, 10, 10, false)]
+        [InlineData(0, -1, 10, 10, false)]
+        public void IsInside(double x, double y, double width, double height, bool isInside)
+        {
+            var roi = new RoixGaugePoint(x, y, width, height);
+            roi.IsInside.Is(isInside);
+            roi.IsOutside.Is(!isInside);
+        }
+        #endregion
 
     }
 }

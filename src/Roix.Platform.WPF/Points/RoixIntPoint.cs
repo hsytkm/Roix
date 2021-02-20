@@ -7,15 +7,20 @@ namespace Roix.Wpf
         public readonly int X;
         public readonly int Y;
 
+        #region ctor
         public RoixIntPoint(int x, int y) => (X, Y) = (x, y);
 
         public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
+        #endregion
 
+        #region Equals
         public bool Equals(RoixIntPoint other) => (X, Y) == (other.X, other.Y);
         public override bool Equals(object? obj) => (obj is RoixIntPoint other) && Equals(other);
         public override int GetHashCode() => HashCode.Combine(X, Y);
         public static bool operator ==(in RoixIntPoint left, in RoixIntPoint right) => left.Equals(right);
         public static bool operator !=(in RoixIntPoint left, in RoixIntPoint right) => !(left == right);
+        #endregion
+
         public override string ToString() => $"{nameof(RoixIntPoint)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
     }
 }

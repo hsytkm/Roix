@@ -1,5 +1,6 @@
 using Roix.Wpf;
 using System;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -14,6 +15,8 @@ namespace Roix.WPF.Tests
         [InlineData(double.MaxValue, double.MaxValue)]
         public void Ctor(double w, double h)
         {
+            Marshal.SizeOf<RoixSize>().Is(24);
+
             var size = new RoixSize(w, h);
             size.IsEmpty.IsFalse();
             size.Width.Is(w);
@@ -48,41 +51,7 @@ namespace Roix.WPF.Tests
         }
         #endregion
 
-        #region Cast
-        [Fact]
-        public void WindowsToRoix()
-        {
-            var win1 = new System.Windows.Size(1.1, 2.2);
-            RoixSize roix1 = win1;
-            roix1.IsEmpty.Is(win1.IsEmpty);
-            roix1.Width.Is(win1.Width);
-            roix1.Height.Is(win1.Height);
-
-            var win2 = System.Windows.Size.Empty;
-            RoixSize roix2 = win2;
-            roix2.IsEmpty.Is(win2.IsEmpty);
-            roix2.Width.Is(win2.Width);
-            roix2.Height.Is(win2.Height);
-        }
-
-        [Fact]
-        public void RoixToWindows()
-        {
-            var roix1 = new RoixSize(1.1, 2.2);
-            System.Windows.Size win1 = roix1;
-            win1.IsEmpty.Is(roix1.IsEmpty);
-            win1.Width.Is(roix1.Width);
-            win1.Height.Is(roix1.Height);
-
-            var roix2 = RoixSize.Empty;
-            System.Windows.Size win2 = roix2;
-            win2.IsEmpty.Is(roix2.IsEmpty);
-            win2.Width.Is(roix2.Width);
-            win2.Height.Is(roix2.Height);
-        }
-        #endregion
-
-        #region Equals
+        #region Equal
         [Fact]
         public void Equal()
         {
@@ -102,6 +71,51 @@ namespace Roix.WPF.Tests
             (size1 == size2).IsTrue();
             (size1 != size2).IsFalse();
         }
+        #endregion
+
+        #region Casts
+        [Fact]
+        public void ToWindows()
+        {
+            var rs1 = new RoixSize(1.1, 2.2);
+            System.Windows.Size ws1 = (System.Windows.Size)rs1;
+            ws1.IsEmpty.Is(rs1.IsEmpty);
+            ws1.Width.Is(rs1.Width);
+            ws1.Height.Is(rs1.Height);
+
+            var rs2 = RoixSize.Empty;
+            System.Windows.Size ws2 = (System.Windows.Size)rs2;
+            ws2.IsEmpty.Is(rs2.IsEmpty);
+            ws2.Width.Is(rs2.Width);
+            ws2.Height.Is(rs2.Height);
+        }
+
+        [Fact]
+        public void ToRoix()
+        {
+            var ws1 = new System.Windows.Size(1.1, 2.2);
+            RoixSize rs1 = (RoixSize)ws1;
+            rs1.IsEmpty.Is(ws1.IsEmpty);
+            rs1.Width.Is(ws1.Width);
+            rs1.Height.Is(ws1.Height);
+
+            var ws2 = System.Windows.Size.Empty;
+            RoixSize rs2 = (RoixSize)ws2;
+            rs2.IsEmpty.Is(ws2.IsEmpty);
+            rs2.Width.Is(ws2.Width);
+            rs2.Height.Is(ws2.Height);
+        }
+
+        [Fact]
+        public void FromRoix()
+        {
+            var rs1 = new RoixSize(1.1, 2.2);
+            RoixVector rv1 = (RoixVector)rs1;
+            rv1.X.Is(rs1.Width);
+            rv1.Y.Is(rs1.Height);
+
+            Assert.Throws<ArgumentException>(() => (RoixVector)RoixSize.Empty);
+        }
 
         #endregion
 
@@ -120,6 +134,19 @@ namespace Roix.WPF.Tests
         }
         #endregion
 
+        #region Methods
+        [Theory]
+        [InlineData(0, 0, 0, 0)]
+        [InlineData(1.49, 2.51, 1, 3)]
+        public void ToRoixIntSize(double x, double y, int answerWidth, int answerHeight)
+        {
+            var ip = new RoixSize(x, y).ToRoixIntSize();
+            ip.Width.Is(answerWidth);
+            ip.Height.Is(answerHeight);
+
+            Assert.Throws<ArgumentException>(() => RoixSize.Empty.ToRoixIntSize());
+        }
+        #endregion
 
     }
 }

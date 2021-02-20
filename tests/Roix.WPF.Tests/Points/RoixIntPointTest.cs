@@ -1,5 +1,6 @@
 using Roix.Wpf;
 using System;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -13,6 +14,8 @@ namespace Roix.WPF.Tests
         [InlineData(int.MinValue, int.MaxValue)]
         public void Ctor(int x, int y)
         {
+            Marshal.SizeOf<RoixIntPoint>().Is(8);
+
             var point = new RoixIntPoint(x, y);
             point.X.Is(x);
             point.Y.Is(y);
@@ -31,8 +34,8 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             int x = 1, y = 2;
-            var p1 = new RoixSize(x, y);
-            var p2 = new RoixSize(x, y);
+            var p1 = new RoixIntPoint(x, y);
+            var p2 = new RoixIntPoint(x, y);
 
             p1.Equals(p2).IsTrue();
             (p1 == p2).IsTrue();

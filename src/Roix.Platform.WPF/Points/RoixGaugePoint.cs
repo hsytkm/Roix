@@ -8,6 +8,7 @@ namespace Roix.Wpf
         public readonly RoixPoint Roi;
         public readonly RoixSize Canvas;
 
+        #region ctor
         public RoixGaugePoint(in RoixPoint roi, in RoixSize canvas)
         {
             if (canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(canvas)}");
@@ -17,14 +18,26 @@ namespace Roix.Wpf
         public RoixGaugePoint(double x, double y, double width, double height) => (Roi, Canvas) = (new RoixPoint(x, y), new RoixSize(width, height));
 
         public void Deconstruct(out RoixPoint roi, out RoixSize canvas) => (roi, canvas) = (Roi, Canvas);
+        #endregion
 
+        #region Equals
         public bool Equals(RoixGaugePoint other) => (Roi, Canvas) == (other.Roi, other.Canvas);
         public override bool Equals(object? obj) => (obj is RoixGaugePoint other) && Equals(other);
         public override int GetHashCode() => HashCode.Combine(Roi, Canvas);
         public static bool operator ==(in RoixGaugePoint left, in RoixGaugePoint right) => left.Equals(right);
         public static bool operator !=(in RoixGaugePoint left, in RoixGaugePoint right) => !(left == right);
+        #endregion
+
         public override string ToString() => $"{nameof(RoixGaugePoint)} {{ {nameof(Roi)} = {Roi}, {nameof(Canvas)} = {Canvas} }}";
 
+        #region Properties
+        public RoixPoint ClippedRoi => new(Math.Clamp(Roi.X, 0, Canvas.Width), Math.Clamp(Roi.Y, 0, Canvas.Height));
+
+        public bool IsInside => Roi.X.IsInside(0, Canvas.Width) && Roi.Y.IsInside(0, Canvas.Height);
+        public bool IsOutside => !IsInside;
+        #endregion
+
+        #region Methods
         public RoixGaugePoint ConvertToNewGauge(in RoixSize newSize)
         {
             if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
@@ -34,8 +47,7 @@ namespace Roix.Wpf
             var y = Roi.Y * newSize.Height / Canvas.Height;
             return new(new RoixPoint(x, y), newSize);
         }
-
-        public RoixPoint GetClippedRoi() => new(Roi.X.Clamp(0, Canvas.Width), Roi.Y.Clamp(0, Canvas.Height));
+        #endregion
 
     }
 }
