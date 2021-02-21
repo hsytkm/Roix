@@ -1,6 +1,5 @@
 using Roix.Wpf;
 using System;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -14,8 +13,6 @@ namespace Roix.WPF.Tests
         [InlineData(double.MinValue, double.MaxValue)]
         public void Ctor(double x, double y)
         {
-            Marshal.SizeOf<RoixPoint>().Is(16);
-
             var point = new RoixPoint(x, y);
             point.X.Is(x);
             point.Y.Is(y);
@@ -112,14 +109,20 @@ namespace Roix.WPF.Tests
 
         #region Methods
         [Theory]
-        [InlineData(0, 0, 0, 0)]
-        [InlineData(1.49, 2.51, 1, 3)]
-        [InlineData(-1.49, -2.51, -1, -3)]
-        public void ToRoixIntPoint(double x, double y, int answerX, int answerY)
+        [InlineData(0, 0, true)]
+        [InlineData(10, 10, true)]
+        [InlineData(11, 0, false)]
+        [InlineData(0, 11, false)]
+        [InlineData(-1, 0, false)]
+        [InlineData(0, -1, false)]
+        [InlineData(11, -1, false)]
+        public void IsInside(double x, double y, bool isInside)
         {
-            var ip = new RoixPoint(x, y).ToRoixIntPoint();
-            ip.X.Is(answerX);
-            ip.Y.Is(answerY);
+            var canvs = new RoixSize(10, 10);
+            var ip = new RoixPoint(x, y);
+
+            ip.IsInside(canvs).Is(isInside);
+            ip.IsOutside(canvs).Is(!isInside);
         }
         #endregion
 

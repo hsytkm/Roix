@@ -1,7 +1,6 @@
 using Roix.Wpf;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -15,8 +14,6 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, 3, 4)]
         public void Ctor(double x, double y, double width, double height)
         {
-            Marshal.SizeOf<RoixRect>().Is(32);
-
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);
 
@@ -172,6 +169,20 @@ namespace Roix.WPF.Tests
         #endregion
 
         #region Methods
+        [Theory]
+        [InlineData(0, 0, 0, 0, 10, 10, true)]
+        [InlineData(1, 2, 3, 4, 10, 10, true)]
+        [InlineData(10, 20, 3, 4, 10, 10, false)]
+        [InlineData(-1, -2, 3, 4, 10, 10, false)]
+        public void IsInside(double roiX, double roiY, double roiWidth, double roiHeight, double canvasWidth, double canvasHeight, bool isInside)
+        {
+            var rect = new RoixRect(roiX, roiY, roiWidth, roiHeight);
+            var canvas = new RoixSize(canvasWidth, canvasHeight);
+
+            rect.IsInside(canvas).Is(isInside);
+            rect.IsOutside(canvas).Is(!isInside);
+        }
+
         [Theory]
         [InlineData(0, 0, 0, 0)]
         [InlineData(1, 2, 3, 4)]

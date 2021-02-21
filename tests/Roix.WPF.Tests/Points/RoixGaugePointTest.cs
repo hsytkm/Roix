@@ -18,13 +18,13 @@ namespace Roix.WPF.Tests
             var size = new RoixSize(width, height);
             var gp1 = new RoixGaugePoint(point, size);
 
-            gp1.Roi.X.Is(x);
-            gp1.Roi.Y.Is(y);
+            gp1.Point.X.Is(x);
+            gp1.Point.Y.Is(y);
             gp1.Canvas.Width.Is(width);
             gp1.Canvas.Height.Is(height);
 
             var gp2 = new RoixGaugePoint(x, y, width, height);
-            gp2.Roi.Is(gp1.Roi);
+            gp2.Point.Is(gp1.Point);
             gp2.Canvas.Is(gp1.Canvas);
         }
 
@@ -63,6 +63,23 @@ namespace Roix.WPF.Tests
             p1.Equals(obj2).IsTrue();
         }
 
+        #region operator
+        [Fact]
+        public void Add_RoixGaugePoint_RoixVector()
+        {
+            double x = 1, y = 2, width = 10, height = 10;
+            double vx = 3, vy = 4;
+
+            var gp = new RoixGaugePoint(x, y, width, height);
+            var v = new RoixVector(vx, vy);
+            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), gp.Canvas);
+
+            RoixGaugePoint.Add(gp, v).Is(ansRect);
+            (gp + v).Is(ansRect);
+            gp.Add(v).Is(ansRect);
+        }
+        #endregion
+
         #region Properties
         [Theory]
         [InlineData(0.5)]
@@ -76,7 +93,7 @@ namespace Roix.WPF.Tests
 
             var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
             var gp2 = gp1.ConvertToNewGauge(newSize);
-            gp2.Roi.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
+            gp2.Point.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
 
             Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(RoixSize.Empty));
             Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(new RoixSize(0, 0)));

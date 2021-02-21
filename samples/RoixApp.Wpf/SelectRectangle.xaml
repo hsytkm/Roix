@@ -22,8 +22,8 @@
             <Setter Property="IsHitTestVisible" Value="False" />
             <Setter Property="Fill" Value="Transparent" />
             <Setter Property="Stroke" Value="Magenta" />
-            <Setter Property="Opacity" Value="0.5" />
-            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="Opacity" Value="0.8" />
+            <Setter Property="StrokeThickness" Value="4" />
         </Style>
     </UserControl.Resources>
 
@@ -32,22 +32,25 @@
             <i:Interaction.Triggers>
                 <!-- Get Mouse -->
                 <i:EventTrigger EventName="MouseLeftButtonDown" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseDownPoint.Value, Mode=OneWayToSource}" />
+                    <action:CaptureMousePointAction MousePoint="{Binding MouseLeftDownPoint.Value, Mode=OneWayToSource}" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseLeftButtonUp" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseUpPoint.Value, Mode=OneWayToSource}" />
+                    <action:CaptureMousePointAction MousePoint="{Binding MouseLeftUpPoint.Value, Mode=OneWayToSource}" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseMove" >
                     <action:CaptureMousePointAction MousePoint="{Binding MouseMovePoint.Value, Mode=OneWayToSource}" />
                 </i:EventTrigger>
+                <i:EventTrigger EventName="MouseRightButtonDown" >
+                    <action:CaptureMousePointAction MousePoint="{Binding MouseRightDownPoint.Value, Mode=OneWayToSource}" />
+                </i:EventTrigger>
 
-                <!-- Get size of Image control -->
+                <!-- Get size of Image control
                 <i:EventTrigger EventName="Loaded" >
                     <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="SizeChanged" >
                     <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
+                </i:EventTrigger> -->
             </i:Interaction.Triggers>
         </Image>
 
@@ -56,5 +59,12 @@
             <Polygon Style="{StaticResource selectedPolygonStyle}"
                      Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
         </Border>
+
+        <Border Width="{Binding ActualWidth, ElementName=image}"
+                Height="{Binding ActualHeight, ElementName=image}" >
+            <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Cyan"
+                     Points="{Binding ClickedFixedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+        </Border>
+        
     </Grid>
 </UserControl>

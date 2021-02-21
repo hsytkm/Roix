@@ -19,9 +19,10 @@ namespace Roix.Wpf
         {
             var x = Math.Min(point1.X, point2.X);
             var y = Math.Min(point1.Y, point2.Y);
-            var width = Math.Max(Math.Max(point1.X, point2.X) - x, 0);
-            var height = Math.Max(Math.Max(point1.Y, point2.Y) - y, 0);
-            (Location, Size) = (new(x, y), new(width, height));
+            var width = Math.Max(point1.X, point2.X) - x;
+            var height = Math.Max(point1.Y, point2.Y) - y;
+            Location = new(x, y);
+            Size = new(width, height);  // exception will occur if the size is zero.
         }
         public RoixRect(in RoixPoint point, in RoixVector vector) : this(point, point + vector) { }
 
@@ -63,6 +64,9 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
+        public readonly bool IsInside(in RoixSize canvas) => 0 <= Left && Right <= canvas.Width && 0 <= Top && Bottom <= canvas.Height;
+        public readonly bool IsOutside(in RoixSize canvas) => !IsInside(canvas);
+
         public readonly System.Windows.Media.PointCollection ToPointCollection()
         {
             if (IsEmpty) throw new ArgumentException("rect is empty.");

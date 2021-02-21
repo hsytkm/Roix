@@ -45,7 +45,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly RoixIntPoint ToRoixIntPoint() => new(X.RoundToInt(), Y.RoundToInt());
+        public readonly bool IsInside(in RoixSize canvas) => 0 <= X && X <= canvas.Width && 0 <= Y && Y <= canvas.Height;
+        public readonly bool IsOutside(in RoixSize canvas) => !IsInside(canvas);
         #endregion
 
     }

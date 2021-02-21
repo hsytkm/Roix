@@ -12,20 +12,20 @@ namespace RoixApp.Wpf.Actions
         static CaptureButton _captureButton = CaptureButton.None;
 
         public static readonly DependencyProperty MousePointProperty
-            = DependencyProperty.Register(nameof(MousePoint), typeof(RoixPoint), typeof(CaptureMousePointAction));
-        public RoixPoint MousePoint
+            = DependencyProperty.Register(nameof(MousePoint), typeof(RoixGaugePoint), typeof(CaptureMousePointAction));
+        public RoixGaugePoint MousePoint
         {
-            get => (RoixPoint)GetValue(MousePointProperty);
+            get => (RoixGaugePoint)GetValue(MousePointProperty);
             set => SetValue(MousePointProperty, value);
         }
 
         protected override void Invoke(object parameter)
         {
             if (parameter is not MouseEventArgs e) return;
-            if (AssociatedObject is not IInputElement inputElement) return;
+            if (AssociatedObject is not FrameworkElement element) return;
 
-            CaptureMouse(inputElement, e);
-            MousePoint = e.GetPosition(inputElement);
+            CaptureMouse(element, e);
+            MousePoint = new RoixGaugePoint(e.GetPosition(element), new RoixSize(element.ActualWidth, element.ActualHeight));
         }
 
         /// <summary>マウス操作の補足/解除</summary>

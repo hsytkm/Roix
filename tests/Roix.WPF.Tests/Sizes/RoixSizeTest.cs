@@ -1,6 +1,5 @@
 using Roix.Wpf;
 using System;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Roix.WPF.Tests
@@ -15,8 +14,6 @@ namespace Roix.WPF.Tests
         [InlineData(double.MaxValue, double.MaxValue)]
         public void Ctor(double w, double h)
         {
-            Marshal.SizeOf<RoixSize>().Is(16);
-
             var size = new RoixSize(w, h);
             size.IsEmpty.IsFalse();
             size.Width.Is(w);
@@ -114,7 +111,12 @@ namespace Roix.WPF.Tests
             rv1.X.Is(rs1.Width);
             rv1.Y.Is(rs1.Height);
 
+            RoixPoint rp1 = (RoixPoint)rs1;
+            rp1.X.Is(rs1.Width);
+            rp1.Y.Is(rs1.Height);
+
             Assert.Throws<ArgumentException>(() => (RoixVector)RoixSize.Empty);
+            Assert.Throws<ArgumentException>(() => (RoixPoint)RoixSize.Empty);
         }
 
         #endregion
@@ -140,6 +142,21 @@ namespace Roix.WPF.Tests
 
             RoixSize.Empty.IsValid.IsFalse();
             RoixSize.Empty.IsInvalid.IsTrue();
+        }
+        #endregion
+
+        #region Methods
+        [Theory]
+        [InlineData(1, 1, 10, 10, true)]
+        [InlineData(2, 2, 2, 2, true)]
+        [InlineData(2, 2, 1, 1, false)]
+        public void IsInside(double srcWidth, double srcHeight, double canvasWidth, double canvasHeight, bool isInside)
+        {
+            var src = new RoixSize(srcWidth, srcHeight);
+            var canvas = new RoixSize(canvasWidth, canvasHeight);
+
+            src.IsInside(canvas).Is(isInside);
+            src.IsOutside(canvas).Is(!isInside);
         }
         #endregion
 

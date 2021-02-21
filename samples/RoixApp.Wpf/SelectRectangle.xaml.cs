@@ -22,31 +22,32 @@ namespace RoixApp.Wpf
     public class SelectRectangleViewModel : BindableBase
     {
         public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
-        public IReactiveProperty<RoixPoint> MouseDownPoint { get; }
-        public IReactiveProperty<RoixPoint> MouseUpPoint { get; }
-        public IReactiveProperty<RoixPoint> MouseMovePoint { get; }
-        public IReactiveProperty<RoixSize> ViewBorderSize { get; }
-        public IReactiveProperty<RoixRect> SelectedRectangle { get; }
+        public IReactiveProperty<RoixGaugePoint> MouseLeftDownPoint { get; }
+        public IReactiveProperty<RoixGaugePoint> MouseLeftUpPoint { get; }
+        public IReactiveProperty<RoixGaugePoint> MouseMovePoint { get; }
+        public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
+
+        public IReactiveProperty<RoixGaugePoint> MouseRightDownPoint { get; }
+        public IReadOnlyReactiveProperty<RoixRect> ClickedFixedRectangle { get; }
 
         public SelectRectangleViewModel()
         {
-            MouseDownPoint = new ReactivePropertySlim<RoixPoint>(mode: ReactivePropertyMode.None);
-            MouseUpPoint = new ReactivePropertySlim<RoixPoint>(mode: ReactivePropertyMode.None);
-            MouseMovePoint = new ReactivePropertySlim<RoixPoint>();
-            ViewBorderSize = new ReactivePropertySlim<RoixSize>();
-            SelectedRectangle = new ReactivePropertySlim<RoixRect>(initialValue: RoixRect.Zero, mode: ReactivePropertyMode.DistinctUntilChanged);
+            MouseLeftDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
+            MouseLeftUpPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
+            MouseMovePoint = new ReactivePropertySlim<RoixGaugePoint>();
+            MouseRightDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
 
             var draggingVector = new ReactivePropertySlim<RoixVector>(mode: ReactivePropertyMode.None);
 
             // マウス操作開始時の初期化
-            MouseDownPoint.Subscribe(_ => draggingVector.Value = RoixVector.Zero);
+            MouseLeftDownPoint.Subscribe(_ => draggingVector.Value = RoixVector.Zero);
 
             // マウス操作中に移動量を流す + 操作完了時に枠位置を通知する
             MouseMovePoint
                 .Pairwise()
-                .Select(x => x.NewItem - x.OldItem)
-                .SkipUntil(MouseDownPoint.ToUnit())
-                .TakeUntil(MouseUpPoint.ToUnit())
+                .Select(x => x.NewItem.Point - x.OldItem.Point)
+                .SkipUntil(MouseLeftDownPoint.ToUnit())
+                .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
                 {
                     //Debug.WriteLine($"LeftTop: {MouseDownPoint.Value:f2}, Vector: {draggingVector:f2}");
@@ -59,16 +60,24 @@ namespace RoixApp.Wpf
                 .Subscribe(v => draggingVector.Value += v);
 
             // 選択枠のプレビュー
-            draggingVector
-                .Where(v => !v.IsZero)
-                .Select(v => ClipRectangle(new(MouseDownPoint.Value, v), ViewBorderSize.Value))
-                .Subscribe(r => SelectedRectangle.Value = r);
+            SelectedRectangle = draggingVector
+                .Where(vec => !vec.IsZero)
+                .Select(vec => MouseLeftDownPoint.Value.Add(vec).GetClippedRoi(isPointPriority: true))
+                .ToReadOnlyReactivePropertySlim();
+
+            // 右クリックで固定サイズの枠を描画
+            ClickedFixedRectangle = MouseRightDownPoint
+                .Where(x => !x.Canvas.IsZero)
+                .Select(x =>
+                {
+                    var size = new RoixSize(100, 100);
+                    var point = new RoixPoint(x.Point.X - size.Width / 2, x.Point.Y - size.Height / 2);
+                    var rect = new RoixGaugeRect(new RoixRect(point, size), x.Canvas);
+                    return rect.GetClippedRoi(isPointPriority: true);
+                })
+                .ToReadOnlyReactivePropertySlim();
 
         }
-
-        /// <summary>引数の四角形を指定範囲に制限する</summary>
-        private static RoixRect ClipRectangle(in RoixRect roi, in RoixSize bounds)
-            => new RoixGaugeRect(roi, bounds).GetClippedRoi();
 
     }
 
