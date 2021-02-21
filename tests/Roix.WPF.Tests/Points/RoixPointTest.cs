@@ -100,6 +100,16 @@ namespace Roix.WPF.Tests
             v1.Y.Is(y1 - y2);
         }
 
+        #region Properties
+        [Fact]
+        public void IsZero()
+        {
+            new RoixPoint(1.1, 0).IsZero.IsFalse();
+            new RoixPoint(0, 0).IsZero.IsTrue();
+            RoixPoint.Zero.IsZero.IsTrue();
+        }
+        #endregion
+
         #region Methods
         [Theory]
         [InlineData(0, 0, 0, 0)]

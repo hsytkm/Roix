@@ -1,26 +1,15 @@
 ﻿using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using Roix.Core;
-using Roix.Wpf.Extensions;
+using Roix.Wpf;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Roix.Wpf
+namespace RoixApp.Wpf
 {
     public partial class SelectRectangle : UserControl
     {
@@ -33,29 +22,28 @@ namespace Roix.Wpf
     public class SelectRectangleViewModel : BindableBase
     {
         public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
-        public IReactiveProperty<RoixPointDouble> MouseDownPoint { get; }
-        public IReactiveProperty<RoixPointDouble> MouseUpPoint { get; }
-        public IReactiveProperty<RoixPointDouble> MouseMovePoint { get; }
-        public IReactiveProperty<RoixSizeDouble> ViewBorderSize { get; }
-        public IReactiveProperty<RoixRectDouble> SelectedRectangle { get; }
+        public IReactiveProperty<RoixPoint> MouseDownPoint { get; }
+        public IReactiveProperty<RoixPoint> MouseUpPoint { get; }
+        public IReactiveProperty<RoixPoint> MouseMovePoint { get; }
+        public IReactiveProperty<RoixSize> ViewBorderSize { get; }
+        public IReactiveProperty<RoixRect> SelectedRectangle { get; }
 
         public SelectRectangleViewModel()
         {
-            MouseDownPoint = new ReactivePropertySlim<RoixPointDouble>(mode: ReactivePropertyMode.None);
-            MouseUpPoint = new ReactivePropertySlim<RoixPointDouble>(mode: ReactivePropertyMode.None);
-            MouseMovePoint = new ReactivePropertySlim<RoixPointDouble>();
-            ViewBorderSize = new ReactivePropertySlim<RoixSizeDouble>();
-            SelectedRectangle = new ReactivePropertySlim<RoixRectDouble>(initialValue: RoixRectDouble.Zero, mode: ReactivePropertyMode.DistinctUntilChanged);
+            MouseDownPoint = new ReactivePropertySlim<RoixPoint>(mode: ReactivePropertyMode.None);
+            MouseUpPoint = new ReactivePropertySlim<RoixPoint>(mode: ReactivePropertyMode.None);
+            MouseMovePoint = new ReactivePropertySlim<RoixPoint>();
+            ViewBorderSize = new ReactivePropertySlim<RoixSize>();
+            SelectedRectangle = new ReactivePropertySlim<RoixRect>(initialValue: RoixRect.Zero, mode: ReactivePropertyMode.DistinctUntilChanged);
 
-            var draggingVector = new ReactivePropertySlim<RoixVectorDouble>(mode: ReactivePropertyMode.None);
+            var draggingVector = new ReactivePropertySlim<RoixVector>(mode: ReactivePropertyMode.None);
 
             // マウス操作開始時の初期化
-            MouseDownPoint.Subscribe(_ => draggingVector.Value = RoixVectorDouble.Zero);
+            MouseDownPoint.Subscribe(_ => draggingVector.Value = RoixVector.Zero);
 
             // マウス操作中に移動量を流す + 操作完了時に枠位置を通知する
             MouseMovePoint
                 .Pairwise()
-                .Where(x => x.NewItem is not null && x.OldItem is not null)
                 .Select(x => x.NewItem - x.OldItem)
                 .SkipUntil(MouseDownPoint.ToUnit())
                 .TakeUntil(MouseUpPoint.ToUnit())
@@ -79,8 +67,8 @@ namespace Roix.Wpf
         }
 
         /// <summary>引数の四角形を指定範囲に制限する</summary>
-        private static RoixRectDouble ClipRectangle(in RoixRectDouble roi, in RoixSizeDouble bounds)
-            => new RoixBoundsRoiDouble(roi, bounds).GetClippedRoi();
+        private static RoixRect ClipRectangle(in RoixRect roi, in RoixSize bounds)
+            => new RoixGaugeRect(roi, bounds).GetClippedRoi();
 
     }
 

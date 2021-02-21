@@ -12,7 +12,7 @@ namespace Roix.WPF.Tests
         [InlineData(1.1, 2.2, 3.3, 4.4)]
         public void Ctor(double x, double y, double width, double height)
         {
-            Marshal.SizeOf<RoixGaugePoint>().Is(40);
+            Marshal.SizeOf<RoixGaugePoint>().Is(32);
 
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);

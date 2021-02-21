@@ -31,21 +31,21 @@ namespace Roix.Wpf
         public override string ToString() => $"{nameof(RoixGaugePoint)} {{ {nameof(Roi)} = {Roi}, {nameof(Canvas)} = {Canvas} }}";
 
         #region Properties
-        public RoixPoint ClippedRoi => new(Math.Clamp(Roi.X, 0, Canvas.Width), Math.Clamp(Roi.Y, 0, Canvas.Height));
+        public readonly RoixPoint ClippedRoi => new(Math.Clamp(Roi.X, 0, Canvas.Width), Math.Clamp(Roi.Y, 0, Canvas.Height));
 
-        public bool IsInside => Roi.X.IsInside(0, Canvas.Width) && Roi.Y.IsInside(0, Canvas.Height);
-        public bool IsOutside => !IsInside;
+        public readonly bool IsInside => Roi.X.IsInside(0, Canvas.Width) && Roi.Y.IsInside(0, Canvas.Height);
+        public readonly bool IsOutside => !IsInside;
         #endregion
 
         #region Methods
-        public RoixGaugePoint ConvertToNewGauge(in RoixSize newSize)
+        public readonly RoixGaugePoint ConvertToNewGauge(in RoixSize newSize)
         {
             if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
             if (newSize.IsInvalid) throw new ArgumentException($"Invalid {nameof(newSize)}");
 
             var x = Roi.X * newSize.Width / Canvas.Width;
             var y = Roi.Y * newSize.Height / Canvas.Height;
-            return new(new RoixPoint(x, y), newSize);
+            return new(new(x, y), newSize);
         }
         #endregion
 

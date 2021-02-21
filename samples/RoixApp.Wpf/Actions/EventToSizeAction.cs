@@ -1,18 +1,17 @@
 ﻿using Microsoft.Xaml.Behaviors;
-using Roix.Core;
-using Roix.Wpf.Extensions;
+using Roix.Wpf;
 using System;
 using System.Windows;
 
-namespace Roix.Wpf.Actions
+namespace RoixApp.Wpf.Actions
 {
     class EventToSizeAction : TriggerAction<FrameworkElement>
     {
         public static readonly DependencyProperty ControlSizeProperty
-            = DependencyProperty.Register(nameof(ControlSize), typeof(RoixSizeDouble), typeof(EventToSizeAction));
-        public RoixSizeDouble ControlSize
+            = DependencyProperty.Register(nameof(ControlSize), typeof(RoixSize), typeof(EventToSizeAction));
+        public RoixSize ControlSize
         {
-            get => (RoixSizeDouble)GetValue(ControlSizeProperty);
+            get => (RoixSize)GetValue(ControlSizeProperty);
             set => SetValue(ControlSizeProperty, value);
         }
 
@@ -20,11 +19,11 @@ namespace Roix.Wpf.Actions
         {
             if (parameter is SizeChangedEventArgs e)
             {
-                ControlSize = e.NewSize.ToRoixSizeDouble();
+                ControlSize = e.NewSize;
             }
             else if (AssociatedObject is FrameworkElement fe)
             {
-                ControlSize = fe.ToRoixSizeDouble();
+                ControlSize = new(fe.ActualWidth, fe.ActualHeight);
             }
             else
             {

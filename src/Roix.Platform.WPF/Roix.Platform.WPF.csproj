@@ -1,11 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Title>Roix.Wpf</Title>
+    <Description>Roix manage plane rectangle.</Description>
+    <AssemblyName>Roix.Wpf</AssemblyName>
     <RootNamespace>Roix.Wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <Version>0.0.1.0</Version>
+    <Authors>myoga</Authors>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/hsytkm/Roix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hsytkm/Roix</RepositoryUrl>
+    <PackageTags>System.Windows.Rect</PackageTags>
+    <Copyright>Copyright (c) 2021 myoga</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>

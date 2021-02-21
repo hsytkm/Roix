@@ -23,8 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Roix.Core\Roix.Core.csproj" />
-    <ProjectReference Include="..\..\src\Roix.Wpf\Roix.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\Roix.Platform.WPF\Roix.Platform.WPF.csproj" />
   </ItemGroup>
 
 </Project>

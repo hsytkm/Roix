@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Roix.Wpf.Converters
+namespace RoixApp.Wpf.Converters
 {
     /// <summary>
     /// Generic型を使用した汎用コンバーター抽象クラス

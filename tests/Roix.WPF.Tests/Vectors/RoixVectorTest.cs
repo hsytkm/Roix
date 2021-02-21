@@ -16,18 +16,18 @@ namespace Roix.WPF.Tests
         {
             Marshal.SizeOf<RoixVector>().Is(16);
 
-            var point = new RoixVector(x, y);
-            point.X.Is(x);
-            point.Y.Is(y);
+            var vec = new RoixVector(x, y);
+            vec.X.Is(x);
+            vec.Y.Is(y);
         }
 
         [Fact]
         public void Deconstruct()
         {
-            var point = new RoixVector(1.1, 2.2);
-            var (x, y) = point;
-            x.Is(point.X);
-            y.Is(point.Y);
+            var vec = new RoixVector(1.1, 2.2);
+            var (x, y) = vec;
+            x.Is(vec.X);
+            y.Is(vec.Y);
         }
 
         #region Equal
@@ -35,15 +35,15 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             double x = 1.1, y = 2.2;
-            var p1 = new RoixVector(x, y);
-            var p2 = new RoixVector(x, y);
+            var v1 = new RoixVector(x, y);
+            var v2 = new RoixVector(x, y);
 
-            p1.Equals(p2).IsTrue();
-            (p1 == p2).IsTrue();
-            (p1 != p2).IsFalse();
+            v1.Equals(v2).IsTrue();
+            (v1 == v2).IsTrue();
+            (v1 != v2).IsFalse();
 
-            var obj2 = (object)p2;
-            p1.Equals(obj2).IsTrue();
+            var obj2 = (object)v2;
+            v1.Equals(obj2).IsTrue();
         }
         #endregion
 
@@ -122,6 +122,16 @@ namespace Roix.WPF.Tests
             v3.X.Is(x1 - x2);
             v3.Y.Is(y1 - y2);
         }
+
+        #region Properties
+        [Fact]
+        public void IsZero()
+        {
+            new RoixVector(1.1, 0).IsZero.IsFalse();
+            new RoixVector(0, 0).IsZero.IsTrue();
+            RoixVector.Zero.IsZero.IsTrue();
+        }
+        #endregion
 
     }
 }

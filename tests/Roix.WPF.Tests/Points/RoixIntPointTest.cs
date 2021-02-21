@@ -45,5 +45,57 @@ namespace Roix.WPF.Tests
             p1.Equals(obj2).IsTrue();
         }
 
+        #region Casts
+        [Fact]
+        public void ToRoix()
+        {
+            int x = 1, y = 2;
+            var rip1 = new RoixIntPoint(x, y);
+            RoixPoint rp1 = (RoixPoint)rip1;
+            rp1.X.Is(rip1.X);
+            rp1.Y.Is(rip1.Y);
+        }
+
+        [Fact]
+        public void FromRoix()
+        {
+            double x = 1.1, y = 2.2;
+            var rp1 = new RoixPoint(x, y);
+            RoixIntPoint rip1 = (RoixIntPoint)rp1;
+            rip1.X.Is((int)Math.Round(rp1.X));
+            rip1.Y.Is((int)Math.Round(rp1.Y));
+        }
+
+        [Fact]
+        public void ToWindows()
+        {
+            int x = 1, y = 2;
+            var rip1 = new RoixIntPoint(x, y);
+            System.Windows.Point wp1 = (System.Windows.Point)rip1;
+            wp1.X.Is(rip1.X);
+            wp1.Y.Is(rip1.Y);
+        }
+
+        [Fact]
+        public void FromWindows()
+        {
+            double x = 1.1, y = 2.2;
+            var wp1 = new System.Windows.Point(x, y);
+            RoixIntPoint rip1 = (RoixIntPoint)wp1;
+            rip1.X.Is((int)Math.Round(wp1.X));
+            rip1.Y.Is((int)Math.Round(wp1.Y));
+        }
+        #endregion
+
+        #region Properties
+        [Fact]
+        public void IsZero()
+        {
+            new RoixIntPoint(1, 0).IsZero.IsFalse();
+            new RoixIntPoint(0, 0).IsZero.IsTrue();
+            RoixIntPoint.Zero.IsZero.IsTrue();
+        }
+        #endregion
+
     }
 }

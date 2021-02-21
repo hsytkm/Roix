@@ -6,6 +6,8 @@ namespace Roix.Wpf
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Point.cs
     public readonly struct RoixPoint : IEquatable<RoixPoint>
     {
+        public static RoixPoint Zero { get; } = new(0, 0);
+
         public readonly double X;
         public readonly double Y;
 
@@ -38,7 +40,13 @@ namespace Roix.Wpf
         public static RoixVector operator -(in RoixPoint point1, in RoixPoint point2) => new(point1.X - point2.X, point1.Y - point2.Y);
         #endregion
 
-        public RoixIntPoint ToRoixIntPoint() => new(X.RoundToInt(), Y.RoundToInt());
+        #region Properties
+        public readonly bool IsZero => this == Zero;
+        #endregion
+
+        #region Methods
+        public readonly RoixIntPoint ToRoixIntPoint() => new(X.RoundToInt(), Y.RoundToInt());
+        #endregion
 
     }
 }

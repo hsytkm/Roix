@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xaml.Behaviors;
-using Roix.Core;
-using Roix.Wpf.Extensions;
+using Roix.Wpf;
 using System;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Roix.Wpf.Actions
+namespace RoixApp.Wpf.Actions
 {
     class CaptureMousePointAction : TriggerAction<FrameworkElement>
     {
@@ -13,10 +12,10 @@ namespace Roix.Wpf.Actions
         static CaptureButton _captureButton = CaptureButton.None;
 
         public static readonly DependencyProperty MousePointProperty
-            = DependencyProperty.Register(nameof(MousePoint), typeof(RoixPointDouble), typeof(CaptureMousePointAction));
-        public RoixPointDouble MousePoint
+            = DependencyProperty.Register(nameof(MousePoint), typeof(RoixPoint), typeof(CaptureMousePointAction));
+        public RoixPoint MousePoint
         {
-            get => (RoixPointDouble)GetValue(MousePointProperty);
+            get => (RoixPoint)GetValue(MousePointProperty);
             set => SetValue(MousePointProperty, value);
         }
 
@@ -26,13 +25,13 @@ namespace Roix.Wpf.Actions
             if (AssociatedObject is not IInputElement inputElement) return;
 
             CaptureMouse(inputElement, e);
-            MousePoint = e.GetPosition(inputElement).ToRoixPointDouble();
+            MousePoint = e.GetPosition(inputElement);
         }
 
         /// <summary>マウス操作の補足/解除</summary>
         private static void CaptureMouse(IInputElement inputElement, MouseEventArgs e)
         {
-            if (_captureButton == CaptureButton.None)
+            if (_captureButton is CaptureButton.None)
             {
                 var button = e switch
                 {
@@ -52,9 +51,9 @@ namespace Roix.Wpf.Actions
             {
                 var release = _captureButton switch
                 {
-                    CaptureButton.Left when e.LeftButton == MouseButtonState.Released => true,
-                    CaptureButton.Right when e.RightButton == MouseButtonState.Released => true,
-                    CaptureButton.Middle when e.MiddleButton == MouseButtonState.Released => true,
+                    CaptureButton.Left when e.LeftButton is MouseButtonState.Released => true,
+                    CaptureButton.Right when e.RightButton is MouseButtonState.Released => true,
+                    CaptureButton.Middle when e.MiddleButton is MouseButtonState.Released => true,
                     _ => false,
                 };
 

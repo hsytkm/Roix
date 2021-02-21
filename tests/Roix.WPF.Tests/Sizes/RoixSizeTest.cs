@@ -15,7 +15,7 @@ namespace Roix.WPF.Tests
         [InlineData(double.MaxValue, double.MaxValue)]
         public void Ctor(double w, double h)
         {
-            Marshal.SizeOf<RoixSize>().Is(24);
+            Marshal.SizeOf<RoixSize>().Is(16);
 
             var size = new RoixSize(w, h);
             size.IsEmpty.IsFalse();
@@ -121,6 +121,15 @@ namespace Roix.WPF.Tests
 
         #region Properties
         [Fact]
+        public void IsZero()
+        {
+            new RoixSize(1.1, 0).IsZero.IsFalse();
+            new RoixSize(0, 0).IsZero.IsTrue();
+            RoixSize.Empty.IsZero.IsFalse();
+            RoixSize.Zero.IsZero.IsTrue();
+        }
+
+        [Fact]
         public void IsValid()
         {
             new RoixSize(1.1, 2.2).IsValid.IsTrue();
@@ -131,20 +140,6 @@ namespace Roix.WPF.Tests
 
             RoixSize.Empty.IsValid.IsFalse();
             RoixSize.Empty.IsInvalid.IsTrue();
-        }
-        #endregion
-
-        #region Methods
-        [Theory]
-        [InlineData(0, 0, 0, 0)]
-        [InlineData(1.49, 2.51, 1, 3)]
-        public void ToRoixIntSize(double x, double y, int answerWidth, int answerHeight)
-        {
-            var ip = new RoixSize(x, y).ToRoixIntSize();
-            ip.Width.Is(answerWidth);
-            ip.Height.Is(answerHeight);
-
-            Assert.Throws<ArgumentException>(() => RoixSize.Empty.ToRoixIntSize());
         }
         #endregion
 

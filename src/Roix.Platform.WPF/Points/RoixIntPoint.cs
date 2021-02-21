@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Roix.Wpf.Internals;
+using System;
 
 namespace Roix.Wpf
 {
     public readonly struct RoixIntPoint : IEquatable<RoixIntPoint>
     {
+        public static RoixIntPoint Zero { get; } = new(0, 0);
+
         public readonly int X;
         public readonly int Y;
 
@@ -22,5 +25,18 @@ namespace Roix.Wpf
         #endregion
 
         public override string ToString() => $"{nameof(RoixIntPoint)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
+
+        #region implicit
+        public static implicit operator RoixIntPoint(in RoixPoint point) => new(point.X.RoundToInt(), point.Y.RoundToInt());
+        public static implicit operator RoixPoint(in RoixIntPoint point) => new(point.X, point.Y);
+
+        public static implicit operator RoixIntPoint(System.Windows.Point point) => new(point.X.RoundToInt(), point.Y.RoundToInt());
+        public static implicit operator System.Windows.Point(in RoixIntPoint point) => new(point.X, point.Y);
+        #endregion
+
+        #region Properties
+        public readonly bool IsZero => this == Zero;
+        #endregion
+
     }
 }

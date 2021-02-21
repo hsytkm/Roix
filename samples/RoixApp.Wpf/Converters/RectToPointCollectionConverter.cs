@@ -1,19 +1,18 @@
-﻿using Roix.Core;
-using Roix.Wpf.Extensions;
+﻿using Roix.Wpf;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Roix.Wpf.Converters
+namespace RoixApp.Wpf.Converters
 {
-    [ValueConversion(typeof(RoixRectDouble), typeof(PointCollection))]
-    class RectToPointCollectionConverter : GenericValueConverter<RoixRectDouble, PointCollection>
+    [ValueConversion(typeof(RoixRect), typeof(PointCollection))]
+    class RectToPointCollectionConverter : GenericValueConverter<RoixRect, PointCollection>
     {
-        public override PointCollection Convert(RoixRectDouble rect, object parameter, CultureInfo culture)
+        public override PointCollection Convert(RoixRect rect, object parameter, CultureInfo culture)
             => rect.ToPointCollection();
 
-        public override RoixRectDouble ConvertBack(PointCollection points, object parameter, CultureInfo culture)
-            => RoixRectDouble.Zero;
+        public override RoixRect ConvertBack(PointCollection points, object parameter, CultureInfo culture)
+            => RoixRect.Zero;
     }
 }
