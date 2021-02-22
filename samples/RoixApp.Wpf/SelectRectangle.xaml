@@ -54,17 +54,13 @@
             </i:Interaction.Triggers>
         </Image>
 
-        <Border Width="{Binding ActualWidth, ElementName=image}"
-                Height="{Binding ActualHeight, ElementName=image}" >
+        <Grid Width="{Binding ActualWidth, ElementName=image}"
+              Height="{Binding ActualHeight, ElementName=image}" >
             <Polygon Style="{StaticResource selectedPolygonStyle}"
                      Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
-        </Border>
 
-        <Border Width="{Binding ActualWidth, ElementName=image}"
-                Height="{Binding ActualHeight, ElementName=image}" >
             <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Cyan"
                      Points="{Binding ClickedFixedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
-        </Border>
-        
+        </Grid>
     </Grid>
 </UserControl>

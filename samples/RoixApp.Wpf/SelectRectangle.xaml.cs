@@ -68,12 +68,12 @@ namespace RoixApp.Wpf
             // 右クリックで固定サイズの枠を描画
             ClickedFixedRectangle = MouseRightDownPoint
                 .Where(x => !x.Canvas.IsZero)
-                .Select(x =>
+                .Select(rgp =>
                 {
                     var size = new RoixSize(100, 100);
-                    var point = new RoixPoint(x.Point.X - size.Width / 2, x.Point.Y - size.Height / 2);
-                    var rect = new RoixGaugeRect(new RoixRect(point, size), x.Canvas);
-                    return rect.GetClippedRoi(isPointPriority: true);
+                    var point = rgp.Point - (RoixVector)(size / 2);
+                    var rect = new RoixGaugeRect(new RoixRect(point, size), rgp.Canvas);
+                    return rect.GetClippedRoi(isPointPriority: false);
                 })
                 .ToReadOnlyReactivePropertySlim();
 

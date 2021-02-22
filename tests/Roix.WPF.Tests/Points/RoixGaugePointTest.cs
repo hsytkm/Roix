@@ -82,24 +82,6 @@ namespace Roix.WPF.Tests
 
         #region Properties
         [Theory]
-        [InlineData(0.5)]
-        [InlineData(4.0)]
-        [InlineData(12.34)]
-        public void ConvertToNewGauge(double ratio)
-        {
-            var point = new RoixPoint(10, 20);
-            var size = new RoixSize(100, 100);
-            var gp1 = new RoixGaugePoint(point, size);
-
-            var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
-            var gp2 = gp1.ConvertToNewGauge(newSize);
-            gp2.Point.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
-
-            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(RoixSize.Empty));
-            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(new RoixSize(0, 0)));
-        }
-
-        [Theory]
         [InlineData(0, 0, 1, 1, 0, 0)]
         [InlineData(1, 1, 1, 1, 1, 1)]
         [InlineData(12, 0, 10, 10, 10, 0)]
@@ -128,6 +110,26 @@ namespace Roix.WPF.Tests
             var roi = new RoixGaugePoint(x, y, width, height);
             roi.IsInside.Is(isInside);
             roi.IsOutside.Is(!isInside);
+        }
+        #endregion
+
+        #region Methods
+        [Theory]
+        [InlineData(0.5)]
+        [InlineData(4.0)]
+        [InlineData(12.34)]
+        public void ConvertToNewGauge(double ratio)
+        {
+            var point = new RoixPoint(10, 20);
+            var size = new RoixSize(100, 100);
+            var gp1 = new RoixGaugePoint(point, size);
+
+            var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
+            var gp2 = gp1.ConvertToNewGauge(newSize);
+            gp2.Point.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
+
+            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(new RoixSize(0, 0)));
         }
         #endregion
 

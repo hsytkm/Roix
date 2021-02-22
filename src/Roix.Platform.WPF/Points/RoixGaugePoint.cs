@@ -44,14 +44,13 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly RoixGaugePoint ConvertToNewGauge(in RoixSize newSize)
+        public readonly RoixGaugePoint ConvertToNewGauge(in RoixSize newCanvas)
         {
             if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
-            if (newSize.IsInvalid) throw new ArgumentException($"Invalid {nameof(newSize)}");
+            if (newCanvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(newCanvas)}");
 
-            var x = Point.X * newSize.Width / Canvas.Width;
-            var y = Point.Y * newSize.Height / Canvas.Height;
-            return new(new(x, y), newSize);
+            var newPoint = new RoixPoint(Point.X * newCanvas.Width / Canvas.Width, Point.Y * newCanvas.Height / Canvas.Height);
+            return new(newPoint, newCanvas);
         }
         #endregion
 

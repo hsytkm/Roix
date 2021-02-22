@@ -7,12 +7,12 @@ using System.Windows.Media;
 namespace RoixApp.Wpf.Converters
 {
     [ValueConversion(typeof(RoixRect), typeof(PointCollection))]
-    class RectToPointCollectionConverter : GenericValueConverter<RoixRect, PointCollection>
+    class RectToPointCollectionConverter : GenericValueConverter<RoixRect, PointCollection?>
     {
-        public override PointCollection Convert(RoixRect rect, object parameter, CultureInfo culture)
-            => rect.ToPointCollection();
+        public override PointCollection? Convert(RoixRect rect, object parameter, CultureInfo culture)
+            => (!rect.IsZero && !rect.IsEmpty) ? rect.ToPointCollection() : null;
 
-        public override RoixRect ConvertBack(PointCollection points, object parameter, CultureInfo culture)
+        public override RoixRect ConvertBack(PointCollection? points, object parameter, CultureInfo culture)
             => RoixRect.Zero;
     }
 }

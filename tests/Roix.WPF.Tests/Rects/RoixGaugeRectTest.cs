@@ -88,6 +88,27 @@ namespace Roix.WPF.Tests
 
         #region Methods
         [Theory]
+        [InlineData(0.5)]
+        [InlineData(4.0)]
+        [InlineData(12.34)]
+        public void ConvertToNewGauge(double ratio)
+        {
+            var point = new RoixPoint(10, 20);
+            var size = new RoixSize(20, 40);
+            var canvas = new RoixSize(100, 100);
+            var gr1 = new RoixGaugeRect(new RoixRect(point, size), canvas);
+
+            var newSize = new RoixSize(canvas.Width * ratio, canvas.Height * ratio);
+            var gr2 = gr1.ConvertToNewGauge(newSize);
+
+            gr2.Roi.TopLeft.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
+            gr2.Roi.Size.Is(new RoixSize(size.Width * ratio, size.Height * ratio));
+
+            Assert.Throws<ArgumentException>(() => gr1.ConvertToNewGauge(RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => gr1.ConvertToNewGauge(new RoixSize(0, 0)));
+        }
+
+        [Theory]
         [InlineData(0, 0, 4, 4)]
         [InlineData(0, 0, 10, 10)]
         [InlineData(9, 9, 1, 1)]

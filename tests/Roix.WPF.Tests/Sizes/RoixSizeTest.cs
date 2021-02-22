@@ -121,6 +121,42 @@ namespace Roix.WPF.Tests
 
         #endregion
 
+        #region Operators
+        [Theory]
+        [InlineData(0.5)]
+        [InlineData(2)]
+        public void OperatorèÊéZ(double ratio)
+        {
+            var src = new RoixSize(100, 200);
+
+            var size1 = src * ratio;
+            size1.Width.Is(src.Width * ratio);
+            size1.Height.Is(src.Height * ratio);
+
+            (src * 0).Is(RoixSize.Zero);
+            (RoixSize.Zero * ratio).Is(RoixSize.Zero);
+            (RoixSize.Empty * ratio).Is(RoixSize.Empty);
+            Assert.Throws<ArgumentException>(() => src / -ratio);
+        }
+
+        [Theory]
+        [InlineData(0.5)]
+        [InlineData(2)]
+        public void OperatorèúéZ(double ratio)
+        {
+            var src = new RoixSize(100, 200);
+
+            var size1 = src / ratio;
+            size1.Width.Is(src.Width / ratio);
+            size1.Height.Is(src.Height / ratio);
+
+            (RoixSize.Zero / ratio).Is(RoixSize.Zero);
+            (RoixSize.Empty / ratio).Is(RoixSize.Empty);
+            Assert.Throws<ArgumentException>(() => src / -ratio);
+            Assert.Throws<DivideByZeroException>(() => src / 0);
+        }
+        #endregion
+
         #region Properties
         [Fact]
         public void IsZero()

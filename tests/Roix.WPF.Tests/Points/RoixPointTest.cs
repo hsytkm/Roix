@@ -77,6 +77,7 @@ namespace Roix.WPF.Tests
         }
         #endregion
 
+        #region Operators
         [Theory]
         [InlineData(0, 0, 0, 0)]
         [InlineData(1, 2, 30, 40)]
@@ -96,6 +97,7 @@ namespace Roix.WPF.Tests
             v1.X.Is(x1 - x2);
             v1.Y.Is(y1 - y2);
         }
+        #endregion
 
         #region Properties
         [Fact]

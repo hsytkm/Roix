@@ -34,6 +34,16 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
+        public readonly RoixGaugeRect ConvertToNewGauge(in RoixSize newCanvas)
+        {
+            if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
+            if (newCanvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(newCanvas)}");
+
+            var newPoint = new RoixPoint(Roi.X * newCanvas.Width / Canvas.Width, Roi.Y * newCanvas.Height / Canvas.Height);
+            var newSize = new RoixSize(Roi.Width * newCanvas.Width / Canvas.Width, Roi.Height * newCanvas.Height / Canvas.Height);
+            return new(new(newPoint, newSize), newCanvas);
+        }
+
         /// <summary>
         /// Roi の左上点を優先して Rect を Canvas サイズ内に納めます。
         /// Roi の左上点が Canvas の境界上に乗っている場合は、戻り値の Size が Zero になります。

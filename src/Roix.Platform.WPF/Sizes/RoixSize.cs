@@ -42,6 +42,23 @@ namespace Roix.Wpf
         public static explicit operator RoixPoint(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException("size is empty");
         #endregion
 
+        #region operator
+        public static RoixSize operator *(in RoixSize size, double mul)
+        {
+            if (size.IsEmpty) return Empty;
+            if (mul < 0) throw new ArgumentException("cannot be negative value");
+            return new(size.Width * mul, size.Height * mul);
+        }
+
+        public static RoixSize operator /(in RoixSize size, double div)
+        {
+            if (size.IsEmpty) return Empty;
+            if (div < 0) throw new ArgumentException("cannot be negative value");
+            if (div == 0) throw new DivideByZeroException();
+            return new(size.Width / div, size.Height / div);
+        }
+        #endregion
+
         #region Properties
         public readonly bool IsEmpty => this == Empty;
         public readonly bool IsZero => this == Zero;
