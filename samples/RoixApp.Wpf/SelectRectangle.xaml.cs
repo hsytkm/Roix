@@ -2,7 +2,7 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Roix.Wpf;
-using RoixApp.Wpf.Extensions;
+using Roix.Wpf.Extensions;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -28,7 +28,10 @@ namespace RoixApp.Wpf
         public IReactiveProperty<RoixGaugePoint> MouseMovePoint { get; }
         public IReactiveProperty<RoixSize> ViewBorderSize { get; }
 
-        public IReactiveProperty<RoixGaugeRect> SelectedRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixGaugePoint> CursorGaugePoint { get; }
+        public IReadOnlyReactiveProperty<RoixIntPoint> CursorPointToModel { get; }
+
+        public IReactiveProperty<RoixGaugeRect> SelectedGaugeRectangle { get; }
         public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
         public IReactiveProperty<RoixGaugePoint> MouseRightDownPoint { get; }
@@ -37,16 +40,27 @@ namespace RoixApp.Wpf
 
         public SelectRectangleViewModel()
         {
-            var imageSourceSize = MyImage.ToRoixSize();
             MouseLeftDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
             MouseLeftUpPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
             MouseMovePoint = new ReactivePropertySlim<RoixGaugePoint>();
             ViewBorderSize = new ReactivePropertySlim<RoixSize>();
             MouseRightDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
-            SelectedRectangle = new ReactivePropertySlim<RoixGaugeRect>();
+            SelectedGaugeRectangle = new ReactivePropertySlim<RoixGaugeRect>();
             SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
             ClickedFixedGaugeRectangle = new ReactivePropertySlim<RoixGaugeRect>();
 
+            var imageSourceSize = MyImage.PixelSizeToRoixSize();
+
+            #region CursorPoint
+            CursorGaugePoint = MouseMovePoint.ToReadOnlyReactivePropertySlim();
+
+            CursorPointToModel = CursorGaugePoint
+                .Where(gp => !gp.IsZero)
+                .Select(gp => gp.ConvertToNewGauge(imageSourceSize).ToRoixIntPoint(isCheckBoundaries: false))
+                .ToReadOnlyReactivePropertySlim();
+            #endregion
+
+            #region SelectedRectangle
             var draggingVector = new ReactivePropertySlim<RoixVector>(mode: ReactivePropertyMode.None);
 
             // マウス操作開始時の初期化
@@ -56,6 +70,7 @@ namespace RoixApp.Wpf
             MouseMovePoint
                 .Pairwise()
                 .Select(x => x.NewItem.Point - x.OldItem.Point)
+                //.Select(x => x.NewItem - x.OldItem)
                 .SkipUntil(MouseLeftDownPoint.ToUnit())
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
@@ -63,7 +78,7 @@ namespace RoixApp.Wpf
                     if (draggingVector.Value.IsZero) return;
 
                     // ドラッグ枠の確定
-                    var gaugeRectOnView = MouseLeftDownPoint.Value.Add(draggingVector.Value);
+                    var gaugeRectOnView = MouseLeftDownPoint.Value.CreateRoixGaugeRect(draggingVector.Value);
                     var gaugeRectOnModel = gaugeRectOnView.ConvertToNewGauge(imageSourceSize);
                     SelectedRectangleToModel.Value = (RoixIntRect)gaugeRectOnModel.GetClippedGaugeRect().Roi;
                 })
@@ -73,34 +88,37 @@ namespace RoixApp.Wpf
             // 選択枠のプレビュー
             draggingVector
                 .Where(vec => !vec.IsZero)
-                .Subscribe(vec => SelectedRectangle.Value = MouseLeftDownPoint.Value.Add(vec).GetClippedGaugeRect());
+                .Subscribe(vec => SelectedGaugeRectangle.Value = MouseLeftDownPoint.Value.CreateRoixGaugeRect(vec).GetClippedGaugeRect());
+            #endregion
 
+            #region ClickedFixedRectangle
             // 右クリックで固定サイズの枠を描画
             MouseRightDownPoint
-                .Where(x => !x.Bounds.IsZero)
-                .Subscribe(gaugePoint =>
+                .Where(gauge => !gauge.Border.IsZero)
+                .Subscribe(gaugePointOnView =>
                 {
                     var gaugeSizeOnModel = new RoixGaugeSize(new RoixSize(100, 100), imageSourceSize);
-                    var boundsOnView = gaugePoint.Bounds;
-                    var gaugeSizeOnView = gaugeSizeOnModel.ConvertToNewGauge(boundsOnView);
-                    var newPointOnView = gaugePoint.Point - (RoixVector)(gaugeSizeOnView.Size / 2);
-                    var gaugeRectOnView = new RoixGaugeRect(new RoixRect(newPointOnView, gaugeSizeOnView.Size), boundsOnView);
+                    var borderOnView = gaugePointOnView.Border;
+                    var gaugeSizeOnView = gaugeSizeOnModel.ConvertToNewGauge(borderOnView);
+                    var newPointOnView = gaugePointOnView.Point - (RoixVector)(gaugeSizeOnView.Size / 2);
+                    var gaugeRectOnView = new RoixGaugeRect(new RoixRect(newPointOnView, gaugeSizeOnView.Size), borderOnView);
                     ClickedFixedGaugeRectangle.Value = gaugeRectOnView.GetClippedGaugeRect(isPointPriority: false);
                 });
 
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedGaugeRectangle
-                .Where(gaugeRectOnView => !gaugeRectOnView.Bounds.IsZero)
+                .Where(gauge => !gauge.Border.IsZero)
                 .Select(gaugeRectOnView => (RoixIntRect)gaugeRectOnView.ConvertToNewGauge(imageSourceSize).Roi)
                 .ToReadOnlyReactivePropertySlim();
+            #endregion
 
             // View画像サイズの変更に応じて枠を伸縮
             ViewBorderSize
-                .Where(x => !x.IsZero)
-                .Subscribe(newBounds =>
+                .Where(size => !size.IsZero)
+                .Subscribe(newBorder =>
                 {
-                    SelectedRectangle.Value = SelectedRectangle.Value.ConvertToNewGauge(newBounds);
-                    ClickedFixedGaugeRectangle.Value = ClickedFixedGaugeRectangle.Value.ConvertToNewGauge(newBounds);
+                    SelectedGaugeRectangle.Value = SelectedGaugeRectangle.Value.ConvertToNewGauge(newBorder);
+                    ClickedFixedGaugeRectangle.Value = ClickedFixedGaugeRectangle.Value.ConvertToNewGauge(newBorder);
                 });
 
         }

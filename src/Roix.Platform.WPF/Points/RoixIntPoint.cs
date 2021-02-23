@@ -34,6 +34,12 @@ namespace Roix.Wpf
         public static implicit operator System.Windows.Point(in RoixIntPoint point) => new(point.X, point.Y);
         #endregion
 
+        #region explicit
+        #endregion
+
+        #region operator
+        #endregion
+
         #region Properties
         public readonly bool IsZero => this == Zero;
         #endregion

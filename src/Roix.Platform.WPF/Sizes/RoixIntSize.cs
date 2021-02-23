@@ -38,6 +38,12 @@ namespace Roix.Wpf
         public static implicit operator System.Windows.Size(in RoixIntSize size) => new(size.Width, size.Height);
         #endregion
 
+        #region explicit
+        #endregion
+
+        #region operator
+        #endregion
+
         #region Properties
         public readonly bool IsZero => this == Zero;
         #endregion

@@ -29,11 +29,17 @@ namespace Roix.Wpf
         public readonly override string ToString() => $"{nameof(RoixIntRect)} {{ {nameof(Location)} = {Location}, {nameof(Size)} = {Size} }}";
 
         #region implicit
-        public static implicit operator RoixIntRect(in RoixRect rect) => !rect.IsEmpty ? new(rect.X.RoundToInt(), rect.Y.RoundToInt(), rect.Width.RoundToInt(), rect.Height.RoundToInt()) : throw new ArgumentException("rect is empty");
+        public static implicit operator RoixIntRect(in RoixRect rect) => !rect.IsEmpty ? new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size) : throw new ArgumentException("rect is empty");
         public static implicit operator RoixRect(in RoixIntRect rect) => new(rect.X, rect.Y, rect.Width, rect.Height);
 
-        public static implicit operator RoixIntRect(System.Windows.Rect rect) => !rect.IsEmpty ? new(rect.X.RoundToInt(), rect.Y.RoundToInt(), rect.Width.RoundToInt(), rect.Height.RoundToInt()) : throw new ArgumentException("size is empty");
+        public static implicit operator RoixIntRect(System.Windows.Rect rect) => !rect.IsEmpty ? new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size) : throw new ArgumentException("size is empty");
         public static implicit operator System.Windows.Rect(in RoixIntRect rect) => new(rect.X, rect.Y, rect.Width, rect.Height);
+        #endregion
+
+        #region explicit
+        #endregion
+
+        #region operator
         #endregion
 
         #region Properties

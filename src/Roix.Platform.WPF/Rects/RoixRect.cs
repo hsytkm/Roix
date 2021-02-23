@@ -7,7 +7,7 @@ namespace Roix.Wpf
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Rect.cs
     public readonly struct RoixRect : IEquatable<RoixRect>, IFormattable
     {
-        public static RoixRect Zero { get; } = new(0, 0, 0, 0);
+        public static RoixRect Zero { get; } = new(RoixPoint.Zero, RoixSize.Zero);
         public static RoixRect Empty { get; } = new(new(double.PositiveInfinity, double.PositiveInfinity), RoixSize.Empty);
 
         public readonly RoixPoint Location { get; }
@@ -56,6 +56,12 @@ namespace Roix.Wpf
         public static implicit operator System.Windows.Rect(in RoixRect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : System.Windows.Rect.Empty;
         #endregion
 
+        #region explicit
+        #endregion
+
+        #region operator
+        #endregion
+
         #region Properties
         public readonly bool IsZero => this == Zero;
         public readonly bool IsEmpty => this == Empty;
@@ -75,8 +81,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize bounds) => 0 <= Left && Right <= bounds.Width && 0 <= Top && Bottom <= bounds.Height;
-        public readonly bool IsOutside(in RoixSize bounds) => !IsInside(bounds);
+        public readonly bool IsInside(in RoixSize border) => 0 <= Left && Right <= border.Width && 0 <= Top && Bottom <= border.Height;
+        public readonly bool IsOutside(in RoixSize border) => !IsInside(border);
 
         public readonly System.Windows.Media.PointCollection ToPointCollection()
         {

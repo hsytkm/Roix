@@ -5,88 +5,115 @@ namespace Roix.Wpf
 {
     public readonly struct RoixGaugeRect : IEquatable<RoixGaugeRect>, IFormattable
     {
+        public static RoixGaugeRect Zero { get; } = new(RoixRect.Zero, RoixSize.Zero);
+
         public readonly RoixRect Roi { get; }
-        public readonly RoixSize Bounds { get; }
+        public readonly RoixSize Border { get; }
 
         #region ctor
-        public RoixGaugeRect(in RoixRect roi, in RoixSize bounds)
+        public RoixGaugeRect(in RoixRect roi, in RoixSize border)
         {
-            if (bounds.IsInvalid) throw new ArgumentException($"Invalid {nameof(bounds)}");
-            (Roi, Bounds) = (roi, bounds);
+            if (border.IsEmpty) throw new ArgumentException($"{nameof(border)} is empty");
+            (Roi, Border) = (roi, border);
         }
 
-        public readonly void Deconstruct(out RoixRect roi, out RoixSize bounds) => (roi, bounds) = (Roi, Bounds);
+        public readonly void Deconstruct(out RoixRect roi, out RoixSize border) => (roi, border) = (Roi, Border);
         #endregion
 
         #region Equals
-        public readonly bool Equals(RoixGaugeRect other) => (Roi, Bounds) == (other.Roi, other.Bounds);
+        public readonly bool Equals(RoixGaugeRect other) => (Roi, Border) == (other.Roi, other.Border);
         public readonly override bool Equals(object? obj) => (obj is RoixGaugeRect other) && Equals(other);
-        public readonly override int GetHashCode() => HashCode.Combine(Roi, Bounds);
+        public readonly override int GetHashCode() => HashCode.Combine(Roi, Border);
         public static bool operator ==(in RoixGaugeRect left, in RoixGaugeRect right) => left.Equals(right);
         public static bool operator !=(in RoixGaugeRect left, in RoixGaugeRect right) => !(left == right);
         #endregion
 
         #region ToString
-        public readonly override string ToString() => $"{nameof(RoixGaugeRect)} {{ {nameof(Roi)} = {Roi}, {nameof(Bounds)} = {Bounds} }}";
+        public readonly override string ToString() => $"{nameof(RoixGaugeRect)} {{ {nameof(Roi)} = {Roi}, {nameof(Border)} = {Border} }}";
         public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixGaugeRect)} {{ ");
             sb.Append($"{nameof(Roi)} = {Roi.ToString(format, formatProvider)}, ");
-            sb.Append($"{nameof(Bounds)} = {Bounds.ToString(format, formatProvider)} }}");
+            sb.Append($"{nameof(Border)} = {Border.ToString(format, formatProvider)} }}");
             return sb.ToString();
         }
         #endregion
 
+        #region implicit
+        #endregion
+
+        #region explicit
+        #endregion
+
+        #region operator
+        #endregion
+
         #region Properties
-        public readonly bool IsInsideInBounds => Roi.IsInside(Bounds);
-        public readonly bool IsOutsideInBounds => !IsInsideInBounds;
+        public readonly bool IsZero => this == Zero;
+        public readonly bool IsInsideBorder => Roi.IsInside(Border);
+        public readonly bool IsOutsideBorder => !IsInsideBorder;
         #endregion
 
         #region Methods
-        public readonly RoixGaugeRect ConvertToNewGauge(in RoixSize newBounds)
+        public readonly RoixGaugeRect ConvertToNewGauge(in RoixSize newBorder)
         {
-            if (Bounds.IsInvalid) return this;
-            if (newBounds.IsInvalid) throw new ArgumentException($"Invalid {nameof(newBounds)}");
+            if (Border.IsInvalid) return this;
+            if (newBorder.IsInvalid) throw new ArgumentException($"Invalid {nameof(newBorder)}");
 
-            var newPoint = new RoixPoint(Roi.X * newBounds.Width / Bounds.Width, Roi.Y * newBounds.Height / Bounds.Height);
-            var newSize = new RoixSize(Roi.Width * newBounds.Width / Bounds.Width, Roi.Height * newBounds.Height / Bounds.Height);
-            return new(new(newPoint, newSize), newBounds);
+            var newPoint = new RoixPoint(Roi.X * newBorder.Width / Border.Width, Roi.Y * newBorder.Height / Border.Height);
+            var newSize = new RoixSize(Roi.Width * newBorder.Width / Border.Width, Roi.Height * newBorder.Height / Border.Height);
+            return new(new(newPoint, newSize), newBorder);
+        }
+
+        public readonly RoixIntRect ToRoixIntRect(bool isCheckBoundaries = true)
+        {
+            if (isCheckBoundaries && IsOutsideBorder) throw new InvalidOperationException("must inside the border");
+
+            var srcRect = (RoixIntRect)Roi;
+            var intSize = (RoixIntSize)Border;
+            if (intSize.IsZero) throw new InvalidOperationException("size is zero");
+
+            var x = Math.Clamp(srcRect.X, 0, intSize.Width - 1);
+            var y = Math.Clamp(srcRect.Y, 0, intSize.Height - 1);
+            var width = Math.Clamp(srcRect.Width, 0, intSize.Width - x);
+            var height = Math.Clamp(srcRect.Height, 0, intSize.Height - y);
+            return new(x, y, width, height);
         }
 
         /// <summary>
-        /// Roi の左上点を優先して Rect を Bounds サイズ内に納めます。
-        /// Roi の左上点が Bounds の境界上に乗っている場合は、戻り値の Size が Zero になります。
+        /// Roi の左上点を優先して Rect を Border サイズ内に納めます。
+        /// Roi の左上点が Border の境界上に乗っている場合は、戻り値の Size が Zero になります。
         /// </summary>
         private readonly RoixGaugeRect GetClippedGaugeRectByPointPriority()
         {
-            if (IsInsideInBounds) return this;
+            if (IsInsideBorder) return this;
 
-            var left = Math.Clamp(Roi.Left, 0, Bounds.Width);
-            var top = Math.Clamp(Roi.Top, 0, Bounds.Height);
+            var left = Math.Clamp(Roi.Left, 0, Border.Width);
+            var top = Math.Clamp(Roi.Top, 0, Border.Height);
 
             // 最小側にめり込んで制限された場合は正数になる（その値だけ長さを伸縮する）
             var (deltaLeft, deltaTop) = (left - Roi.Left, top - Roi.Top);
 
-            var width = Math.Clamp(Roi.Width - deltaLeft, 0, Bounds.Width - left);
-            var height = Math.Clamp(Roi.Height - deltaTop, 0, Bounds.Height - top);
+            var width = Math.Clamp(Roi.Width - deltaLeft, 0, Border.Width - left);
+            var height = Math.Clamp(Roi.Height - deltaTop, 0, Border.Height - top);
             var rect = new RoixRect(new RoixPoint(left, top), new RoixSize(width, height));
-            return new(rect, Bounds);
+            return new(rect, Border);
         }
 
         /// <summary>
-        /// Roi のサイズを優先して Rect を Bounds サイズに納めます。
+        /// Roi のサイズを優先して Rect を Border サイズに納めます。
         /// </summary>
         private readonly RoixGaugeRect GetClippedGaugeRectBySizePriority()
         {
-            if (IsInsideInBounds) return this;
+            if (IsInsideBorder) return this;
 
-            var width = Math.Clamp(Roi.Width, 0, Bounds.Width);
-            var height = Math.Clamp(Roi.Height, 0, Bounds.Height);
-            var left = Math.Clamp(Roi.Left - GetJutLength(Roi.Left, Roi.Right, 0, Bounds.Width), 0, Bounds.Width - width);
-            var top = Math.Clamp(Roi.Top - GetJutLength(Roi.Top, Roi.Bottom, 0, Bounds.Height), 0, Bounds.Height - height);
+            var width = Math.Clamp(Roi.Width, 0, Border.Width);
+            var height = Math.Clamp(Roi.Height, 0, Border.Height);
+            var left = Math.Clamp(Roi.Left - GetJutLength(Roi.Left, Roi.Right, 0, Border.Width), 0, Border.Width - width);
+            var top = Math.Clamp(Roi.Top - GetJutLength(Roi.Top, Roi.Bottom, 0, Border.Height), 0, Border.Height - height);
             var rect = new RoixRect(new RoixPoint(left, top), new RoixSize(width, height));
-            return new(rect, Bounds);
+            return new(rect, Border);
 
             static double GetJutLength(double left, double right, double min, double max)
             {

@@ -47,7 +47,9 @@ namespace Roix.Wpf
         #region implicit
         public static implicit operator RoixSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width, size.Height) : Empty;
         public static implicit operator System.Windows.Size(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : System.Windows.Size.Empty;
+        #endregion
 
+        #region explicit
         public static explicit operator RoixVector(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException("size is empty");
         public static explicit operator RoixPoint(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException("size is empty");
         #endregion
@@ -80,8 +82,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize bounds) => ((RoixPoint)this).IsInside(bounds);
-        public readonly bool IsOutside(in RoixSize bounds) => !IsInside(bounds);
+        public readonly bool IsInside(in RoixSize border) => ((RoixPoint)this).IsInside(border);
+        public readonly bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
 

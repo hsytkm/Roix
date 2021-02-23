@@ -12,42 +12,43 @@ namespace Roix.WPF.Tests
         [InlineData(1, 2, 3, 4, 10, 10)]
         [InlineData(10, 20, 3, 4, 10, 10)]
         [InlineData(-1, -2, 3, 4, 10, 10)]
-        public void Ctor(double roiX, double roiY, double roiWidth, double roiHeight, double boundsWidth, double boundsHeight)
+        public void Ctor(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight)
         {
             var rect = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var size = new RoixSize(boundsWidth, boundsHeight);
+            var size = new RoixSize(borderWidth, borderHeight);
 
             var gr1 = new RoixGaugeRect(rect, size);
             gr1.Roi.X.Is(rect.X);
             gr1.Roi.Y.Is(rect.Y);
             gr1.Roi.Width.Is(rect.Width);
             gr1.Roi.Height.Is(rect.Height);
-            gr1.Bounds.Width.Is(size.Width);
-            gr1.Bounds.Height.Is(size.Height);
+            gr1.Border.Width.Is(size.Width);
+            gr1.Border.Height.Is(size.Height);
+
+            new RoixGaugeRect(rect, RoixSize.Zero);     //OK
         }
 
         [Theory]
-        [InlineData(0, 0, 0, 0, 0, 0)]
         [InlineData(0, 0, 4, 4, -1, 0)]
         [InlineData(0, 0, 4, 4, 0, -1)]
-        public void CtorBounds負数ダメ(double roiX, double roiY, double roiWidth, double roiHeight, double boundsWidth, double boundsHeight)
+        public void CtorBorder負数ダメ(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight)
         {
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(new(roiX, roiY, roiWidth, roiHeight), new(boundsWidth, boundsHeight)));
+            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(new(roiX, roiY, roiWidth, roiHeight), new(borderWidth, borderHeight)));
         }
 
         [Fact]
         public void Deconstruct()
         {
             var srcRect = new RoixRect(1, 2, 3, 4);
-            var srcBounds = new RoixSize(10, 10);
+            var srcBorder = new RoixSize(10, 10);
 
-            var (roi, bounds) = new RoixGaugeRect(srcRect, srcBounds);
+            var (roi, border) = new RoixGaugeRect(srcRect, srcBorder);
             roi.X.Is(srcRect.X);
             roi.Y.Is(srcRect.Y);
             roi.Width.Is(srcRect.Width);
             roi.Height.Is(srcRect.Height);
-            bounds.Width.Is(srcBounds.Width);
-            bounds.Height.Is(srcBounds.Height);
+            border.Width.Is(srcBorder.Width);
+            border.Height.Is(srcBorder.Height);
         }
         #endregion
 
@@ -56,10 +57,10 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             var rect = new RoixRect(1, 2, 3, 4);
-            var bounds = new RoixSize(10, 10);
+            var border = new RoixSize(10, 10);
 
-            var gr1 = new RoixGaugeRect(rect, bounds);
-            var gr2 = new RoixGaugeRect(rect, bounds);
+            var gr1 = new RoixGaugeRect(rect, border);
+            var gr2 = new RoixGaugeRect(rect, border);
             gr1.Equals(gr2).IsTrue();
             (gr1 == gr2).IsTrue();
             (gr1 != gr2).IsFalse();
@@ -70,19 +71,32 @@ namespace Roix.WPF.Tests
         #endregion
 
         #region Properties
+        [Fact]
+        public void IsZero()
+        {
+            var rect = new RoixRect(1, 2, 3, 4);
+            var size = new RoixSize(10, 10);
+
+            new RoixGaugeRect(rect, size).IsZero.IsFalse();
+            new RoixGaugeRect(rect, RoixSize.Zero).IsZero.IsFalse();
+            new RoixGaugeRect(RoixRect.Zero, size).IsZero.IsFalse();
+            new RoixGaugeRect(RoixRect.Zero, RoixSize.Zero).IsZero.IsTrue();
+            RoixGaugeRect.Zero.IsZero.IsTrue();
+        }
+
         [Theory]
         [InlineData(0, 0, 0, 0, 10, 10, true)]
         [InlineData(1, 2, 3, 4, 10, 10, true)]
         [InlineData(10, 20, 3, 4, 10, 10, false)]
         [InlineData(-1, -2, 3, 4, 10, 10, false)]
-        public void IsInside(double roiX, double roiY, double roiWidth, double roiHeight, double boundsWidth, double boundsHeight, bool isInside)
+        public void IsInside(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight, bool isInside)
         {
             var rect = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var size = new RoixSize(boundsWidth, boundsHeight);
+            var size = new RoixSize(borderWidth, borderHeight);
             var gp = new RoixGaugeRect(rect, size);
 
-            gp.IsInsideInBounds.Is(isInside);
-            gp.IsOutsideInBounds.Is(!isInside);
+            gp.IsInsideBorder.Is(isInside);
+            gp.IsOutsideBorder.Is(!isInside);
         }
         #endregion
 
@@ -95,10 +109,10 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(10, 20);
             var size = new RoixSize(20, 40);
-            var bounds = new RoixSize(100, 100);
-            var gr1 = new RoixGaugeRect(new RoixRect(point, size), bounds);
+            var border = new RoixSize(100, 100);
+            var gr1 = new RoixGaugeRect(new RoixRect(point, size), border);
 
-            var newSize = new RoixSize(bounds.Width * ratio, bounds.Height * ratio);
+            var newSize = new RoixSize(border.Width * ratio, border.Height * ratio);
             var gr2 = gr1.ConvertToNewGauge(newSize);
 
             gr2.Roi.TopLeft.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
@@ -109,19 +123,45 @@ namespace Roix.WPF.Tests
         }
 
         [Theory]
+        [InlineData(1.1, 1.9, 3.1, 3.9, 1, 2, 3, 4)]
+        [InlineData(0, 0, 10, 10, 0, 0, 10, 10)]
+        [InlineData(9, 2, 1, 3, 9, 2, 1, 3)]       // 0~Length-1
+        public void ToRoixIntRect_Ok(double x, double y, double width, double height, int ansX, int ansY, int ansWidth, int ansHeight)
+        {
+            var rect = new RoixRect(x, y, width, height);
+            var border = new RoixSize(10, 10);
+
+            var ir = new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBoundaries: true);
+            var ansRect = new RoixIntRect(ansX, ansY, ansWidth, ansHeight);
+            ir.Is(ansRect);
+        }
+
+        [Theory]
+        [InlineData(10, 2, 1, 4)]   // Outside
+        [InlineData(1, 0, 1, 11)]   // Outside
+        public void ToRoixIntRect_Ng(double x, double y, double width, double height)
+        {
+            var rect = new RoixRect(x, y, width, height);
+            var border = new RoixSize(10, 10);
+
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBoundaries: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBoundaries: true));
+        }
+
+        [Theory]
         [InlineData(0, 0, 4, 4)]
         [InlineData(0, 0, 10, 10)]
         [InlineData(9, 9, 1, 1)]
         public void GetClippedRoiByPointPriority_1_1_そもそも収まっててOK(
             double roiX, double roiY, double roiWidth, double roiHeight)
         {
-            var bounds = new RoixSize(10, 10);
+            var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var groi = new RoixGaugeRect(roi, bounds);
+            var groi = new RoixGaugeRect(roi, border);
 
             var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
             clippedRect.Roi.Is(roi);
-            clippedRect.Bounds.Is(groi.Bounds);
+            clippedRect.Border.Is(groi.Border);
         }
 
         [Theory]
@@ -131,15 +171,15 @@ namespace Roix.WPF.Tests
         public void GetClippedRoiByPointPriority_1_2_枠の食み出しをサイズ制限してOK(
             double roiX, double roiY, double roiWidth, double roiHeight, double ansWidth, double ansHeight)
         {
-            var bounds = new RoixSize(10, 10);
+            var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var ansSize = new RoixSize(ansWidth, ansHeight);
 
-            var groi = new RoixGaugeRect(roi, bounds);
+            var groi = new RoixGaugeRect(roi, border);
             var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
             clippedRect.Roi.Size.Is(ansSize);
             clippedRect.Roi.TopLeft.Is(roi.TopLeft);
-            clippedRect.Bounds.Is(groi.Bounds);
+            clippedRect.Border.Is(groi.Border);
         }
 
         [Theory]
@@ -149,13 +189,13 @@ namespace Roix.WPF.Tests
         public void GetClippedRoiBySizePriority_2_1_そもそも収まっててOK(
             double roiX, double roiY, double roiWidth, double roiHeight)
         {
-            var bounds = new RoixSize(10, 10);
+            var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var groi = new RoixGaugeRect(roi, bounds);
+            var groi = new RoixGaugeRect(roi, border);
 
             var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
             clippedRect.Roi.Is(roi);
-            clippedRect.Bounds.Is(groi.Bounds);
+            clippedRect.Border.Is(groi.Border);
         }
 
         [Theory]
@@ -164,15 +204,15 @@ namespace Roix.WPF.Tests
         public void GetClippedRoiBySizePriority_2_2_枠の食み出しを位置制限してOK(
             double roiX, double roiY, double roiWidth, double roiHeight, double ansX, double ansY)
         {
-            var bounds = new RoixSize(10, 10);
+            var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var ansPoint = new RoixPoint(ansX, ansY);
 
-            var groi = new RoixGaugeRect(roi, bounds);
+            var groi = new RoixGaugeRect(roi, border);
             var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
             clippedRect.Roi.TopLeft.Is(ansPoint);
             clippedRect.Roi.Size.Is(roi.Size);
-            clippedRect.Bounds.Is(groi.Bounds);
+            clippedRect.Border.Is(groi.Border);
         }
         #endregion
 

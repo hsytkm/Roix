@@ -40,14 +40,17 @@ namespace Roix.Wpf
         #region implicit
         public static implicit operator RoixPoint(System.Windows.Point point) => new(point.X, point.Y);
         public static implicit operator System.Windows.Point(in RoixPoint point) => new(point.X, point.Y);
+        #endregion
 
+        #region explicit
+        //public static explicit operator RoixSize(in RoixPoint point) => new(point.X, point.Y);
         public static explicit operator RoixVector(in RoixPoint point) => new(point.X, point.Y);
         #endregion
 
         #region operator
         public static RoixPoint operator +(in RoixPoint point, in RoixVector vector) => new(point.X + vector.X, point.Y + vector.Y);
-        public static RoixPoint operator -(in RoixPoint point, in RoixVector vector) => new(point.X - vector.X, point.Y - vector.Y);
         public static RoixVector operator -(in RoixPoint point1, in RoixPoint point2) => new(point1.X - point2.X, point1.Y - point2.Y);
+        public static RoixPoint operator -(in RoixPoint point, in RoixVector vector) => new(point.X - vector.X, point.Y - vector.Y);
         #endregion
 
         #region Properties
@@ -55,8 +58,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize bounds) => 0 <= X && X <= bounds.Width && 0 <= Y && Y <= bounds.Height;
-        public readonly bool IsOutside(in RoixSize bounds) => !IsInside(bounds);
+        public readonly bool IsInside(in RoixSize border) => 0 <= X && X <= border.Width && 0 <= Y && Y <= border.Height;
+        public readonly bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
     }

@@ -33,10 +33,12 @@
                 <Run Text="{Binding MyImage.PixelWidth, Mode=OneWay, StringFormat='SourceImageSize:  {0} x'}" />
                 <Run Text="{Binding MyImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}" />
             </TextBlock>
-            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewSize:  {0:f1}'}" />
-            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelSize:  {0:f1}'}" />
-            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedGaugeRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewSize:  {0:f1}'}" />
-            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelSize:  {0}'}" />
+            <TextBlock Foreground="Green" Text="{Binding CursorGaugePoint.Value.Point, Mode=OneWay, StringFormat='ViewPoint:  {0:f1}'}" />
+            <TextBlock Foreground="Green" Text="{Binding CursorPointToModel.Value, Mode=OneWay, StringFormat='ModelPoint:  {0}'}" />
+            <TextBlock Foreground="Crimson" Text="{Binding SelectedGaugeRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0:f1}'}" />
+            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedGaugeRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
         </StackPanel>
 
         <Grid>
@@ -69,7 +71,7 @@
             <Grid Width="{Binding ActualWidth, ElementName=image}"
                   Height="{Binding ActualHeight, ElementName=image}" >
                 <Polygon Style="{StaticResource selectedPolygonStyle}"
-                         Points="{Binding SelectedRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+                         Points="{Binding SelectedGaugeRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
 
                 <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Blue"
                          Points="{Binding ClickedFixedGaugeRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />

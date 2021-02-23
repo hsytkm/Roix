@@ -40,7 +40,9 @@ namespace Roix.Wpf
         #region implicit
         public static implicit operator RoixVector(System.Windows.Vector vector) => new(vector.X, vector.Y);
         public static implicit operator System.Windows.Vector(in RoixVector vector) => new(vector.X, vector.Y);
+        #endregion
 
+        #region explicit
         public static explicit operator System.Windows.Point(in RoixVector vector) => new(vector.X, vector.Y);
         public static explicit operator RoixVector(System.Windows.Point point) => new(point.X, point.Y);
 
@@ -49,7 +51,7 @@ namespace Roix.Wpf
 
         #region operator
         public static RoixVector operator +(in RoixVector vector1, in RoixVector vector2) => new(vector1.X + vector2.X, vector1.Y + vector2.Y);
-        public static RoixVector operator -(in RoixVector vector) => new(-vector.X, -vector.Y);
+        public static RoixVector operator -(in RoixVector vector) => Zero - vector;
         public static RoixVector operator -(in RoixVector vector1, in RoixVector vector2) => new(vector1.X - vector2.X, vector1.Y - vector2.Y);
         #endregion
 
