@@ -21,20 +21,20 @@ namespace Roix.Wpf
             (Width, Height) = (width, height);
         }
 
-        public void Deconstruct(out double width, out double height) => (width, height) = (Width, Height);
+        public readonly void Deconstruct(out double width, out double height) => (width, height) = (Width, Height);
         #endregion
 
         #region Equals
-        public bool Equals(RoixSize other) => (Width, Height) == (other.Width, other.Height);
-        public override bool Equals(object? obj) => (obj is RoixSize other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Width, Height);
+        public readonly bool Equals(RoixSize other) => (Width, Height) == (other.Width, other.Height);
+        public readonly override bool Equals(object? obj) => (obj is RoixSize other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(Width, Height);
         public static bool operator ==(in RoixSize left, in RoixSize right) => left.Equals(right);
         public static bool operator !=(in RoixSize left, in RoixSize right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixSize)} {{ ");

@@ -59,10 +59,10 @@
                     <!-- Get size of Image control
                     <i:EventTrigger EventName="Loaded" >
                         <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                    </i:EventTrigger>
+                    </i:EventTrigger> -->
                     <i:EventTrigger EventName="SizeChanged" >
                         <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                    </i:EventTrigger> -->
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>
            

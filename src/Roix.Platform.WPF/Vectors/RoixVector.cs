@@ -14,20 +14,20 @@ namespace Roix.Wpf
         #region ctor
         public RoixVector(double x, double y) => (X, Y) = (x, y);
 
-        public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
+        public readonly void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
         #endregion
 
         #region Equals
-        public bool Equals(RoixVector other) => (X, Y) == (other.X, other.Y);
-        public override bool Equals(object? obj) => (obj is RoixVector other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(X, Y);
+        public readonly bool Equals(RoixVector other) => (X, Y) == (other.X, other.Y);
+        public readonly override bool Equals(object? obj) => (obj is RoixVector other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(X, Y);
         public static bool operator ==(in RoixVector left, in RoixVector right) => left.Equals(right);
         public static bool operator !=(in RoixVector left, in RoixVector right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixVector)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixVector)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixVector)} {{ ");
@@ -55,10 +55,6 @@ namespace Roix.Wpf
 
         #region Properties
         public readonly bool IsZero => this == Zero;
-        #endregion
-
-        #region Methods
-        //public readonly RoixVector GetClippedVector(double minX, double maxX, double minY, double maxY) => new(Math.Clamp(X, minX, maxX), Math.Clamp(Y, minY, maxY));
         #endregion
 
     }

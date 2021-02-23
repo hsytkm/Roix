@@ -14,20 +14,20 @@ namespace Roix.Wpf
         #region ctor
         public RoixPoint(double x, double y) => (X, Y) = (x, y);
 
-        public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
+        public readonly void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
         #endregion
 
         #region Equals
-        public bool Equals(RoixPoint other) => (X, Y) == (other.X, other.Y);
-        public override bool Equals(object? obj) => (obj is RoixPoint other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(X, Y);
+        public readonly bool Equals(RoixPoint other) => (X, Y) == (other.X, other.Y);
+        public readonly override bool Equals(object? obj) => (obj is RoixPoint other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(X, Y);
         public static bool operator ==(in RoixPoint left, in RoixPoint right) => left.Equals(right);
         public static bool operator !=(in RoixPoint left, in RoixPoint right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixPoint)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixPoint)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixPoint)} {{ ");

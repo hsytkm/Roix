@@ -4,8 +4,8 @@
 //{
 //    public readonly struct RoixRange : IEquatable<RoixRange>
 //    {
-//        public readonly double Min;
-//        public readonly double Max;
+//        public readonly double Min { get; }
+//        public readonly double Max { get; }
 
 //        #region ctor
 //        public RoixRange(double min, double max)
@@ -14,18 +14,18 @@
 //            (Min, Max) = (min, max);
 //        }
 
-//        public void Deconstruct(out double min, out double max) => (min, max) = (Min, Max);
+//        public readonly void Deconstruct(out double min, out double max) => (min, max) = (Min, Max);
 //        #endregion
 
 //        #region Equals
-//        public bool Equals(RoixRange other) => (Min, Max) == (other.Min, other.Max);
-//        public override bool Equals(object? obj) => (obj is RoixRange other) && Equals(other);
-//        public override int GetHashCode() => HashCode.Combine(Min, Max);
+//        public readonly bool Equals(RoixRange other) => (Min, Max) == (other.Min, other.Max);
+//        public readonly override bool Equals(object? obj) => (obj is RoixRange other) && Equals(other);
+//        public readonly override int GetHashCode() => HashCode.Combine(Min, Max);
 //        public static bool operator ==(in RoixRange left, in RoixRange right) => left.Equals(right);
 //        public static bool operator !=(in RoixRange left, in RoixRange right) => !(left == right);
 //        #endregion
 
-//        public override string ToString() => $"{nameof(RoixRange)} {{ {nameof(Min)} = {Min}, {nameof(Max)} = {Max} }}";
+//        public readonly override string ToString() => $"{nameof(RoixRange)} {{ {nameof(Min)} = {Min}, {nameof(Max)} = {Max} }}";
 
 //    }
 //}

@@ -15,20 +15,20 @@ namespace Roix.Wpf
             (Roi, Canvas) = (roi, canvas);
         }
 
-        public void Deconstruct(out RoixRect roi, out RoixSize canvas) => (roi, canvas) = (Roi, Canvas);
+        public readonly void Deconstruct(out RoixRect roi, out RoixSize canvas) => (roi, canvas) = (Roi, Canvas);
         #endregion
 
         #region Equals
-        public bool Equals(RoixGaugeRect other) => (Roi, Canvas) == (other.Roi, other.Canvas);
-        public override bool Equals(object? obj) => (obj is RoixGaugeRect other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Roi, Canvas);
+        public readonly bool Equals(RoixGaugeRect other) => (Roi, Canvas) == (other.Roi, other.Canvas);
+        public readonly override bool Equals(object? obj) => (obj is RoixGaugeRect other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(Roi, Canvas);
         public static bool operator ==(in RoixGaugeRect left, in RoixGaugeRect right) => left.Equals(right);
         public static bool operator !=(in RoixGaugeRect left, in RoixGaugeRect right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixGaugeRect)} {{ {nameof(Roi)} = {Roi}, {nameof(Canvas)} = {Canvas} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixGaugeRect)} {{ {nameof(Roi)} = {Roi}, {nameof(Canvas)} = {Canvas} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixGaugeRect)} {{ ");
@@ -46,7 +46,7 @@ namespace Roix.Wpf
         #region Methods
         public readonly RoixGaugeRect ConvertToNewGauge(in RoixSize newCanvas)
         {
-            if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
+            if (Canvas.IsInvalid) return this;
             if (newCanvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(newCanvas)}");
 
             var newPoint = new RoixPoint(Roi.X * newCanvas.Width / Canvas.Width, Roi.Y * newCanvas.Height / Canvas.Height);
@@ -58,7 +58,7 @@ namespace Roix.Wpf
         /// Roi の左上点を優先して Rect を Canvas サイズ内に納めます。
         /// Roi の左上点が Canvas の境界上に乗っている場合は、戻り値の Size が Zero になります。
         /// </summary>
-        public readonly RoixGaugeRect GetClippedGaugeRectByPointPriority()
+        private readonly RoixGaugeRect GetClippedGaugeRectByPointPriority()
         {
             if (IsInsideInCanvas) return this;
 
@@ -77,7 +77,7 @@ namespace Roix.Wpf
         /// <summary>
         /// Roi のサイズを優先して Rect を Canvas サイズに納めます。
         /// </summary>
-        public readonly RoixGaugeRect GetClippedGaugeRectBySizePriority()
+        private readonly RoixGaugeRect GetClippedGaugeRectBySizePriority()
         {
             if (IsInsideInCanvas) return this;
 

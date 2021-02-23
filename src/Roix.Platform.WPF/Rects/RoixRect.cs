@@ -27,21 +27,21 @@ namespace Roix.Wpf
         }
         public RoixRect(in RoixPoint point, in RoixVector vector) : this(point, point + vector) { }
 
-        public void Deconstruct(out double x, out double y, out double width, out double height) => (x, y, width, height) = (Location.X, Location.Y, Size.Width, Size.Height);
-        public void Deconstruct(out RoixPoint point, out RoixSize size) => (point, size) = (Location, Size);
+        public readonly void Deconstruct(out double x, out double y, out double width, out double height) => (x, y, width, height) = (Location.X, Location.Y, Size.Width, Size.Height);
+        public readonly void Deconstruct(out RoixPoint point, out RoixSize size) => (point, size) = (Location, Size);
         #endregion
 
         #region Equals
-        public bool Equals(RoixRect other) => (Location, Size) == (other.Location, other.Size);
-        public override bool Equals(object? obj) => (obj is RoixRect other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Location, Size);
+        public readonly bool Equals(RoixRect other) => (Location, Size) == (other.Location, other.Size);
+        public readonly override bool Equals(object? obj) => (obj is RoixRect other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(Location, Size);
         public static bool operator ==(in RoixRect left, in RoixRect right) => left.Equals(right);
         public static bool operator !=(in RoixRect left, in RoixRect right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixRect)} {{ {nameof(Location)} = {Location}, {nameof(Size)} = {Size} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixRect)} {{ {nameof(Location)} = {Location}, {nameof(Size)} = {Size} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixRect)} {{ ");

@@ -119,7 +119,7 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var groi = new RoixGaugeRect(roi, canvas);
 
-            var clippedRect = groi.GetClippedGaugeRectByPointPriority();
+            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
             clippedRect.Roi.Is(roi);
             clippedRect.Canvas.Is(groi.Canvas);
         }
@@ -136,7 +136,7 @@ namespace Roix.WPF.Tests
             var ansSize = new RoixSize(ansWidth, ansHeight);
 
             var groi = new RoixGaugeRect(roi, canvas);
-            var clippedRect = groi.GetClippedGaugeRectByPointPriority();
+            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
             clippedRect.Roi.Size.Is(ansSize);
             clippedRect.Roi.TopLeft.Is(roi.TopLeft);
             clippedRect.Canvas.Is(groi.Canvas);
@@ -153,7 +153,7 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var groi = new RoixGaugeRect(roi, canvas);
 
-            var clippedRect = groi.GetClippedGaugeRectBySizePriority();
+            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
             clippedRect.Roi.Is(roi);
             clippedRect.Canvas.Is(groi.Canvas);
         }
@@ -169,7 +169,7 @@ namespace Roix.WPF.Tests
             var ansPoint = new RoixPoint(ansX, ansY);
 
             var groi = new RoixGaugeRect(roi, canvas);
-            var clippedRect = groi.GetClippedGaugeRectBySizePriority();
+            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
             clippedRect.Roi.TopLeft.Is(ansPoint);
             clippedRect.Roi.Size.Is(roi.Size);
             clippedRect.Canvas.Is(groi.Canvas);

@@ -16,22 +16,22 @@ namespace Roix.Wpf
             (Point, Canvas) = (point, canvas);
         }
 
-        public RoixGaugePoint(double x, double y, double width, double height) => (Point, Canvas) = (new RoixPoint(x, y), new RoixSize(width, height));
+        public RoixGaugePoint(double x, double y, double width, double height) => (Point, Canvas) = (new(x, y), new(width, height));
 
-        public void Deconstruct(out RoixPoint point, out RoixSize canvas) => (point, canvas) = (Point, Canvas);
+        public readonly void Deconstruct(out RoixPoint point, out RoixSize canvas) => (point, canvas) = (Point, Canvas);
         #endregion
 
         #region Equals
-        public bool Equals(RoixGaugePoint other) => (Point, Canvas) == (other.Point, other.Canvas);
-        public override bool Equals(object? obj) => (obj is RoixGaugePoint other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Point, Canvas);
+        public readonly bool Equals(RoixGaugePoint other) => (Point, Canvas) == (other.Point, other.Canvas);
+        public readonly override bool Equals(object? obj) => (obj is RoixGaugePoint other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(Point, Canvas);
         public static bool operator ==(in RoixGaugePoint left, in RoixGaugePoint right) => left.Equals(right);
         public static bool operator !=(in RoixGaugePoint left, in RoixGaugePoint right) => !(left == right);
         #endregion
 
         #region ToString
-        public override string ToString() => $"{nameof(RoixGaugePoint)} {{ {nameof(Point)} = {Point}, {nameof(Canvas)} = {Canvas} }}";
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public readonly override string ToString() => $"{nameof(RoixGaugePoint)} {{ {nameof(Point)} = {Point}, {nameof(Canvas)} = {Canvas} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixGaugePoint)} {{ ");
@@ -44,7 +44,7 @@ namespace Roix.Wpf
         #region operator
         public static RoixGaugeRect Add(in RoixGaugePoint gaugePoint, in RoixVector vector) => new RoixGaugeRect(new RoixRect(gaugePoint.Point, vector), gaugePoint.Canvas);
         public static RoixGaugeRect operator +(in RoixGaugePoint gaugePoint, in RoixVector vector) => Add(gaugePoint, vector);
-        public RoixGaugeRect Add(in RoixVector vector) => Add(this, vector);
+        public readonly RoixGaugeRect Add(in RoixVector vector) => Add(this, vector);
         #endregion
 
         #region Properties
@@ -57,7 +57,7 @@ namespace Roix.Wpf
         #region Methods
         public readonly RoixGaugePoint ConvertToNewGauge(in RoixSize newCanvas)
         {
-            if (Canvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(Canvas)}");
+            if (Canvas.IsInvalid) return this;
             if (newCanvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(newCanvas)}");
 
             var newPoint = new RoixPoint(Point.X * newCanvas.Width / Canvas.Width, Point.Y * newCanvas.Height / Canvas.Height);

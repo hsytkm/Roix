@@ -17,18 +17,18 @@ namespace Roix.Wpf
             (Width, Height) = (width, height);
         }
 
-        public void Deconstruct(out int width, out int height) => (width, height) = (Width, Height);
+        public readonly void Deconstruct(out int width, out int height) => (width, height) = (Width, Height);
         #endregion
 
         #region Equals
-        public bool Equals(RoixIntSize other) => (Width, Height) == (other.Width, other.Height);
-        public override bool Equals(object? obj) => (obj is RoixIntSize other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(Width, Height);
+        public readonly bool Equals(RoixIntSize other) => (Width, Height) == (other.Width, other.Height);
+        public readonly override bool Equals(object? obj) => (obj is RoixIntSize other) && Equals(other);
+        public readonly override int GetHashCode() => HashCode.Combine(Width, Height);
         public static bool operator ==(in RoixIntSize left, in RoixIntSize right) => left.Equals(right);
         public static bool operator !=(in RoixIntSize left, in RoixIntSize right) => !(left == right);
         #endregion
 
-        public override string ToString() => $"{nameof(RoixIntSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
+        public readonly override string ToString() => $"{nameof(RoixIntSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
 
         #region implicit
         public static implicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException("size is empty");
