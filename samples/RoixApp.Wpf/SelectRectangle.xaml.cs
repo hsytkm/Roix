@@ -77,30 +77,30 @@ namespace RoixApp.Wpf
 
             // 右クリックで固定サイズの枠を描画
             MouseRightDownPoint
-                .Where(x => !x.Canvas.IsZero)
+                .Where(x => !x.Bounds.IsZero)
                 .Subscribe(gaugePoint =>
                 {
                     var gaugeSizeOnModel = new RoixGaugeSize(new RoixSize(100, 100), imageSourceSize);
-                    var canvasOnView = gaugePoint.Canvas;
-                    var gaugeSizeOnView = gaugeSizeOnModel.ConvertToNewGauge(canvasOnView);
+                    var boundsOnView = gaugePoint.Bounds;
+                    var gaugeSizeOnView = gaugeSizeOnModel.ConvertToNewGauge(boundsOnView);
                     var newPointOnView = gaugePoint.Point - (RoixVector)(gaugeSizeOnView.Size / 2);
-                    var gaugeRectOnView = new RoixGaugeRect(new RoixRect(newPointOnView, gaugeSizeOnView.Size), canvasOnView);
+                    var gaugeRectOnView = new RoixGaugeRect(new RoixRect(newPointOnView, gaugeSizeOnView.Size), boundsOnView);
                     ClickedFixedGaugeRectangle.Value = gaugeRectOnView.GetClippedGaugeRect(isPointPriority: false);
                 });
 
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedGaugeRectangle
-                .Where(gaugeRectOnView => !gaugeRectOnView.Canvas.IsZero)
+                .Where(gaugeRectOnView => !gaugeRectOnView.Bounds.IsZero)
                 .Select(gaugeRectOnView => (RoixIntRect)gaugeRectOnView.ConvertToNewGauge(imageSourceSize).Roi)
                 .ToReadOnlyReactivePropertySlim();
 
             // View画像サイズの変更に応じて枠を伸縮
             ViewBorderSize
                 .Where(x => !x.IsZero)
-                .Subscribe(newCanvas =>
+                .Subscribe(newBounds =>
                 {
-                    SelectedRectangle.Value = SelectedRectangle.Value.ConvertToNewGauge(newCanvas);
-                    ClickedFixedGaugeRectangle.Value = ClickedFixedGaugeRectangle.Value.ConvertToNewGauge(newCanvas);
+                    SelectedRectangle.Value = SelectedRectangle.Value.ConvertToNewGauge(newBounds);
+                    ClickedFixedGaugeRectangle.Value = ClickedFixedGaugeRectangle.Value.ConvertToNewGauge(newBounds);
                 });
 
         }

@@ -186,13 +186,13 @@ namespace Roix.WPF.Tests
         [InlineData(1, 1, 10, 10, true)]
         [InlineData(2, 2, 2, 2, true)]
         [InlineData(2, 2, 1, 1, false)]
-        public void IsInside(double srcWidth, double srcHeight, double canvasWidth, double canvasHeight, bool isInside)
+        public void IsInside(double srcWidth, double srcHeight, double boundsWidth, double boundsHeight, bool isInside)
         {
             var src = new RoixSize(srcWidth, srcHeight);
-            var canvas = new RoixSize(canvasWidth, canvasHeight);
+            var bounds = new RoixSize(boundsWidth, boundsHeight);
 
-            src.IsInside(canvas).Is(isInside);
-            src.IsOutside(canvas).Is(!isInside);
+            src.IsInside(bounds).Is(isInside);
+            src.IsOutside(bounds).Is(!isInside);
         }
         #endregion
 

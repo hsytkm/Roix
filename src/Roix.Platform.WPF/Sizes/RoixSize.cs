@@ -80,8 +80,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize canvas) => ((RoixPoint)this).IsInside(canvas);
-        public readonly bool IsOutside(in RoixSize canvas) => !IsInside(canvas);
+        public readonly bool IsInside(in RoixSize bounds) => ((RoixPoint)this).IsInside(bounds);
+        public readonly bool IsOutside(in RoixSize bounds) => !IsInside(bounds);
         #endregion
 
 

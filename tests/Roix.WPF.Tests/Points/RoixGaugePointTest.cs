@@ -17,12 +17,12 @@ namespace Roix.WPF.Tests
 
             gp1.Point.X.Is(x);
             gp1.Point.Y.Is(y);
-            gp1.Canvas.Width.Is(width);
-            gp1.Canvas.Height.Is(height);
+            gp1.Bounds.Width.Is(width);
+            gp1.Bounds.Height.Is(height);
 
             var gp2 = new RoixGaugePoint(x, y, width, height);
             gp2.Point.Is(gp1.Point);
-            gp2.Canvas.Is(gp1.Canvas);
+            gp2.Bounds.Is(gp1.Bounds);
         }
 
         [Theory]
@@ -40,9 +40,9 @@ namespace Roix.WPF.Tests
             var point = new RoixPoint(1.1, 2.2);
             var size = new RoixSize(3.3, 4.4);
             var gp = new RoixGaugePoint(point, size);
-            var (roi, canvas) = gp;
+            var (roi, bounds) = gp;
             roi.Is(point);
-            canvas.Is(size);
+            bounds.Is(size);
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Roix.WPF.Tests
 
             var gp = new RoixGaugePoint(x, y, width, height);
             var v = new RoixVector(vx, vy);
-            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), gp.Canvas);
+            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), gp.Bounds);
 
             RoixGaugePoint.Add(gp, v).Is(ansRect);
             (gp + v).Is(ansRect);
@@ -105,8 +105,8 @@ namespace Roix.WPF.Tests
         public void IsInside(double x, double y, double width, double height, bool isInside)
         {
             var roi = new RoixGaugePoint(x, y, width, height);
-            roi.IsInsideInCanvas.Is(isInside);
-            roi.IsOutsideInCanvas.Is(!isInside);
+            roi.IsInsideInBounds.Is(isInside);
+            roi.IsOutsideInBounds.Is(!isInside);
         }
         #endregion
 

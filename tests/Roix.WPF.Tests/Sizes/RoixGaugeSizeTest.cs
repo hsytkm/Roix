@@ -17,8 +17,8 @@ namespace Roix.WPF.Tests
 
             gs1.Size.Width.Is(width1);
             gs1.Size.Height.Is(height1);
-            gs1.Canvas.Width.Is(width2);
-            gs1.Canvas.Height.Is(height2);
+            gs1.Bounds.Width.Is(width2);
+            gs1.Bounds.Height.Is(height2);
         }
 
         [Fact]
@@ -27,9 +27,9 @@ namespace Roix.WPF.Tests
             var size1 = new RoixSize(1, 2);
             var size2 = new RoixSize(11, 22);
             var gs1 = new RoixGaugeSize(size1, size2);
-            var (size, canvas) = gs1;
+            var (size, bounds) = gs1;
             size.Is(size1);
-            canvas.Is(size2);
+            bounds.Is(size2);
         }
 
         [Fact]
@@ -61,8 +61,8 @@ namespace Roix.WPF.Tests
             var size2 = new RoixSize(width2, height2);
             var gs1 = new RoixGaugeSize(size1, size2);
 
-            gs1.IsInsideInCanvas.Is(isInside);
-            gs1.IsOutsideInCanvas.Is(!isInside);
+            gs1.IsInsideInBounds.Is(isInside);
+            gs1.IsOutsideInBounds.Is(!isInside);
         }
         #endregion
 
@@ -74,11 +74,11 @@ namespace Roix.WPF.Tests
         public void ConvertToNewGauge(double ratio)
         {
             var size = new RoixSize(10, 20);
-            var canvas = new RoixSize(100, 100);
-            var gs1 = new RoixGaugeSize(size, canvas);
+            var bounds = new RoixSize(100, 100);
+            var gs1 = new RoixGaugeSize(size, bounds);
 
-            var newCanvas = new RoixSize(canvas.Width * ratio, canvas.Height * ratio);
-            var gs2 = gs1.ConvertToNewGauge(newCanvas);
+            var newBounds = new RoixSize(bounds.Width * ratio, bounds.Height * ratio);
+            var gs2 = gs1.ConvertToNewGauge(newBounds);
             gs2.Size.Is(new RoixSize(size.Width * ratio, size.Height * ratio));
 
             Assert.Throws<ArgumentException>(() => gs1.ConvertToNewGauge(RoixSize.Empty));

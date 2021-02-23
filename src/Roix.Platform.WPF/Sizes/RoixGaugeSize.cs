@@ -6,47 +6,47 @@ namespace Roix.Wpf
     public readonly struct RoixGaugeSize : IEquatable<RoixGaugeSize>, IFormattable
     {
         public readonly RoixSize Size { get; }
-        public readonly RoixSize Canvas { get; }
+        public readonly RoixSize Bounds { get; }
 
         #region ctor
-        public RoixGaugeSize(in RoixSize size, in RoixSize canvas) => (Size, Canvas) = (size, canvas);
+        public RoixGaugeSize(in RoixSize size, in RoixSize bounds) => (Size, Bounds) = (size, bounds);
 
-        public readonly void Deconstruct(out RoixSize size, out RoixSize canvas) => (size, canvas) = (Size, Canvas);
+        public readonly void Deconstruct(out RoixSize size, out RoixSize bounds) => (size, bounds) = (Size, Bounds);
         #endregion
 
         #region Equals
-        public readonly bool Equals(RoixGaugeSize other) => (Size, Canvas) == (other.Size, other.Canvas);
+        public readonly bool Equals(RoixGaugeSize other) => (Size, Bounds) == (other.Size, other.Bounds);
         public readonly override bool Equals(object? obj) => (obj is RoixGaugeSize other) && Equals(other);
-        public readonly override int GetHashCode() => HashCode.Combine(Size, Canvas);
+        public readonly override int GetHashCode() => HashCode.Combine(Size, Bounds);
         public static bool operator ==(in RoixGaugeSize left, in RoixGaugeSize right) => left.Equals(right);
         public static bool operator !=(in RoixGaugeSize left, in RoixGaugeSize right) => !(left == right);
         #endregion
 
         #region ToString
-        public readonly override string ToString() => $"{nameof(RoixGaugeSize)} {{ {nameof(Size)} = {Size}, {nameof(Canvas)} = {Canvas} }}";
+        public readonly override string ToString() => $"{nameof(RoixGaugeSize)} {{ {nameof(Size)} = {Size}, {nameof(Bounds)} = {Bounds} }}";
         public readonly string ToString(string? format, IFormatProvider? formatProvider)
         {
             var sb = new StringBuilder();
             sb.Append($"{nameof(RoixGaugeSize)} {{ ");
             sb.Append($"{nameof(Size)} = {Size.ToString(format, formatProvider)}, ");
-            sb.Append($"{nameof(Canvas)} = {Canvas.ToString(format, formatProvider)} }}");
+            sb.Append($"{nameof(Bounds)} = {Bounds.ToString(format, formatProvider)} }}");
             return sb.ToString();
         }
         #endregion
 
         #region Properties
-        public readonly bool IsInsideInCanvas => Size.IsInside(Canvas);
-        public readonly bool IsOutsideInCanvas => !IsInsideInCanvas;
+        public readonly bool IsInsideInBounds => Size.IsInside(Bounds);
+        public readonly bool IsOutsideInBounds => !IsInsideInBounds;
         #endregion
 
         #region Methods
-        public readonly RoixGaugeSize ConvertToNewGauge(in RoixSize newCanvas)
+        public readonly RoixGaugeSize ConvertToNewGauge(in RoixSize newBounds)
         {
-            if (Canvas.IsInvalid) return this;
-            if (newCanvas.IsInvalid) throw new ArgumentException($"Invalid {nameof(newCanvas)}");
+            if (Bounds.IsInvalid) return this;
+            if (newBounds.IsInvalid) throw new ArgumentException($"Invalid {nameof(newBounds)}");
 
-            var newSize = new RoixSize(Size.Width * newCanvas.Width / Canvas.Width, Size.Height * newCanvas.Height / Canvas.Height);
-            return new(newSize, newCanvas);
+            var newSize = new RoixSize(Size.Width * newBounds.Width / Bounds.Width, Size.Height * newBounds.Height / Bounds.Height);
+            return new(newSize, newBounds);
         }
         #endregion
 

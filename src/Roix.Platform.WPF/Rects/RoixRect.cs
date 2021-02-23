@@ -75,8 +75,8 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize canvas) => 0 <= Left && Right <= canvas.Width && 0 <= Top && Bottom <= canvas.Height;
-        public readonly bool IsOutside(in RoixSize canvas) => !IsInside(canvas);
+        public readonly bool IsInside(in RoixSize bounds) => 0 <= Left && Right <= bounds.Width && 0 <= Top && Bottom <= bounds.Height;
+        public readonly bool IsOutside(in RoixSize bounds) => !IsInside(bounds);
 
         public readonly System.Windows.Media.PointCollection ToPointCollection()
         {
