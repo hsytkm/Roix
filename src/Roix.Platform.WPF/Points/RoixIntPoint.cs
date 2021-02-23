@@ -7,8 +7,8 @@ namespace Roix.Wpf
     {
         public static RoixIntPoint Zero { get; } = new(0, 0);
 
-        public readonly int X;
-        public readonly int Y;
+        public readonly int X { get; }
+        public readonly int Y { get; }
 
         #region ctor
         public RoixIntPoint(int x, int y) => (X, Y) = (x, y);

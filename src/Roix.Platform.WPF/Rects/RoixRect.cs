@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Rect.cs
-    public readonly struct RoixRect : IEquatable<RoixRect>
+    public readonly struct RoixRect : IEquatable<RoixRect>, IFormattable
     {
         public static RoixRect Zero { get; } = new(0, 0, 0, 0);
         public static RoixRect Empty { get; } = new(new(double.PositiveInfinity, double.PositiveInfinity), RoixSize.Empty);
 
-        public readonly RoixPoint Location;
-        public readonly RoixSize Size;
+        public readonly RoixPoint Location { get; }
+        public readonly RoixSize Size { get; }
 
         #region ctor
         public RoixRect(double x, double y, double width, double height) => (Location, Size) = (new(x, y), new(width, height));
@@ -38,7 +39,17 @@ namespace Roix.Wpf
         public static bool operator !=(in RoixRect left, in RoixRect right) => !(left == right);
         #endregion
 
+        #region ToString
         public override string ToString() => $"{nameof(RoixRect)} {{ {nameof(Location)} = {Location}, {nameof(Size)} = {Size} }}";
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{nameof(RoixRect)} {{ ");
+            sb.Append($"{nameof(Location)} = {Location.ToString(format, formatProvider)}, ");
+            sb.Append($"{nameof(Size)} = {Size.ToString(format, formatProvider)} }}");
+            return sb.ToString();
+        }
+        #endregion
 
         #region implicit
         public static implicit operator RoixRect(System.Windows.Rect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : Empty;

@@ -21,46 +21,59 @@
         <Style x:Key="selectedPolygonStyle" TargetType="{x:Type Polygon}" >
             <Setter Property="IsHitTestVisible" Value="False" />
             <Setter Property="Fill" Value="Transparent" />
-            <Setter Property="Stroke" Value="Magenta" />
+            <Setter Property="Stroke" Value="Crimson" />
             <Setter Property="Opacity" Value="0.8" />
             <Setter Property="StrokeThickness" Value="4" />
         </Style>
     </UserControl.Resources>
 
-    <Grid ClipToBounds="True" Margin="10,5" Background="LightGray" >
-        <Image x:Name="image" Source="{Binding MyImage, Mode=OneTime}" >
-            <i:Interaction.Triggers>
-                <!-- Get Mouse -->
-                <i:EventTrigger EventName="MouseLeftButtonDown" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseLeftDownPoint.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseLeftButtonUp" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseLeftUpPoint.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseMove" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseMovePoint.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="MouseRightButtonDown" >
-                    <action:CaptureMousePointAction MousePoint="{Binding MouseRightDownPoint.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
+    <DockPanel ClipToBounds="True" Margin="10,5" Background="Gray" >
+        <StackPanel DockPanel.Dock="Top" Margin="10,5" >
+            <TextBlock >
+                <Run Text="{Binding MyImage.PixelWidth, Mode=OneWay, StringFormat='SourceImageSize:  {0} x'}" />
+                <Run Text="{Binding MyImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}" />
+            </TextBlock>
+            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewSize:  {0:f1}'}" />
+            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelSize:  {0:f1}'}" />
+            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedGaugeRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewSize:  {0:f1}'}" />
+            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelSize:  {0}'}" />
+        </StackPanel>
 
-                <!-- Get size of Image control
-                <i:EventTrigger EventName="Loaded" >
-                    <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="SizeChanged" >
-                    <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                </i:EventTrigger> -->
-            </i:Interaction.Triggers>
-        </Image>
+        <Grid>
+            <Image x:Name="image" Source="{Binding MyImage, Mode=OneTime}" >
+                <i:Interaction.Triggers>
+                    <!-- Get Mouse -->
+                    <i:EventTrigger EventName="MouseLeftButtonDown" >
+                        <action:CaptureMousePointAction MousePoint="{Binding MouseLeftDownPoint.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseLeftButtonUp" >
+                        <action:CaptureMousePointAction MousePoint="{Binding MouseLeftUpPoint.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseMove" >
+                        <action:CaptureMousePointAction MousePoint="{Binding MouseMovePoint.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseRightButtonDown" >
+                        <action:CaptureMousePointAction MousePoint="{Binding MouseRightDownPoint.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+           
+                    <!-- Get size of Image control
+                    <i:EventTrigger EventName="Loaded" >
+                        <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="SizeChanged" >
+                        <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger> -->
+                </i:Interaction.Triggers>
+            </Image>
+           
+            <Grid Width="{Binding ActualWidth, ElementName=image}"
+                  Height="{Binding ActualHeight, ElementName=image}" >
+                <Polygon Style="{StaticResource selectedPolygonStyle}"
+                         Points="{Binding SelectedRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
 
-        <Grid Width="{Binding ActualWidth, ElementName=image}"
-              Height="{Binding ActualHeight, ElementName=image}" >
-            <Polygon Style="{StaticResource selectedPolygonStyle}"
-                     Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
-
-            <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Cyan"
-                     Points="{Binding ClickedFixedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+                <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Blue"
+                         Points="{Binding ClickedFixedGaugeRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+            </Grid>
         </Grid>
-    </Grid>
+    </DockPanel>
 </UserControl>

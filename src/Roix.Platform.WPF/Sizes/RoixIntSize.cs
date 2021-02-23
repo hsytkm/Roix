@@ -7,8 +7,8 @@ namespace Roix.Wpf
     {
         public static RoixIntSize Zero { get; } = new(0, 0);
 
-        public readonly int Width;
-        public readonly int Height;
+        public readonly int Width { get; }
+        public readonly int Height { get; }
 
         #region ctor
         public RoixIntSize(int width, int height)

@@ -2,6 +2,7 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Roix.Wpf;
+using RoixApp.Wpf.Extensions;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -25,17 +26,21 @@ namespace RoixApp.Wpf
         public IReactiveProperty<RoixGaugePoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixGaugePoint> MouseLeftUpPoint { get; }
         public IReactiveProperty<RoixGaugePoint> MouseMovePoint { get; }
-        public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixGaugeRect> SelectedRectangle { get; }
+        public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
         public IReactiveProperty<RoixGaugePoint> MouseRightDownPoint { get; }
-        public IReadOnlyReactiveProperty<RoixRect> ClickedFixedRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixGaugeRect> ClickedFixedGaugeRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixIntRect> ClickedFixedRectangleToModel { get; }
 
         public SelectRectangleViewModel()
         {
+            var imageSourceSize = MyImage.ToRoixSize();
             MouseLeftDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
             MouseLeftUpPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
             MouseMovePoint = new ReactivePropertySlim<RoixGaugePoint>();
             MouseRightDownPoint = new ReactivePropertySlim<RoixGaugePoint>(mode: ReactivePropertyMode.None);
+            SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
 
             var draggingVector = new ReactivePropertySlim<RoixVector>(mode: ReactivePropertyMode.None);
 
@@ -50,11 +55,12 @@ namespace RoixApp.Wpf
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
                 {
-                    //Debug.WriteLine($"LeftTop: {MouseDownPoint.Value:f2}, Vector: {draggingVector:f2}");
                     if (draggingVector.Value.IsZero) return;
 
-                    // 枠の確定
-                    Debug.WriteLine("end");
+                    // ドラッグ枠の確定
+                    var gaugeRectOnView = MouseLeftDownPoint.Value.Add(draggingVector.Value);
+                    var gaugeRectOnModel = gaugeRectOnView.ConvertToNewGauge(imageSourceSize);
+                    SelectedRectangleToModel.Value = (RoixIntRect)gaugeRectOnModel.GetClippedGaugeRect().Roi;
                 })
                 .Repeat()
                 .Subscribe(v => draggingVector.Value += v);
@@ -62,23 +68,30 @@ namespace RoixApp.Wpf
             // 選択枠のプレビュー
             SelectedRectangle = draggingVector
                 .Where(vec => !vec.IsZero)
-                .Select(vec => MouseLeftDownPoint.Value.Add(vec).GetClippedRoi(isPointPriority: true))
+                .Select(vec => MouseLeftDownPoint.Value.Add(vec).GetClippedGaugeRect())
                 .ToReadOnlyReactivePropertySlim();
 
             // 右クリックで固定サイズの枠を描画
-            ClickedFixedRectangle = MouseRightDownPoint
+            ClickedFixedGaugeRectangle = MouseRightDownPoint
                 .Where(x => !x.Canvas.IsZero)
-                .Select(rgp =>
+                .Select(gaugePoint =>
                 {
-                    var size = new RoixSize(100, 100);
-                    var point = rgp.Point - (RoixVector)(size / 2);
-                    var rect = new RoixGaugeRect(new RoixRect(point, size), rgp.Canvas);
-                    return rect.GetClippedRoi(isPointPriority: false);
+                    var gaugeSizeOnModel = new RoixGaugeSize(new RoixSize(100, 100), imageSourceSize);
+                    var canvasOnView = gaugePoint.Canvas;
+                    var gaugeSizeOnView = gaugeSizeOnModel.ConvertToNewGauge(canvasOnView);
+                    var newPointOnView = gaugePoint.Point - (RoixVector)(gaugeSizeOnView.Size / 2);
+                    var gaugeRectOnView = new RoixGaugeRect(new RoixRect(newPointOnView, gaugeSizeOnView.Size), canvasOnView);
+                    return gaugeRectOnView.GetClippedGaugeRect(isPointPriority: false);
                 })
                 .ToReadOnlyReactivePropertySlim();
 
-        }
+            // Model通知用にView座標系から元画像の座標系に正規化
+            ClickedFixedRectangleToModel = ClickedFixedGaugeRectangle
+                .Where(gaugeRectOnView => !gaugeRectOnView.Canvas.IsZero)
+                .Select(gaugeRectOnView => (RoixIntRect)gaugeRectOnView.ConvertToNewGauge(imageSourceSize).Roi)
+                .ToReadOnlyReactivePropertySlim();
 
+        }
     }
 
 }

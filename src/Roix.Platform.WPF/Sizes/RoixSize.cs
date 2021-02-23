@@ -1,16 +1,16 @@
-﻿using Roix.Wpf.Internals;
-using System;
+﻿using System;
+using System.Text;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Size.cs
-    public readonly struct RoixSize : IEquatable<RoixSize>
+    public readonly struct RoixSize : IEquatable<RoixSize>, IFormattable
     {
         public static RoixSize Zero { get; } = new(0, 0);
         public static RoixSize Empty { get; } = new(double.NegativeInfinity);
 
-        public readonly double Width;
-        public readonly double Height;
+        public readonly double Width { get; }
+        public readonly double Height { get; }
 
         #region ctor
         private RoixSize(double value) => (Width, Height) = (value, value); // forEmpty
@@ -32,7 +32,17 @@ namespace Roix.Wpf
         public static bool operator !=(in RoixSize left, in RoixSize right) => !(left == right);
         #endregion
 
+        #region ToString
         public override string ToString() => $"{nameof(RoixSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{nameof(RoixSize)} {{ ");
+            sb.Append($"{nameof(Width)} = {Width.ToString(format, formatProvider)}, ");
+            sb.Append($"{nameof(Height)} = {Height.ToString(format, formatProvider)} }}");
+            return sb.ToString();
+        }
+        #endregion
 
         #region implicit
         public static implicit operator RoixSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width, size.Height) : Empty;

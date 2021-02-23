@@ -1,6 +1,5 @@
 //using Roix.Wpf.Ranges;
 //using System;
-//using System.Runtime.InteropServices;
 //using Xunit;
 
 //namespace Roix.WPF.Tests
@@ -15,8 +14,6 @@
 //        [InlineData(double.MinValue, double.MaxValue)]
 //        public void Ctor(double min, double max)
 //        {
-//            Marshal.SizeOf<RoixRange>().Is(16);
-
 //            var rr = new RoixRange(min, max);
 //            rr.Min.Is(min);
 //            rr.Max.Is(max);

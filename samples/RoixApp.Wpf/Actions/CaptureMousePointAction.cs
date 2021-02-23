@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using Roix.Wpf;
+using RoixApp.Wpf.Extensions;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -25,7 +26,7 @@ namespace RoixApp.Wpf.Actions
             if (AssociatedObject is not FrameworkElement element) return;
 
             CaptureMouse(element, e);
-            MousePoint = new RoixGaugePoint(e.GetPosition(element), new RoixSize(element.ActualWidth, element.ActualHeight));
+            MousePoint = new RoixGaugePoint(e.GetPosition(element), element.ToRoixSize());
         }
 
         /// <summary>マウス操作の補足/解除</summary>

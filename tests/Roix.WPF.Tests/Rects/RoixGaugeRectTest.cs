@@ -119,8 +119,9 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var groi = new RoixGaugeRect(roi, canvas);
 
-            var clippedRoi = groi.GetClippedRoiByPointPriority();
-            clippedRoi.Is(roi);
+            var clippedRect = groi.GetClippedGaugeRectByPointPriority();
+            clippedRect.Roi.Is(roi);
+            clippedRect.Canvas.Is(groi.Canvas);
         }
 
         [Theory]
@@ -135,9 +136,10 @@ namespace Roix.WPF.Tests
             var ansSize = new RoixSize(ansWidth, ansHeight);
 
             var groi = new RoixGaugeRect(roi, canvas);
-            var clippedRoi = groi.GetClippedRoiByPointPriority();
-            clippedRoi.Size.Is(ansSize);
-            clippedRoi.TopLeft.Is(roi.TopLeft);
+            var clippedRect = groi.GetClippedGaugeRectByPointPriority();
+            clippedRect.Roi.Size.Is(ansSize);
+            clippedRect.Roi.TopLeft.Is(roi.TopLeft);
+            clippedRect.Canvas.Is(groi.Canvas);
         }
 
         [Theory]
@@ -151,8 +153,9 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var groi = new RoixGaugeRect(roi, canvas);
 
-            var clippedRoi = groi.GetClippedRoiBySizePriority();
-            clippedRoi.Is(roi);
+            var clippedRect = groi.GetClippedGaugeRectBySizePriority();
+            clippedRect.Roi.Is(roi);
+            clippedRect.Canvas.Is(groi.Canvas);
         }
 
         [Theory]
@@ -166,9 +169,10 @@ namespace Roix.WPF.Tests
             var ansPoint = new RoixPoint(ansX, ansY);
 
             var groi = new RoixGaugeRect(roi, canvas);
-            var clippedRoi = groi.GetClippedRoiBySizePriority();
-            clippedRoi.TopLeft.Is(ansPoint);
-            clippedRoi.Size.Is(roi.Size);
+            var clippedRect = groi.GetClippedGaugeRectBySizePriority();
+            clippedRect.Roi.TopLeft.Is(ansPoint);
+            clippedRect.Roi.Size.Is(roi.Size);
+            clippedRect.Canvas.Is(groi.Canvas);
         }
         #endregion
 

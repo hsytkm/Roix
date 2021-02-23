@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Text;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Vector.cs
-    public readonly struct RoixVector : IEquatable<RoixVector>
+    public readonly struct RoixVector : IEquatable<RoixVector>, IFormattable
     {
         public static RoixVector Zero { get; } = new(0, 0);
 
-        public readonly double X;
-        public readonly double Y;
+        public readonly double X { get; }
+        public readonly double Y { get; }
 
         #region ctor
         public RoixVector(double x, double y) => (X, Y) = (x, y);
@@ -24,7 +25,17 @@ namespace Roix.Wpf
         public static bool operator !=(in RoixVector left, in RoixVector right) => !(left == right);
         #endregion
 
+        #region ToString
         public override string ToString() => $"{nameof(RoixVector)} {{ {nameof(X)} = {X}, {nameof(Y)} = {Y} }}";
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{nameof(RoixVector)} {{ ");
+            sb.Append($"{nameof(X)} = {X.ToString(format, formatProvider)}, ");
+            sb.Append($"{nameof(Y)} = {Y.ToString(format, formatProvider)} }}");
+            return sb.ToString();
+        }
+        #endregion
 
         #region implicit
         public static implicit operator RoixVector(System.Windows.Vector vector) => new(vector.X, vector.Y);
