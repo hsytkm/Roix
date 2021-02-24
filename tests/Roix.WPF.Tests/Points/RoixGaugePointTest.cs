@@ -147,7 +147,7 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, 10, 10, 0, 0)]
         public void ClippedPoint(double x, double y, double width, double height, double answerX, double answerY)
         {
-            var point = new RoixGaugePoint(x, y, width, height).ClippedPoint;
+            var point = new RoixGaugePoint(x, y, width, height).ClippedRoixPoint;
             point.X.Is(answerX);
             point.Y.Is(answerY);
         }
@@ -199,13 +199,18 @@ namespace Roix.WPF.Tests
         {
             double x = 1, y = 2, width = 10, height = 10;
             double vx = 3, vy = 4;
+            var point = new RoixPoint(x, y);
+            var border = new RoixSize(width, height);
+            var vector = new RoixVector(vx, vy);
+            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), border);
 
-            var gp = new RoixGaugePoint(x, y, width, height);
-            var v = new RoixVector(vx, vy);
-            var rect = gp.CreateRoixGaugeRect(v);
+            var gp = new RoixGaugePoint(point, border);
+            var rect1 = gp.CreateRoixGaugeRect(vector);
+            rect1.Is(ansRect);
 
-            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), gp.Border);
-            rect.Is(ansRect);
+            var gv = new RoixGaugeVector(vector, border);
+            var rect2 = gp.CreateRoixGaugeRect(gv);
+            rect2.Is(ansRect);
         }
         #endregion
 

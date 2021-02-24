@@ -60,6 +60,7 @@ namespace Roix.WPF.Tests
 
         [Theory]
         [InlineData(0, 0)]
+        [InlineData(1, 1)]
         [InlineData(1, -2)]
         [InlineData(-0.1, 0.2)]
         [InlineData(double.MinValue, double.MaxValue)]
@@ -74,6 +75,13 @@ namespace Roix.WPF.Tests
             RoixVector rv2 = (RoixVector)rp2;
             rv2.X.Is(rp2.X);
             rv2.Y.Is(rp2.Y);
+
+            if (rp2.X >= 0 && rp2.Y >= 0)
+            {
+                RoixSize rs2 = (RoixSize)rp2;
+                rs2.Width.Is(rp2.X);
+                rs2.Height.Is(rp2.Y);
+            }
         }
         #endregion
 

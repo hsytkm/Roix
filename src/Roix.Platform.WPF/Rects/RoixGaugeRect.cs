@@ -13,9 +13,24 @@ namespace Roix.Wpf
         #region ctor
         public RoixGaugeRect(in RoixRect roi, in RoixSize border)
         {
-            if (border.IsEmpty) throw new ArgumentException($"{nameof(border)} is empty");
+            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             (Roi, Border) = (roi, border);
         }
+
+        public RoixGaugeRect(in RoixGaugePoint gaugePoint, in RoixGaugeSize gaugeSize)
+        {
+            if (gaugePoint.Border != gaugeSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            (Roi, Border) = (new RoixRect(gaugePoint.Point, gaugeSize.Size), gaugePoint.Border);
+        }
+
+        public RoixGaugeRect(in RoixGaugePoint gaugePoint1, in RoixGaugePoint gaugePoint2)
+        {
+            if (gaugePoint1.Border != gaugePoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            var roi = new RoixRect(gaugePoint1.Point, gaugePoint2.Point);
+            (Roi, Border) = (roi, gaugePoint1.Border);
+        }
+
+        public RoixGaugeRect(in RoixGaugePoint gaugePoint, in RoixGaugeVector gaugeVector) : this(gaugePoint, gaugePoint + gaugeVector) { }
 
         public readonly void Deconstruct(out RoixRect roi, out RoixSize border) => (roi, border) = (Roi, Border);
         #endregion
@@ -59,7 +74,7 @@ namespace Roix.Wpf
         public readonly RoixGaugeRect ConvertToNewGauge(in RoixSize newBorder)
         {
             if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException($"Invalid {nameof(newBorder)}");
+            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
 
             var newPoint = new RoixPoint(Roi.X * newBorder.Width / Border.Width, Roi.Y * newBorder.Height / Border.Height);
             var newSize = new RoixSize(Roi.Width * newBorder.Width / Border.Width, Roi.Height * newBorder.Height / Border.Height);
@@ -68,11 +83,11 @@ namespace Roix.Wpf
 
         public readonly RoixIntRect ToRoixIntRect(bool isCheckBoundaries = true)
         {
-            if (isCheckBoundaries && IsOutsideBorder) throw new InvalidOperationException("must inside the border");
+            if (isCheckBoundaries && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
 
             var srcRect = (RoixIntRect)Roi;
             var intSize = (RoixIntSize)Border;
-            if (intSize.IsZero) throw new InvalidOperationException("size is zero");
+            if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
 
             var x = Math.Clamp(srcRect.X, 0, intSize.Width - 1);
             var y = Math.Clamp(srcRect.Y, 0, intSize.Height - 1);

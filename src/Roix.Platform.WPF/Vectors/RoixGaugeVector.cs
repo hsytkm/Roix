@@ -14,7 +14,7 @@ namespace Roix.Wpf
         #region ctor
         public RoixGaugeVector(in RoixVector vector, in RoixSize border)
         {
-            if (border.IsEmpty) throw new ArgumentException($"{nameof(border)} is empty");
+            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             (Vector, Border) = (vector, border);
         }
 
@@ -63,7 +63,7 @@ namespace Roix.Wpf
         public readonly RoixGaugeVector ConvertToNewGauge(in RoixSize newBorder)
         {
             if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException($"Invalid {nameof(newBorder)}");
+            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
 
             var newVector = new RoixVector(Vector.X * newBorder.Width / Border.Width, Vector.Y * newBorder.Height / Border.Height);
             return new(newVector, newBorder);

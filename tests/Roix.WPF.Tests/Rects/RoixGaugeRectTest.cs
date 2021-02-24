@@ -14,18 +14,34 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, 3, 4, 10, 10)]
         public void Ctor(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight)
         {
-            var rect = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var size = new RoixSize(borderWidth, borderHeight);
+            var point = new RoixPoint(roiX, roiY);
+            var size = new RoixSize(roiWidth, roiHeight);
+            var rect = new RoixRect(point, size);
+            var border = new RoixSize(borderWidth, borderHeight);
 
-            var gr1 = new RoixGaugeRect(rect, size);
-            gr1.Roi.X.Is(rect.X);
-            gr1.Roi.Y.Is(rect.Y);
-            gr1.Roi.Width.Is(rect.Width);
-            gr1.Roi.Height.Is(rect.Height);
-            gr1.Border.Width.Is(size.Width);
-            gr1.Border.Height.Is(size.Height);
-
+            var gr1 = new RoixGaugeRect(rect, border);
+            gr1.Roi.Is(rect);
+            gr1.Border.Is(border);
             new RoixGaugeRect(rect, RoixSize.Zero);     //OK
+            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(rect, RoixSize.Empty));
+
+            var gpoint1 = new RoixGaugePoint(point, border);
+            var gsize = new RoixGaugeSize(size, border);
+            var gr2 = new RoixGaugeRect(gpoint1, gsize);
+            gr2.Roi.Is(rect);
+            gr2.Border.Is(border);
+            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(gpoint1, RoixGaugeSize.Zero));
+
+            var gpoint2 = new RoixGaugePoint(point + (RoixVector)size, border);
+            var gr3 = new RoixGaugeRect(gpoint1, gpoint2);
+            gr3.Roi.Is(rect);
+            gr3.Border.Is(border);
+            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(gpoint1, RoixGaugePoint.Zero));
+
+            var gvector = new RoixGaugeVector((RoixVector)size, border);
+            var gr4 = new RoixGaugeRect(gpoint1, gvector);
+            gr4.Roi.Is(rect);
+            gr4.Border.Is(border);
         }
 
         [Theory]
@@ -33,7 +49,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, 0, 4, 4, 0, -1)]
         public void CtorBorderïâêîÉ_ÉÅ(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight)
         {
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(new(roiX, roiY, roiWidth, roiHeight), new(borderWidth, borderHeight)));
+            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(new RoixRect(roiX, roiY, roiWidth, roiHeight), new RoixSize(borderWidth, borderHeight)));
         }
 
         [Fact]

@@ -61,34 +61,23 @@ namespace RoixApp.Wpf
             #endregion
 
             #region SelectedRectangle
-            var draggingVector = new ReactivePropertySlim<RoixVector>(mode: ReactivePropertyMode.None);
-
-            // マウス操作開始時の初期化
-            MouseLeftDownPoint.Subscribe(_ => draggingVector.Value = RoixVector.Zero);
-
-            // マウス操作中に移動量を流す + 操作完了時に枠位置を通知する
+            // マウス操作中に枠を更新 + 操作完了時に枠位置を通知する
             MouseMovePoint
-                .Pairwise()
-                .Select(x => x.NewItem.Point - x.OldItem.Point)
-                //.Select(x => x.NewItem - x.OldItem)
                 .SkipUntil(MouseLeftDownPoint.ToUnit())
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
                 {
-                    if (draggingVector.Value.IsZero) return;
+                    if (MouseLeftDownPoint.Value == MouseLeftUpPoint.Value) return;
 
                     // ドラッグ枠の確定
-                    var gaugeRectOnView = MouseLeftDownPoint.Value.CreateRoixGaugeRect(draggingVector.Value);
+                    var gaugeRectOnView = new RoixGaugeRect(MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     var gaugeRectOnModel = gaugeRectOnView.ConvertToNewGauge(imageSourceSize);
-                    SelectedRectangleToModel.Value = (RoixIntRect)gaugeRectOnModel.GetClippedGaugeRect().Roi;
+                    SelectedRectangleToModel.Value = gaugeRectOnModel.GetClippedGaugeRect().ToRoixIntRect(isCheckBoundaries: true);
                 })
                 .Repeat()
-                .Subscribe(v => draggingVector.Value += v);
-
-            // 選択枠のプレビュー
-            draggingVector
-                .Where(vec => !vec.IsZero)
-                .Subscribe(vec => SelectedGaugeRectangle.Value = MouseLeftDownPoint.Value.CreateRoixGaugeRect(vec).GetClippedGaugeRect());
+                .Select(lastestPoint => lastestPoint - MouseLeftDownPoint.Value)
+                .Where(gaugeVector => !gaugeVector.IsZero)
+                .Subscribe(gaugeVector => SelectedGaugeRectangle.Value = MouseLeftDownPoint.Value.CreateRoixGaugeRect(gaugeVector.Vector).GetClippedGaugeRect());
             #endregion
 
             #region ClickedFixedRectangle
@@ -108,7 +97,7 @@ namespace RoixApp.Wpf
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedGaugeRectangle
                 .Where(gauge => !gauge.Border.IsZero)
-                .Select(gaugeRectOnView => (RoixIntRect)gaugeRectOnView.ConvertToNewGauge(imageSourceSize).Roi)
+                .Select(gaugeRectOnView => gaugeRectOnView.ConvertToNewGauge(imageSourceSize).ToRoixIntRect(isCheckBoundaries: false))
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 

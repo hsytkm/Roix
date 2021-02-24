@@ -86,7 +86,7 @@ namespace Roix.Wpf
 
         public readonly System.Windows.Media.PointCollection ToPointCollection()
         {
-            if (IsEmpty) throw new ArgumentException("rect is empty.");
+            if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
             return new(new[] { TopLeft, TopRight, BottomRight, BottomLeft }.Select(static x => (System.Windows.Point)x));
         }
 

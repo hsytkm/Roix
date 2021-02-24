@@ -13,11 +13,11 @@ namespace Roix.Wpf
         public readonly double Height { get; }
 
         #region ctor
-        private RoixSize(double value) => (Width, Height) = (value, value); // forEmpty
+        private RoixSize(double value) => (Width, Height) = (value, value); // forEmpty(SkipCheck)
 
         public RoixSize(double width, double height)
         {
-            if (width < 0 || height < 0) throw new ArgumentException("width and height cannot be negative value.");
+            if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
             (Width, Height) = (width, height);
         }
 
@@ -50,22 +50,22 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixVector(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException("size is empty");
-        public static explicit operator RoixPoint(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException("size is empty");
+        public static explicit operator RoixVector(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        public static explicit operator RoixPoint(in RoixSize size) => !size.IsEmpty ? new(size.Width, size.Height) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         #endregion
 
         #region operator
         public static RoixSize operator *(in RoixSize size, double mul)
         {
             if (size.IsEmpty) return Empty;
-            if (mul < 0) throw new ArgumentException("cannot be negative value");
+            if (mul < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
             return new(size.Width * mul, size.Height * mul);
         }
 
         public static RoixSize operator /(in RoixSize size, double div)
         {
             if (size.IsEmpty) return Empty;
-            if (div < 0) throw new ArgumentException("cannot be negative value");
+            if (div < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
             if (div == 0) throw new DivideByZeroException();
             return new(size.Width / div, size.Height / div);
         }

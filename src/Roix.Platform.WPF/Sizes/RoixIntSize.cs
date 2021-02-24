@@ -13,7 +13,7 @@ namespace Roix.Wpf
         #region ctor
         public RoixIntSize(int width, int height)
         {
-            if (width < 0 || height < 0) throw new ArgumentException("width and height cannot be negative value.");
+            if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
             (Width, Height) = (width, height);
         }
 
@@ -31,10 +31,10 @@ namespace Roix.Wpf
         public readonly override string ToString() => $"{nameof(RoixIntSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
 
         #region implicit
-        public static implicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException("size is empty");
+        public static implicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         public static implicit operator RoixSize(in RoixIntSize size) => new(size.Width, size.Height);
 
-        public static implicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException("size is empty");
+        public static implicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         public static implicit operator System.Windows.Size(in RoixIntSize size) => new(size.Width, size.Height);
         #endregion
 
