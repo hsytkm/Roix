@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roix.Platform.WPF", "src\Ro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roix.WPF.Tests", "tests\Roix.WPF.Tests\Roix.WPF.Tests.csproj", "{42262BD4-C671-4700-8E16-121FA5ACB4F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roix.SourceGenerator", "src\Roix.SourceGenerator\Roix.SourceGenerator.csproj", "{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{42262BD4-C671-4700-8E16-121FA5ACB4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42262BD4-C671-4700-8E16-121FA5ACB4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42262BD4-C671-4700-8E16-121FA5ACB4F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{98A2834B-2967-4029-A7CD-6AB3E26F9116} = {9C0239BE-9715-402A-B4A3-147E87EF1000}
 		{0EA27B41-0DA6-4523-843A-5F6C560CB3B0} = {9C0239BE-9715-402A-B4A3-147E87EF1000}
 		{42262BD4-C671-4700-8E16-121FA5ACB4F8} = {22C598B5-36BB-4344-AB47-F9E3D8917EC3}
+		{AF6D18F1-6248-430C-B01F-DDDF32C5ADCE} = {9C0239BE-9715-402A-B4A3-147E87EF1000}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2DB419FA-ED60-46A4-8280-D410FE4EAC1D}
