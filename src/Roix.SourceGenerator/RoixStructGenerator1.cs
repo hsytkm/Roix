@@ -10,23 +10,18 @@ using System.Text;
 
 namespace Roix.SourceGenerator
 {
-    static class Consts
-    {
-        public const string Namespace = "Roix.SourceGenerator";
-        public const string MyGeneratorName = "RoixStructGenerator";
-        public const string AttributeName = "RoixStructGeneratorAttribute";
-        public static readonly string AttributeFullName = $"{Namespace}.{AttributeName}";
-    }
-
     [Generator]
-    public sealed class RoixStructGenerator : ISourceGenerator
+    public sealed class RoixStructGenerator1 : ISourceGenerator
     {
+        private const string _generatorName = nameof(RoixStructGenerator1);
+        private const string _attributeName = _generatorName + "Attribute";
+        private static readonly string _attributeFullName = $"{Consts.Namespace}.{_attributeName}";
         private readonly static string _attributeSource = $@"
 using System;
 namespace {Consts.Namespace}
 {{
     [AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-    public sealed class {Consts.AttributeName} : Attribute
+    public sealed class {_attributeName} : Attribute
     {{
     }}
 }}";
@@ -44,7 +39,7 @@ namespace {Consts.Namespace}
 
         public void Execute(GeneratorExecutionContext context)
         {
-            context.AddSource($"{Consts.MyGeneratorName}.cs", SourceText.From(_attributeSource, Encoding.UTF8));
+            context.AddSource($"{_generatorName}.cs", SourceText.From(_attributeSource, Encoding.UTF8));
 
             try
             {
@@ -53,7 +48,7 @@ namespace {Consts.Namespace}
                 var options = (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
                 var compilation = context.Compilation.AddSyntaxTrees(
                     CSharpSyntaxTree.ParseText(SourceText.From(_attributeSource, Encoding.UTF8), options));
-                var attributeSymbol = compilation.GetTypeByMetadataName(Consts.AttributeFullName);
+                var attributeSymbol = compilation.GetTypeByMetadataName(_attributeFullName);
 
                 foreach (var candidate in receiver.CandidateStructs)
                 {
@@ -137,14 +132,14 @@ namespace {Consts.Namespace}
             static string ToPropertyName(string fieldName) => fieldName[0] == '_' ? new string(new char[] { fieldName[1] }).ToUpper() + fieldName.Substring(2) : fieldName;
         }
 
-        class SyntaxReceiver : ISyntaxReceiver
+        private sealed class SyntaxReceiver : ISyntaxReceiver
         {
             internal List<StructDeclarationSyntax> CandidateStructs { get; } = new();
 
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
                 static bool hasMyGeneratorAttribute(SyntaxList<AttributeListSyntax> attrs)
-                    => attrs.SelectMany(x => x.Attributes).Any(x => x.Name.ToString().Contains(Consts.MyGeneratorName));
+                    => attrs.SelectMany(x => x.Attributes).Any(x => x.Name.ToString().Contains(_generatorName));
 
                 static bool isCandidate(StructDeclarationSyntax s)
                 {
