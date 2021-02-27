@@ -1,6 +1,4 @@
-﻿//#nullable disable
-
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -12,17 +10,15 @@ using System.Text;
 namespace Roix.SourceGenerator
 {
     [Generator]
-    public sealed class RoixStructGenerator2 : ISourceGenerator
+    public sealed class RoixStructGenerator : ISourceGenerator
     {
-        private const string _generatorName = nameof(RoixStructGenerator2);
-        private const string _attributeName = _generatorName + "Attribute";
-        //private static readonly string _attributeFullName = $"{Consts.Namespace}.{_attributeName}";
+        private const string _attributeName = nameof(RoixStructGenerator) + "Attribute";
         private readonly static string _attributeSource = $@"
 using System;
 namespace {Consts.Namespace}
 {{
     [AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-    public sealed class {_attributeName} : Attribute
+    public sealed class {_attributeName}: Attribute
     {{
     }}
 }}";
@@ -40,7 +36,7 @@ namespace {Consts.Namespace}
 
         public void Execute(GeneratorExecutionContext context)
         {
-            context.AddSource($"{_generatorName}.cs", SourceText.From(_attributeSource, Encoding.UTF8));
+            context.AddSource($"{_attributeName}.cs", SourceText.From(_attributeSource, Encoding.UTF8));
 
             try
             {
@@ -82,6 +78,8 @@ namespace {Consts.Namespace}
 
                 var parent = GetParentStructDeclarationSyntax(structDeclarationSyntax);
                 if (parent is null) return;
+
+                parent.AttributeLists.SelectMany(x => x.Attributes).Any(x => x.ToString() == _attributeName);
 
                 if (!IsReadOnlyStruct(parent)) return;
                 if (!parent.ChildNodes().Any(n => n == structDeclarationSyntax)) return;

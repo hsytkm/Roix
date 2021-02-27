@@ -17,13 +17,16 @@ namespace Roix.SourceGenerator
         }
 
         public static StructDeclarationSyntax GetPartialTypeDelaration(this StructDeclarationSyntax typeDecl)
-            => CSharpSyntaxTree.ParseText($@"
-readonly partial struct {GetGenericTypeName(typeDecl)}
+        {
+            var structName = GetGenericTypeName(typeDecl);
+            return CSharpSyntaxTree.ParseText($@"
+readonly partial struct {structName} : IEquatable<{structName}>, IFormattable
 {{
 }}
 ").GetRoot().ChildNodes().OfType<StructDeclarationSyntax>().First();
+        }
 
-        private static string GetGenericTypeName(TypeDeclarationSyntax typeDecl)
+        public static string GetGenericTypeName(this TypeDeclarationSyntax typeDecl)
         {
             if (typeDecl.TypeParameterList == null)
             {

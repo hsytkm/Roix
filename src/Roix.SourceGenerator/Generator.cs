@@ -7,13 +7,14 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Roix.SourceGenerator
 {
-    public class Generator
+    // https://github.com/ufcpp/ValueChangedGenerator/
+    class Generator
     {
         public CompilationUnitSyntax GeneratePartialDeclaration(INamedTypeSymbol container, StructDeclarationSyntax structDecl)
         {
-            var recordStructDecl = (StructDeclarationSyntax)structDecl.ChildNodes().First(x => x is StructDeclarationSyntax);
+            var recordDecl = (StructDeclarationSyntax)structDecl.ChildNodes().First(x => x is StructDeclarationSyntax);
 
-            var def = new RecordDefinition(recordStructDecl);
+            var def = new RecordDefinition(structDecl, recordDecl);
             var generatedNodes = GetGeneratedNodes(def).ToArray();
 
             var newStructDecl = container.GetContainingTypesAndThis()
@@ -30,31 +31,38 @@ namespace Roix.SourceGenerator
 
             var root = (CompilationUnitSyntax)structDecl.SyntaxTree.GetRoot();
 
-            return CompilationUnit().AddUsings(WithComponentModel(root.Usings))
+            return CompilationUnit()
+                .AddUsings(WithComponentModel(root.Usings))
                 .AddMembers(topDecl)
+                .WithLeadingTrivia(CreateNullableTrivia())
                 .WithTrailingTrivia(CarriageReturnLineFeed)
                 .NormalizeWhitespace();
         }
+
+        // https://github.com/dotnet/roslyn/blob/master/src/Features/CSharp/Portable/MetadataAsSource/CSharpMetadataAsSourceService.cs#L137
+        private static SyntaxTrivia[] CreateNullableTrivia()
+            => new[] { Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), isActive: true)), CarriageReturnLineFeed };
 
         private UsingDirectiveSyntax[] WithComponentModel(IEnumerable<UsingDirectiveSyntax> usings) => usings.ToArray();
 
         private IEnumerable<MemberDeclarationSyntax> GetGeneratedNodes(RecordDefinition def)
         {
             yield return CSharpSyntaxTree.ParseText(
-                $@"        private readonly {Consts.SourceValuesStruct} _value;
+                $@"        private readonly {Consts.SourceValuesStruct} _values;
 ")
                 .GetRoot().ChildNodes()
                 .OfType<MemberDeclarationSyntax>()
                 .First()
                 .WithTrailingTrivia(CarriageReturnLineFeed, CarriageReturnLineFeed);
 
+            // Properties
             foreach (var p in def.Properties)
                 foreach (var s in WithTrivia(GetGeneratedMember(p), p.LeadingTrivia, p.TrailingTrivia))
                     yield return s;
 
-            //foreach (var p in def.DependentProperties)
-            //    foreach (var s in WithTrivia(GetGeneratedMember(p), p.LeadingTrivia, p.TrailingTrivia))
-            //        yield return s;
+            // Methods
+            foreach (var s in GetGeneratedMethods(def))
+                yield return s;
         }
 
         private IEnumerable<MemberDeclarationSyntax> WithTrivia(IEnumerable<MemberDeclarationSyntax> members, SyntaxTriviaList leadingTrivia, SyntaxTriviaList trailingTrivia)
@@ -82,7 +90,7 @@ namespace Roix.SourceGenerator
 
         private IEnumerable<MemberDeclarationSyntax> GetGeneratedMember(SimpleProperty p)
         {
-            var source = string.Format(@"        public {1} {0} => _value.{0};",
+            var source = string.Format(@"        public {1} {0} => _values.{0};",
                 p.Name, p.Type.WithoutTrivia().GetText().ToString());
 
             var generatedNodes = CSharpSyntaxTree.ParseText(source)
@@ -90,6 +98,56 @@ namespace Roix.SourceGenerator
                 .OfType<MemberDeclarationSyntax>();
 
             return generatedNodes;
+        }
+
+        private IEnumerable<MemberDeclarationSyntax> GetGeneratedMethods(RecordDefinition def)
+        {
+            static MemberDeclarationSyntax ToMemberDeclarationSyntax(string source)
+                => CSharpSyntaxTree.ParseText(source).GetRoot().ChildNodes().OfType<MemberDeclarationSyntax>().First();
+
+            var structName = def.ParentSyntax.GetGenericTypeName();
+            var sources = new[]
+            {
+                string.Format(@"        public {0}({1}) => _values = new({2});", structName,
+                    string.Join(", ", def.Properties.Select(p => $"{p.Type} {p.Name.ToLower()}")),
+                    string.Join(", ", def.Properties.Select(p => p.Name.ToLower()))),
+
+                string.Format(@"        public void Deconstruct({0}) => ({1}) = ({2});",
+                    string.Join(", ", def.Properties.Select(p => $"out {p.Type} {p.Name.ToLower()}")),
+                    string.Join(", ", def.Properties.Select(p => p.Name.ToLower())),
+                    string.Join(", ", def.Properties.Select(p => p.Name))),
+
+                string.Format(@"        public static {0} Zero {{ get; }} = default;", structName),
+
+                //string.Format(@"        public bool Equals({0} other) => ({1}) == ({2});", structName,
+                //    string.Join(", ", def.Properties.Select(p => p.Name)),
+                //    string.Join(", ", def.Properties.Select(p => "other." + p.Name))),
+                string.Format(@"        public bool Equals({0} other) => this == other;", structName),
+
+                string.Format(@"        public override bool Equals(object? obj) => (obj is {0} other) && Equals(other);", structName),
+
+                string.Format(@"        public override int GetHashCode() => HashCode.Combine({0});",
+                    string.Join(", ", def.Properties.Select(p => p.Name))),
+
+                string.Format(@"        public static bool operator ==(in {0} left, in {0} right) => ({1}) == ({2});", structName,
+                    string.Join(", ", def.Properties.Select(p => "left." + p.Name)),
+                    string.Join(", ", def.Properties.Select(p => "right." + p.Name))),
+
+                string.Format(@"        public static bool operator !=(in {0} left, in {0} right) => !(left == right);", structName),
+
+                string.Format(@"        public override string ToString() => $""{0} {{{{ {1} }}}}"";", structName,
+                    string.Join(", ", def.Properties.Select(p => p.Name + " = {" + p.Name + "}"))),
+
+                string.Format(@"        public string ToString(string? format, IFormatProvider? formatProvider) => $""{0} {{{{ {1} }}}}"";", structName,
+                    string.Join(", ", def.Properties.Select(p => p.Name + " = {" + p.Name + ".ToString(format, formatProvider)}"))),
+
+                string.Format(@"        public bool IsZero => this == Zero;"),
+            };
+
+            foreach (var source in sources)
+            {
+                yield return ToMemberDeclarationSyntax(source);
+            }
         }
 
     }
