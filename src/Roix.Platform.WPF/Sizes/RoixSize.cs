@@ -1,46 +1,27 @@
 ﻿using System;
-using System.Text;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Size.cs
-    public readonly struct RoixSize : IEquatable<RoixSize>, IFormattable
+    [SourceGenerator.RoixStructGenerator]
+    public readonly partial struct RoixSize
     {
-        public static RoixSize Zero { get; } = new(0, 0);
+        readonly struct SourceValues
+        {
+            public readonly double Width;
+            public readonly double Height;
+            public SourceValues(double width, double height) => (Width, Height) = (width, height);
+        }
+
         public static RoixSize Empty { get; } = new(double.NegativeInfinity);
 
-        public readonly double Width { get; }
-        public readonly double Height { get; }
-
         #region ctor
-        private RoixSize(double value) => (Width, Height) = (value, value); // forEmpty(SkipCheck)
+        private RoixSize(double value) => _values = new(value, value);  // forEmpty(SkipCheck)
 
         public RoixSize(double width, double height)
         {
             if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            (Width, Height) = (width, height);
-        }
-
-        public readonly void Deconstruct(out double width, out double height) => (width, height) = (Width, Height);
-        #endregion
-
-        #region Equals
-        public readonly bool Equals(RoixSize other) => (Width, Height) == (other.Width, other.Height);
-        public readonly override bool Equals(object? obj) => (obj is RoixSize other) && Equals(other);
-        public readonly override int GetHashCode() => HashCode.Combine(Width, Height);
-        public static bool operator ==(in RoixSize left, in RoixSize right) => left.Equals(right);
-        public static bool operator !=(in RoixSize left, in RoixSize right) => !(left == right);
-        #endregion
-
-        #region ToString
-        public readonly override string ToString() => $"{nameof(RoixSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
-        public readonly string ToString(string? format, IFormatProvider? formatProvider)
-        {
-            var sb = new StringBuilder();
-            sb.Append($"{nameof(RoixSize)} {{ ");
-            sb.Append($"{nameof(Width)} = {Width.ToString(format, formatProvider)}, ");
-            sb.Append($"{nameof(Height)} = {Height.ToString(format, formatProvider)} }}");
-            return sb.ToString();
+            _values = new(width, height);
         }
         #endregion
 
@@ -64,26 +45,23 @@ namespace Roix.Wpf
 
         public static RoixSize operator /(in RoixSize size, double div)
         {
-            if (size.IsEmpty) return Empty;
-            if (div < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
             if (div == 0) throw new DivideByZeroException();
-            return new(size.Width / div, size.Height / div);
+            return size * (1d / div);
         }
         #endregion
 
         #region Properties
-        public readonly bool IsEmpty => this == Empty;
-        public readonly bool IsZero => this == Zero;
+        public bool IsEmpty => this == Empty;
 
         /// <summary>Length=0 is Invalid</summary>
-        public readonly bool IsInvalid => IsEmpty || IsZero;
+        public bool IsInvalid => IsEmpty || IsZero;
 
-        public readonly bool IsValid => !IsInvalid;
+        public bool IsValid => !IsInvalid;
         #endregion
 
         #region Methods
-        public readonly bool IsInside(in RoixSize border) => ((RoixPoint)this).IsInside(border);
-        public readonly bool IsOutside(in RoixSize border) => !IsInside(border);
+        public bool IsInside(in RoixSize border) => ((RoixPoint)this).IsInside(border);
+        public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
 

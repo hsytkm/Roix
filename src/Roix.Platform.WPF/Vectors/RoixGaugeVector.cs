@@ -1,46 +1,26 @@
 ﻿using Roix.Wpf.Internals;
 using System;
-using System.Text;
 
 namespace Roix.Wpf
 {
-    public readonly struct RoixGaugeVector : IEquatable<RoixGaugeVector>, IFormattable
+    [SourceGenerator.RoixStructGenerator]
+    public readonly partial struct RoixGaugeVector
     {
-        public static RoixGaugeVector Zero { get; } = new(RoixVector.Zero, RoixSize.Zero);
-
-        public readonly RoixVector Vector { get; }
-        public readonly RoixSize Border { get; }
+        readonly struct SourceValues
+        {
+            public readonly RoixVector Vector;
+            public readonly RoixSize Border;
+            public SourceValues(in RoixVector vector, in RoixSize border) => (Vector, Border) = (vector, border);
+        }
 
         #region ctor
         public RoixGaugeVector(in RoixVector vector, in RoixSize border)
         {
             if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-            (Vector, Border) = (vector, border);
+            _values = new(vector, border);
         }
 
-        public RoixGaugeVector(double x, double y, double width, double height) => (Vector, Border) = (new(x, y), new(width, height));
-
-        public readonly void Deconstruct(out RoixVector vector, out RoixSize border) => (vector, border) = (Vector, Border);
-        #endregion
-
-        #region Equals
-        public readonly bool Equals(RoixGaugeVector other) => (Vector, Border) == (other.Vector, other.Border);
-        public readonly override bool Equals(object? obj) => (obj is RoixGaugeVector other) && Equals(other);
-        public readonly override int GetHashCode() => HashCode.Combine(Vector, Border);
-        public static bool operator ==(in RoixGaugeVector left, in RoixGaugeVector right) => left.Equals(right);
-        public static bool operator !=(in RoixGaugeVector left, in RoixGaugeVector right) => !(left == right);
-        #endregion
-
-        #region ToString
-        public readonly override string ToString() => $"{nameof(RoixGaugeVector)} {{ {nameof(Vector)} = {Vector}, {nameof(Border)} = {Border} }}";
-        public readonly string ToString(string? format, IFormatProvider? formatProvider)
-        {
-            var sb = new StringBuilder();
-            sb.Append($"{nameof(RoixGaugeVector)} {{ ");
-            sb.Append($"{nameof(Vector)} = {Vector.ToString(format, formatProvider)}, ");
-            sb.Append($"{nameof(Border)} = {Border.ToString(format, formatProvider)} }}");
-            return sb.ToString();
-        }
+        public RoixGaugeVector(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
         #endregion
 
         #region implicit
@@ -54,13 +34,12 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public readonly bool IsZero => this == Zero;
-        public readonly bool IsInsideBorder => Vector.X.IsInside(0, Border.Width) && Vector.Y.IsInside(0, Border.Height);
-        public readonly bool IsOutsideBorder => !IsInsideBorder;
+        public bool IsInsideBorder => Vector.X.IsInside(0, Border.Width) && Vector.Y.IsInside(0, Border.Height);
+        public bool IsOutsideBorder => !IsInsideBorder;
         #endregion
 
         #region Methods
-        public readonly RoixGaugeVector ConvertToNewGauge(in RoixSize newBorder)
+        public RoixGaugeVector ConvertToNewGauge(in RoixSize newBorder)
         {
             if (Border.IsInvalid) return this;
             if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);

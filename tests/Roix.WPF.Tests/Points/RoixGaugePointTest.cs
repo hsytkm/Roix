@@ -179,7 +179,7 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(x, y);
             var size = new RoixSize(10, 10);
-            var gp = new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBoundaries: true);
+            var gp = new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBorder: true);
             gp.X.Is(ansX);
             gp.Y.Is(ansY);
         }
@@ -190,8 +190,8 @@ namespace Roix.WPF.Tests
             var point = new RoixPoint(11, 10);    // Outside
             var size = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBoundaries: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, RoixSize.Zero).ToRoixIntPoint(isCheckBoundaries: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, RoixSize.Zero).ToRoixIntPoint(isCheckBorder: true));
         }
 
         [Fact]

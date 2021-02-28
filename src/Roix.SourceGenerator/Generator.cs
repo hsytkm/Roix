@@ -60,9 +60,14 @@ namespace Roix.SourceGenerator
                 foreach (var s in WithTrivia(GetGeneratedMember(p), p.LeadingTrivia, p.TrailingTrivia))
                     yield return s;
 
-            // Methods
-            foreach (var s in GetGeneratedMethods(def))
-                yield return s;
+            if (!def.IsConstructorDeclared)
+            {
+                foreach (var s in GetGeneratedCtor(def)) yield return s;
+            }
+
+            foreach (var s in GetGeneratedInterfaces(def)) yield return s;
+            
+            foreach (var s in GetGeneratedRoixMethods(def)) yield return s;
         }
 
         private IEnumerable<MemberDeclarationSyntax> WithTrivia(IEnumerable<MemberDeclarationSyntax> members, SyntaxTriviaList leadingTrivia, SyntaxTriviaList trailingTrivia)
@@ -88,36 +93,41 @@ namespace Roix.SourceGenerator
             yield return array[array.Length - 1].WithTrailingTrivia(trailingTrivia);
         }
 
+        private static MemberDeclarationSyntax ToMemberDeclarationSyntax(string source)
+            => CSharpSyntaxTree.ParseText(source).GetRoot().ChildNodes().OfType<MemberDeclarationSyntax>().First();
+
         private IEnumerable<MemberDeclarationSyntax> GetGeneratedMember(SimpleProperty p)
         {
             var source = string.Format(@"        public {1} {0} => _values.{0};",
                 p.Name, p.Type.WithoutTrivia().GetText().ToString());
 
-            var generatedNodes = CSharpSyntaxTree.ParseText(source)
-                .GetRoot().ChildNodes()
-                .OfType<MemberDeclarationSyntax>();
-
-            return generatedNodes;
+            yield return ToMemberDeclarationSyntax(source);
         }
 
-        private IEnumerable<MemberDeclarationSyntax> GetGeneratedMethods(RecordDefinition def)
+        private IEnumerable<MemberDeclarationSyntax> GetGeneratedCtor(RecordDefinition def)
         {
-            static MemberDeclarationSyntax ToMemberDeclarationSyntax(string source)
-                => CSharpSyntaxTree.ParseText(source).GetRoot().ChildNodes().OfType<MemberDeclarationSyntax>().First();
+            static string GetTypeString(TypeSyntax type)
+                => type.IsKind(SyntaxKind.StructDeclaration) && type.IsKind(SyntaxKind.ReadOnlyKeyword)
+                    ? "in " + type.ToString()
+                    : type.ToString();
 
+            var structName = def.ParentSyntax.GetGenericTypeName();
+            var source = string.Format(@"        public {0}({1}) => _values = new({2});", structName,
+                string.Join(", ", def.Properties.Select(p => GetTypeString(p.Type) + " " + p.Name.ToLower())),
+                string.Join(", ", def.Properties.Select(p => p.Name.ToLower())));
+
+            yield return ToMemberDeclarationSyntax(source);
+        }
+
+        private IEnumerable<MemberDeclarationSyntax> GetGeneratedInterfaces(RecordDefinition def)
+        {
             var structName = def.ParentSyntax.GetGenericTypeName();
             var sources = new[]
             {
-                string.Format(@"        public {0}({1}) => _values = new({2});", structName,
-                    string.Join(", ", def.Properties.Select(p => $"{p.Type} {p.Name.ToLower()}")),
-                    string.Join(", ", def.Properties.Select(p => p.Name.ToLower()))),
-
                 string.Format(@"        public void Deconstruct({0}) => ({1}) = ({2});",
                     string.Join(", ", def.Properties.Select(p => $"out {p.Type} {p.Name.ToLower()}")),
                     string.Join(", ", def.Properties.Select(p => p.Name.ToLower())),
                     string.Join(", ", def.Properties.Select(p => p.Name))),
-
-                string.Format(@"        public static {0} Zero {{ get; }} = default;", structName),
 
                 //string.Format(@"        public bool Equals({0} other) => ({1}) == ({2});", structName,
                 //    string.Join(", ", def.Properties.Select(p => p.Name)),
@@ -140,14 +150,24 @@ namespace Roix.SourceGenerator
 
                 string.Format(@"        public string ToString(string? format, IFormatProvider? formatProvider) => $""{0} {{{{ {1} }}}}"";", structName,
                     string.Join(", ", def.Properties.Select(p => p.Name + " = {" + p.Name + ".ToString(format, formatProvider)}"))),
-
-                string.Format(@"        public bool IsZero => this == Zero;"),
             };
 
             foreach (var source in sources)
-            {
                 yield return ToMemberDeclarationSyntax(source);
-            }
+        }
+
+        private IEnumerable<MemberDeclarationSyntax> GetGeneratedRoixMethods(RecordDefinition def)
+        {
+            var structName = def.ParentSyntax.GetGenericTypeName();
+            var sources = new[]
+            {
+                string.Format(@"        public static {0} Zero {{ get; }} = default;", structName),
+                string.Format(@"        public bool IsZero => this == Zero;"),
+                string.Format(@"        public bool IsNotZero => !IsZero;"),
+            };
+
+            foreach (var source in sources)
+                yield return ToMemberDeclarationSyntax(source);
         }
 
     }

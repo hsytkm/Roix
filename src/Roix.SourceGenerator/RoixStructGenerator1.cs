@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Roix.SourceGenerator
 {
+#if false
     [Generator]
     public sealed class RoixStructGenerator1 : ISourceGenerator
     {
@@ -158,4 +159,5 @@ namespace {Consts.Namespace}
             }
         }
     }
+#endif
 }

@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.0.1.0</Version>
+    <Version>0.0.2.0</Version>
     <Authors>myoga</Authors>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -21,8 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Roix.SourceGenerator\Roix.SourceGenerator.csproj"
-                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Roix.SourceGenerator\Roix.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

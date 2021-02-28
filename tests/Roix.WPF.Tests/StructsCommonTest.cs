@@ -19,7 +19,6 @@ namespace Roix.WPF.Tests
             Marshal.SizeOf<RoixRect>().Is(32);
             Marshal.SizeOf<RoixGaugeRect>().Is(48);
             Marshal.SizeOf<RoixIntRect>().Is(16);
-            //Marshal.SizeOf<RoixIntGaugeRect>().Is(24);
 
             Marshal.SizeOf<System.Windows.Size>().Is(16);
             Marshal.SizeOf<RoixSize>().Is(16);

@@ -147,7 +147,7 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(x, y, width, height);
             var border = new RoixSize(10, 10);
 
-            var ir = new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBoundaries: true);
+            var ir = new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBorder: true);
             var ansRect = new RoixIntRect(ansX, ansY, ansWidth, ansHeight);
             ir.Is(ansRect);
         }
@@ -160,8 +160,8 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(x, y, width, height);
             var border = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBoundaries: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBoundaries: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBorder: true));
         }
 
         [Theory]

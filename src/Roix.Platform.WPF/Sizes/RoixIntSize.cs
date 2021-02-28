@@ -3,32 +3,23 @@ using System;
 
 namespace Roix.Wpf
 {
-    public readonly struct RoixIntSize : IEquatable<RoixIntSize>
+    [SourceGenerator.RoixStructGenerator]
+    public readonly partial struct RoixIntSize
     {
-        public static RoixIntSize Zero { get; } = new(0, 0);
-
-        public readonly int Width { get; }
-        public readonly int Height { get; }
+        readonly struct SourceValues
+        {
+            public readonly int Width;
+            public readonly int Height;
+            public SourceValues(int width, int height) => (Width, Height) = (width, height);
+        }
 
         #region ctor
         public RoixIntSize(int width, int height)
         {
             if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            (Width, Height) = (width, height);
+            _values = new(width, height);
         }
-
-        public readonly void Deconstruct(out int width, out int height) => (width, height) = (Width, Height);
         #endregion
-
-        #region Equals
-        public readonly bool Equals(RoixIntSize other) => (Width, Height) == (other.Width, other.Height);
-        public readonly override bool Equals(object? obj) => (obj is RoixIntSize other) && Equals(other);
-        public readonly override int GetHashCode() => HashCode.Combine(Width, Height);
-        public static bool operator ==(in RoixIntSize left, in RoixIntSize right) => left.Equals(right);
-        public static bool operator !=(in RoixIntSize left, in RoixIntSize right) => !(left == right);
-        #endregion
-
-        public readonly override string ToString() => $"{nameof(RoixIntSize)} {{ {nameof(Width)} = {Width}, {nameof(Height)} = {Height} }}";
 
         #region implicit
         public static implicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
@@ -45,7 +36,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public readonly bool IsZero => this == Zero;
         #endregion
 
     }

@@ -55,8 +55,8 @@ namespace RoixApp.Wpf
             CursorGaugePoint = MouseMovePoint.ToReadOnlyReactivePropertySlim();
 
             CursorPointToModel = CursorGaugePoint
-                .Where(gp => !gp.IsZero)
-                .Select(gp => gp.ConvertToNewGauge(imageSourceSize).ToRoixIntPoint(isCheckBoundaries: false))
+                .Where(gp => gp.IsNotZero)
+                .Select(gp => gp.ConvertToNewGauge(imageSourceSize).ToRoixIntPoint(isCheckBorder: false))
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -72,18 +72,18 @@ namespace RoixApp.Wpf
                     // ドラッグ枠の確定
                     var gaugeRectOnView = new RoixGaugeRect(MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     var gaugeRectOnModel = gaugeRectOnView.ConvertToNewGauge(imageSourceSize);
-                    SelectedRectangleToModel.Value = gaugeRectOnModel.GetClippedGaugeRect().ToRoixIntRect(isCheckBoundaries: true);
+                    SelectedRectangleToModel.Value = gaugeRectOnModel.GetClippedGaugeRect().ToRoixIntRect(isCheckBorder: true);
                 })
                 .Repeat()
                 .Select(lastestPoint => lastestPoint - MouseLeftDownPoint.Value)
-                .Where(gaugeVector => !gaugeVector.IsZero)
+                .Where(gaugeVector => gaugeVector.IsNotZero)
                 .Subscribe(gaugeVector => SelectedGaugeRectangle.Value = MouseLeftDownPoint.Value.CreateRoixGaugeRect(gaugeVector.Vector).GetClippedGaugeRect());
             #endregion
 
             #region ClickedFixedRectangle
             // 右クリックで固定サイズの枠を描画
             MouseRightDownPoint
-                .Where(gauge => !gauge.Border.IsZero)
+                .Where(gauge => gauge.Border.IsNotZero)
                 .Subscribe(gaugePointOnView =>
                 {
                     var gaugeSizeOnModel = new RoixGaugeSize(new RoixSize(100, 100), imageSourceSize);
@@ -96,14 +96,14 @@ namespace RoixApp.Wpf
 
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedGaugeRectangle
-                .Where(gauge => !gauge.Border.IsZero)
-                .Select(gaugeRectOnView => gaugeRectOnView.ConvertToNewGauge(imageSourceSize).ToRoixIntRect(isCheckBoundaries: false))
+                .Where(gauge => gauge.Border.IsNotZero)
+                .Select(gaugeRectOnView => gaugeRectOnView.ConvertToNewGauge(imageSourceSize).ToRoixIntRect(isCheckBorder: false))
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
             // View画像サイズの変更に応じて枠を伸縮
             ViewBorderSize
-                .Where(size => !size.IsZero)
+                .Where(size => size.IsNotZero)
                 .Subscribe(newBorder =>
                 {
                     SelectedGaugeRectangle.Value = SelectedGaugeRectangle.Value.ConvertToNewGauge(newBorder);

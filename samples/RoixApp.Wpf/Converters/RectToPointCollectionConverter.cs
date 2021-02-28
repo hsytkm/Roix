@@ -13,6 +13,6 @@ namespace RoixApp.Wpf.Converters
             => (!rect.IsZero && !rect.IsEmpty) ? rect.ToPointCollection() : null;
 
         public override RoixRect ConvertBack(PointCollection? points, object parameter, CultureInfo culture)
-            => RoixRect.Zero;
+            => default;
     }
 }

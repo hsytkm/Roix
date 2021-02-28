@@ -118,7 +118,7 @@ namespace Roix.WPF.Tests
         {
             var size = new RoixSize(width, height);
             var border = new RoixSize(10, 10);
-            var gs = new RoixGaugeSize(size, border).ToRoixIntSize(isCheckBoundaries: true);
+            var gs = new RoixGaugeSize(size, border).ToRoixIntSize(isCheckBorder: true);
             gs.Width.Is(ansWidth);
             gs.Height.Is(ansHeight);
         }
@@ -129,8 +129,8 @@ namespace Roix.WPF.Tests
             var size = new RoixSize(11, 10);    // Outside
             var border = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeSize(size, border).ToRoixIntSize(isCheckBoundaries: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeSize(size, RoixSize.Zero).ToRoixIntSize(isCheckBoundaries: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeSize(size, border).ToRoixIntSize(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixGaugeSize(size, RoixSize.Zero).ToRoixIntSize(isCheckBorder: true));
         }
 
         #endregion
