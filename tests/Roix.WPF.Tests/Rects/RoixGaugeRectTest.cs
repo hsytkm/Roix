@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Roix.WPF.Tests
 {
-    public class RoixGaugeRectTest
+    public class RoixBorderRectTest
     {
         #region Ctor
         [Theory]
@@ -19,29 +19,29 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(point, size);
             var border = new RoixSize(borderWidth, borderHeight);
 
-            var gr1 = new RoixGaugeRect(rect, border);
-            gr1.Roi.Is(rect);
-            gr1.Border.Is(border);
-            new RoixGaugeRect(rect, RoixSize.Zero);     //OK
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(rect, RoixSize.Empty));
+            var br1 = new RoixBorderRect(rect, border);
+            br1.Roi.Is(rect);
+            br1.Border.Is(border);
+            new RoixBorderRect(rect, RoixSize.Zero);     //OK
+            Assert.Throws<ArgumentException>(() => new RoixBorderRect(rect, RoixSize.Empty));
 
-            var gpoint1 = new RoixGaugePoint(point, border);
-            var gsize = new RoixGaugeSize(size, border);
-            var gr2 = new RoixGaugeRect(gpoint1, gsize);
-            gr2.Roi.Is(rect);
-            gr2.Border.Is(border);
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(gpoint1, RoixGaugeSize.Zero));
+            var gpoint1 = new RoixBorderPoint(point, border);
+            var gsize = new RoixBorderSize(size, border);
+            var br2 = new RoixBorderRect(gpoint1, gsize);
+            br2.Roi.Is(rect);
+            br2.Border.Is(border);
+            Assert.Throws<ArgumentException>(() => new RoixBorderRect(gpoint1, RoixBorderSize.Zero));
 
-            var gpoint2 = new RoixGaugePoint(point + (RoixVector)size, border);
-            var gr3 = new RoixGaugeRect(gpoint1, gpoint2);
-            gr3.Roi.Is(rect);
-            gr3.Border.Is(border);
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(gpoint1, RoixGaugePoint.Zero));
+            var gpoint2 = new RoixBorderPoint(point + (RoixVector)size, border);
+            var br3 = new RoixBorderRect(gpoint1, gpoint2);
+            br3.Roi.Is(rect);
+            br3.Border.Is(border);
+            Assert.Throws<ArgumentException>(() => new RoixBorderRect(gpoint1, RoixBorderPoint.Zero));
 
-            var gvector = new RoixGaugeVector((RoixVector)size, border);
-            var gr4 = new RoixGaugeRect(gpoint1, gvector);
-            gr4.Roi.Is(rect);
-            gr4.Border.Is(border);
+            var gvector = new RoixBorderVector((RoixVector)size, border);
+            var br4 = new RoixBorderRect(gpoint1, gvector);
+            br4.Roi.Is(rect);
+            br4.Border.Is(border);
         }
 
         [Theory]
@@ -49,7 +49,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, 0, 4, 4, 0, -1)]
         public void CtorBorderïâêîÉ_ÉÅ(double roiX, double roiY, double roiWidth, double roiHeight, double borderWidth, double borderHeight)
         {
-            Assert.Throws<ArgumentException>(() => new RoixGaugeRect(new RoixRect(roiX, roiY, roiWidth, roiHeight), new RoixSize(borderWidth, borderHeight)));
+            Assert.Throws<ArgumentException>(() => new RoixBorderRect(new RoixRect(roiX, roiY, roiWidth, roiHeight), new RoixSize(borderWidth, borderHeight)));
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace Roix.WPF.Tests
             var srcRect = new RoixRect(1, 2, 3, 4);
             var srcBorder = new RoixSize(10, 10);
 
-            var (roi, border) = new RoixGaugeRect(srcRect, srcBorder);
+            var (roi, border) = new RoixBorderRect(srcRect, srcBorder);
             roi.X.Is(srcRect.X);
             roi.Y.Is(srcRect.Y);
             roi.Width.Is(srcRect.Width);
@@ -75,14 +75,14 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(1, 2, 3, 4);
             var border = new RoixSize(10, 10);
 
-            var gr1 = new RoixGaugeRect(rect, border);
-            var gr2 = new RoixGaugeRect(rect, border);
-            gr1.Equals(gr2).IsTrue();
-            (gr1 == gr2).IsTrue();
-            (gr1 != gr2).IsFalse();
+            var br1 = new RoixBorderRect(rect, border);
+            var br2 = new RoixBorderRect(rect, border);
+            br1.Equals(br2).IsTrue();
+            (br1 == br2).IsTrue();
+            (br1 != br2).IsFalse();
 
-            var obj2 = (object)gr2;
-            gr1.Equals(obj2).IsTrue();
+            var obj2 = (object)br2;
+            br1.Equals(obj2).IsTrue();
         }
         #endregion
 
@@ -93,11 +93,11 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(1, 2, 3, 4);
             var size = new RoixSize(10, 10);
 
-            new RoixGaugeRect(rect, size).IsZero.IsFalse();
-            new RoixGaugeRect(rect, RoixSize.Zero).IsZero.IsFalse();
-            new RoixGaugeRect(RoixRect.Zero, size).IsZero.IsFalse();
-            new RoixGaugeRect(RoixRect.Zero, RoixSize.Zero).IsZero.IsTrue();
-            RoixGaugeRect.Zero.IsZero.IsTrue();
+            new RoixBorderRect(rect, size).IsZero.IsFalse();
+            new RoixBorderRect(rect, RoixSize.Zero).IsZero.IsFalse();
+            new RoixBorderRect(RoixRect.Zero, size).IsZero.IsFalse();
+            new RoixBorderRect(RoixRect.Zero, RoixSize.Zero).IsZero.IsTrue();
+            RoixBorderRect.Zero.IsZero.IsTrue();
         }
 
         [Theory]
@@ -109,10 +109,10 @@ namespace Roix.WPF.Tests
         {
             var rect = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var size = new RoixSize(borderWidth, borderHeight);
-            var gp = new RoixGaugeRect(rect, size);
+            var bp = new RoixBorderRect(rect, size);
 
-            gp.IsInsideBorder.Is(isInside);
-            gp.IsOutsideBorder.Is(!isInside);
+            bp.IsInsideBorder.Is(isInside);
+            bp.IsOutsideBorder.Is(!isInside);
         }
         #endregion
 
@@ -121,21 +121,21 @@ namespace Roix.WPF.Tests
         [InlineData(0.5)]
         [InlineData(4.0)]
         [InlineData(12.34)]
-        public void ConvertToNewGauge(double ratio)
+        public void ConvertToNewBorder(double ratio)
         {
             var point = new RoixPoint(10, 20);
             var size = new RoixSize(20, 40);
             var border = new RoixSize(100, 100);
-            var gr1 = new RoixGaugeRect(new RoixRect(point, size), border);
+            var br1 = new RoixBorderRect(new RoixRect(point, size), border);
 
             var newSize = new RoixSize(border.Width * ratio, border.Height * ratio);
-            var gr2 = gr1.ConvertToNewGauge(newSize);
+            var br2 = br1.ConvertToNewBorder(newSize);
 
-            gr2.Roi.TopLeft.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
-            gr2.Roi.Size.Is(new RoixSize(size.Width * ratio, size.Height * ratio));
+            br2.Roi.TopLeft.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
+            br2.Roi.Size.Is(new RoixSize(size.Width * ratio, size.Height * ratio));
 
-            Assert.Throws<ArgumentException>(() => gr1.ConvertToNewGauge(RoixSize.Empty));
-            Assert.Throws<ArgumentException>(() => gr1.ConvertToNewGauge(new RoixSize(0, 0)));
+            Assert.Throws<ArgumentException>(() => br1.ConvertToNewBorder(RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => br1.ConvertToNewBorder(new RoixSize(0, 0)));
         }
 
         [Theory]
@@ -147,7 +147,7 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(x, y, width, height);
             var border = new RoixSize(10, 10);
 
-            var ir = new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBorder: true);
+            var ir = new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true);
             var ansRect = new RoixIntRect(ansX, ansY, ansWidth, ansHeight);
             ir.Is(ansRect);
         }
@@ -160,8 +160,8 @@ namespace Roix.WPF.Tests
             var rect = new RoixRect(x, y, width, height);
             var border = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, border).ToRoixIntRect(isCheckBorder: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugeRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBorder: true));
         }
 
         [Theory]
@@ -173,11 +173,11 @@ namespace Roix.WPF.Tests
         {
             var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var groi = new RoixGaugeRect(roi, border);
+            var broi = new RoixBorderRect(roi, border);
 
-            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
+            var clippedRect = broi.GetClippedBorderRect(isPointPriority: true);
             clippedRect.Roi.Is(roi);
-            clippedRect.Border.Is(groi.Border);
+            clippedRect.Border.Is(broi.Border);
         }
 
         [Theory]
@@ -191,11 +191,11 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var ansSize = new RoixSize(ansWidth, ansHeight);
 
-            var groi = new RoixGaugeRect(roi, border);
-            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: true);
+            var broi = new RoixBorderRect(roi, border);
+            var clippedRect = broi.GetClippedBorderRect(isPointPriority: true);
             clippedRect.Roi.Size.Is(ansSize);
             clippedRect.Roi.TopLeft.Is(roi.TopLeft);
-            clippedRect.Border.Is(groi.Border);
+            clippedRect.Border.Is(broi.Border);
         }
 
         [Theory]
@@ -207,11 +207,11 @@ namespace Roix.WPF.Tests
         {
             var border = new RoixSize(10, 10);
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
-            var groi = new RoixGaugeRect(roi, border);
+            var broi = new RoixBorderRect(roi, border);
 
-            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
+            var clippedRect = broi.GetClippedBorderRect(isPointPriority: false);
             clippedRect.Roi.Is(roi);
-            clippedRect.Border.Is(groi.Border);
+            clippedRect.Border.Is(broi.Border);
         }
 
         [Theory]
@@ -224,11 +224,11 @@ namespace Roix.WPF.Tests
             var roi = new RoixRect(roiX, roiY, roiWidth, roiHeight);
             var ansPoint = new RoixPoint(ansX, ansY);
 
-            var groi = new RoixGaugeRect(roi, border);
-            var clippedRect = groi.GetClippedGaugeRect(isPointPriority: false);
+            var broi = new RoixBorderRect(roi, border);
+            var clippedRect = broi.GetClippedBorderRect(isPointPriority: false);
             clippedRect.Roi.TopLeft.Is(ansPoint);
             clippedRect.Roi.Size.Is(roi.Size);
-            clippedRect.Border.Is(groi.Border);
+            clippedRect.Border.Is(broi.Border);
         }
         #endregion
 

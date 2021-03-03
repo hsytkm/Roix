@@ -3,7 +3,7 @@
 namespace Roix.Wpf
 {
     [SourceGenerator.RoixStructGenerator]
-    public readonly partial struct RoixGaugeSize
+    public readonly partial struct RoixBorderSize
     {
         readonly struct SourceValues
         {
@@ -13,7 +13,7 @@ namespace Roix.Wpf
         }
 
         #region ctor
-        public RoixGaugeSize(in RoixSize size, in RoixSize border)
+        public RoixBorderSize(in RoixSize size, in RoixSize border)
         {
             if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             _values = new(size, border);
@@ -27,9 +27,9 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        //public static RoixGaugeSize operator *(in RoixGaugeSize gaugeSize, double mul) => new(gaugeSize.Size * mul, gaugeSize.Border);
+        //public static RoixBorderSize operator *(in RoixBorderSize borderSize, double mul) => new(borderSize.Size * mul, borderSize.Border);
 
-        //public static RoixGaugeSize operator /(in RoixGaugeSize gaugeSize, double div) => (div != 0) ? new(gaugeSize.Size / div, gaugeSize.Border) : throw new DivideByZeroException();
+        //public static RoixBorderSize operator /(in RoixBorderSize borderSize, double div) => (div != 0) ? new(borderSize.Size / div, borderSize.Border) : throw new DivideByZeroException();
         #endregion
 
         #region Properties
@@ -38,7 +38,7 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixGaugeSize ConvertToNewGauge(in RoixSize newBorder)
+        public RoixBorderSize ConvertToNewBorder(in RoixSize newBorder)
         {
             if (Border.IsInvalid) return this;
             if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);

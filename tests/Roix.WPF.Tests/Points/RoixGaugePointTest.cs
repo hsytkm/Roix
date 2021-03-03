@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Roix.WPF.Tests
 {
-    public class RoixGaugePointTest
+    public class RoixBorderPointTest
     {
         #region Ctor
         [Theory]
@@ -14,18 +14,18 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);
-            var gp1 = new RoixGaugePoint(point, size);
+            var bp1 = new RoixBorderPoint(point, size);
 
-            gp1.Point.X.Is(x);
-            gp1.Point.Y.Is(y);
-            gp1.Border.Width.Is(width);
-            gp1.Border.Height.Is(height);
+            bp1.Point.X.Is(x);
+            bp1.Point.Y.Is(y);
+            bp1.Border.Width.Is(width);
+            bp1.Border.Height.Is(height);
 
-            var gp2 = new RoixGaugePoint(x, y, width, height);
-            gp2.Point.Is(gp1.Point);
-            gp2.Border.Is(gp1.Border);
+            var bp2 = new RoixBorderPoint(x, y, width, height);
+            bp2.Point.Is(bp1.Point);
+            bp2.Border.Is(bp1.Border);
 
-            new RoixGaugePoint(point, RoixSize.Zero);     //OK
+            new RoixBorderPoint(point, RoixSize.Zero);     //OK
         }
 
         [Theory]
@@ -33,8 +33,8 @@ namespace Roix.WPF.Tests
         [InlineData(0, 0, -1, 2)]
         public void CtorïâêîÉ_ÉÅ(double x, double y, double width, double height)
         {
-            Assert.Throws<ArgumentException>(() => new RoixGaugePoint(x, y, width, height));
-            Assert.Throws<ArgumentException>(() => new RoixGaugePoint(new RoixPoint(0, 0), RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => new RoixBorderPoint(x, y, width, height));
+            Assert.Throws<ArgumentException>(() => new RoixBorderPoint(new RoixPoint(0, 0), RoixSize.Empty));
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(1.1, 2.2);
             var size = new RoixSize(3.3, 4.4);
-            var gp = new RoixGaugePoint(point, size);
-            var (roi, border) = gp;
+            var bp = new RoixBorderPoint(point, size);
+            var (roi, border) = bp;
             roi.Is(point);
             border.Is(size);
         }
@@ -54,8 +54,8 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             double x = 1.1, y = 2.2, width = 3.3, height = 4.4;
-            var p1 = new RoixGaugePoint(x, y, width, height);
-            var p2 = new RoixGaugePoint(x, y, width, height);
+            var p1 = new RoixBorderPoint(x, y, width, height);
+            var p2 = new RoixBorderPoint(x, y, width, height);
 
             p1.Equals(p2).IsTrue();
             (p1 == p2).IsTrue();
@@ -68,42 +68,42 @@ namespace Roix.WPF.Tests
 
         #region operator
         [Fact]
-        public void Add_RoixGaugePoint_RoixGaugeVector()
+        public void Add_RoixBorderPoint_RoixBorderVector()
         {
             double width = 10, height = 10;
-            var point1 = new RoixGaugePoint(10, 10, width, height);
-            var vector = new RoixGaugeVector(1, 1, width, height);
+            var point1 = new RoixBorderPoint(10, 10, width, height);
+            var vector = new RoixBorderVector(1, 1, width, height);
 
             var point2 = point1 + vector;
-            point2.Is(new RoixGaugePoint(11, 11, width, height));
+            point2.Is(new RoixBorderPoint(11, 11, width, height));
 
-            Assert.Throws<NotImplementedException>(() => point1 + new RoixGaugeVector(0, 0, width + 1, height + 1));
+            Assert.Throws<NotImplementedException>(() => point1 + new RoixBorderVector(0, 0, width + 1, height + 1));
         }
 
         [Fact]
-        public void Substruct_RoixGaugePoint_RoixGaugeVector()
+        public void Substruct_RoixBorderPoint_RoixBorderVector()
         {
             double width = 10, height = 10;
-            var point1 = new RoixGaugePoint(10, 10, width, height);
-            var vector = new RoixGaugeVector(1, 1, width, height);
+            var point1 = new RoixBorderPoint(10, 10, width, height);
+            var vector = new RoixBorderVector(1, 1, width, height);
 
             var point2 = point1 - vector;
-            point2.Is(new RoixGaugePoint(9, 9, width, height));
+            point2.Is(new RoixBorderPoint(9, 9, width, height));
 
-            Assert.Throws<NotImplementedException>(() => point1 - new RoixGaugeVector(0, 0, width + 1, height + 1));
+            Assert.Throws<NotImplementedException>(() => point1 - new RoixBorderVector(0, 0, width + 1, height + 1));
         }
 
         [Fact]
-        public void Substruct_RoixGaugePoint_RoixGaugePoint()
+        public void Substruct_RoixBorderPoint_RoixBorderPoint()
         {
             double width = 10, height = 10;
-            var point1 = new RoixGaugePoint(10, 10, width, height);
-            var point2 = new RoixGaugePoint(1, 1, width, height);
+            var point1 = new RoixBorderPoint(10, 10, width, height);
+            var point2 = new RoixBorderPoint(1, 1, width, height);
 
             var vector = point1 - point2;
-            vector.Is(new RoixGaugeVector(9, 9, width, height));
+            vector.Is(new RoixBorderVector(9, 9, width, height));
 
-            Assert.Throws<NotImplementedException>(() => point1 - new RoixGaugePoint(0, 0, width + 1, height + 1));
+            Assert.Throws<NotImplementedException>(() => point1 - new RoixBorderPoint(0, 0, width + 1, height + 1));
         }
         #endregion
 
@@ -114,11 +114,11 @@ namespace Roix.WPF.Tests
             var point = new RoixPoint(1, 0);
             var size = new RoixSize(10, 10);
 
-            new RoixGaugePoint(point, size).IsZero.IsFalse();
-            new RoixGaugePoint(point, RoixSize.Zero).IsZero.IsFalse();
-            new RoixGaugePoint(RoixPoint.Zero, size).IsZero.IsFalse();
-            new RoixGaugePoint(RoixPoint.Zero, RoixSize.Zero).IsZero.IsTrue();
-            RoixGaugePoint.Zero.IsZero.IsTrue();
+            new RoixBorderPoint(point, size).IsZero.IsFalse();
+            new RoixBorderPoint(point, RoixSize.Zero).IsZero.IsFalse();
+            new RoixBorderPoint(RoixPoint.Zero, size).IsZero.IsFalse();
+            new RoixBorderPoint(RoixPoint.Zero, RoixSize.Zero).IsZero.IsTrue();
+            RoixBorderPoint.Zero.IsZero.IsTrue();
         }
 
         [Theory]
@@ -131,7 +131,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, -1, 10, 10, false)]
         public void IsInside(double x, double y, double width, double height, bool isInside)
         {
-            var point = new RoixGaugePoint(x, y, width, height);
+            var point = new RoixBorderPoint(x, y, width, height);
             point.IsInsideBorder.Is(isInside);
             point.IsOutsideBorder.Is(!isInside);
         }
@@ -147,7 +147,7 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, 10, 10, 0, 0)]
         public void ClippedPoint(double x, double y, double width, double height, double answerX, double answerY)
         {
-            var point = new RoixGaugePoint(x, y, width, height).ClippedRoixPoint;
+            var point = new RoixBorderPoint(x, y, width, height).ClippedRoixPoint;
             point.X.Is(answerX);
             point.Y.Is(answerY);
         }
@@ -158,18 +158,18 @@ namespace Roix.WPF.Tests
         [InlineData(0.5)]
         [InlineData(4.0)]
         [InlineData(12.34)]
-        public void ConvertToNewGauge(double ratio)
+        public void ConvertToNewBorder(double ratio)
         {
             var point = new RoixPoint(10, 20);
             var size = new RoixSize(100, 100);
-            var gp1 = new RoixGaugePoint(point, size);
+            var bp1 = new RoixBorderPoint(point, size);
 
             var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
-            var gp2 = gp1.ConvertToNewGauge(newSize);
-            gp2.Point.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
+            var bp2 = bp1.ConvertToNewBorder(newSize);
+            bp2.Point.Is(new RoixPoint(point.X * ratio, point.Y * ratio));
 
-            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(RoixSize.Empty));
-            Assert.Throws<ArgumentException>(() => gp1.ConvertToNewGauge(new RoixSize(0, 0)));
+            Assert.Throws<ArgumentException>(() => bp1.ConvertToNewBorder(RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => bp1.ConvertToNewBorder(new RoixSize(0, 0)));
         }
 
         [Theory]
@@ -179,9 +179,9 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(x, y);
             var size = new RoixSize(10, 10);
-            var gp = new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBorder: true);
-            gp.X.Is(ansX);
-            gp.Y.Is(ansY);
+            var bp = new RoixBorderPoint(point, size).ToRoixIntPoint(isCheckBorder: true);
+            bp.X.Is(ansX);
+            bp.Y.Is(ansY);
         }
 
         [Fact]
@@ -190,26 +190,26 @@ namespace Roix.WPF.Tests
             var point = new RoixPoint(11, 10);    // Outside
             var size = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, size).ToRoixIntPoint(isCheckBorder: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixGaugePoint(point, RoixSize.Zero).ToRoixIntPoint(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixBorderPoint(point, size).ToRoixIntPoint(isCheckBorder: true));
+            Assert.Throws<InvalidOperationException>(() => new RoixBorderPoint(point, RoixSize.Zero).ToRoixIntPoint(isCheckBorder: true));
         }
 
         [Fact]
-        public void CreateRoixGaugeRect()
+        public void CreateRoixBorderRect()
         {
             double x = 1, y = 2, width = 10, height = 10;
             double vx = 3, vy = 4;
             var point = new RoixPoint(x, y);
             var border = new RoixSize(width, height);
             var vector = new RoixVector(vx, vy);
-            var ansRect = new RoixGaugeRect(new RoixRect(x, y, vx, vy), border);
+            var ansRect = new RoixBorderRect(new RoixRect(x, y, vx, vy), border);
 
-            var gp = new RoixGaugePoint(point, border);
-            var rect1 = gp.CreateRoixGaugeRect(vector);
+            var bp = new RoixBorderPoint(point, border);
+            var rect1 = bp.CreateRoixBorderRect(vector);
             rect1.Is(ansRect);
 
-            var gv = new RoixGaugeVector(vector, border);
-            var rect2 = gp.CreateRoixGaugeRect(gv);
+            var bv = new RoixBorderVector(vector, border);
+            var rect2 = bp.CreateRoixBorderRect(bv);
             rect2.Is(ansRect);
         }
         #endregion

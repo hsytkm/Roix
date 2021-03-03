@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Roix.WPF.Tests
 {
-    public class RoixGaugeVectorTest
+    public class RoixBorderVectorTest
     {
         #region Ctor
         [Theory]
@@ -14,18 +14,18 @@ namespace Roix.WPF.Tests
         {
             var vector = new RoixVector(x, y);
             var size = new RoixSize(width, height);
-            var gv1 = new RoixGaugeVector(vector, size);
+            var bv1 = new RoixBorderVector(vector, size);
 
-            gv1.Vector.X.Is(x);
-            gv1.Vector.Y.Is(y);
-            gv1.Border.Width.Is(width);
-            gv1.Border.Height.Is(height);
+            bv1.Vector.X.Is(x);
+            bv1.Vector.Y.Is(y);
+            bv1.Border.Width.Is(width);
+            bv1.Border.Height.Is(height);
 
-            var gv2 = new RoixGaugeVector(x, y, width, height);
-            gv2.Vector.Is(gv1.Vector);
-            gv2.Border.Is(gv1.Border);
+            var bv2 = new RoixBorderVector(x, y, width, height);
+            bv2.Vector.Is(bv1.Vector);
+            bv2.Border.Is(bv1.Border);
 
-            new RoixGaugeVector(vector, RoixSize.Zero);     //OK
+            new RoixBorderVector(vector, RoixSize.Zero);     //OK
         }
 
         [Theory]
@@ -33,8 +33,8 @@ namespace Roix.WPF.Tests
         [InlineData(0, 0, -1, 2)]
         public void CtorïâêîÉ_ÉÅ(double x, double y, double width, double height)
         {
-            Assert.Throws<ArgumentException>(() => new RoixGaugeVector(x, y, width, height));
-            Assert.Throws<ArgumentException>(() => new RoixGaugeVector(new RoixVector(0, 0), RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => new RoixBorderVector(x, y, width, height));
+            Assert.Throws<ArgumentException>(() => new RoixBorderVector(new RoixVector(0, 0), RoixSize.Empty));
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace Roix.WPF.Tests
         {
             var vector = new RoixVector(1.1, 2.2);
             var size = new RoixSize(3.3, 4.4);
-            var gv = new RoixGaugeVector(vector, size);
-            var (vec, border) = gv;
+            var bv = new RoixBorderVector(vector, size);
+            var (vec, border) = bv;
             vec.Is(vector);
             border.Is(size);
         }
@@ -54,8 +54,8 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             double x = 1.1, y = 2.2, width = 3.3, height = 4.4;
-            var p1 = new RoixGaugeVector(x, y, width, height);
-            var p2 = new RoixGaugeVector(x, y, width, height);
+            var p1 = new RoixBorderVector(x, y, width, height);
+            var p2 = new RoixBorderVector(x, y, width, height);
 
             p1.Equals(p2).IsTrue();
             (p1 == p2).IsTrue();
@@ -76,11 +76,11 @@ namespace Roix.WPF.Tests
             var vector = new RoixVector(1, 0);
             var size = new RoixSize(10, 10);
 
-            new RoixGaugeVector(vector, size).IsZero.IsFalse();
-            new RoixGaugeVector(vector, RoixSize.Zero).IsZero.IsFalse();
-            new RoixGaugeVector(RoixVector.Zero, size).IsZero.IsFalse();
-            new RoixGaugeVector(RoixVector.Zero, RoixSize.Zero).IsZero.IsTrue();
-            RoixGaugeVector.Zero.IsZero.IsTrue();
+            new RoixBorderVector(vector, size).IsZero.IsFalse();
+            new RoixBorderVector(vector, RoixSize.Zero).IsZero.IsFalse();
+            new RoixBorderVector(RoixVector.Zero, size).IsZero.IsFalse();
+            new RoixBorderVector(RoixVector.Zero, RoixSize.Zero).IsZero.IsTrue();
+            RoixBorderVector.Zero.IsZero.IsTrue();
         }
 
         [Theory]
@@ -93,7 +93,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, -1, 10, 10, false)]
         public void IsInside(double x, double y, double width, double height, bool isInside)
         {
-            var vec = new RoixGaugeVector(x, y, width, height);
+            var vec = new RoixBorderVector(x, y, width, height);
             vec.IsInsideBorder.Is(isInside);
             vec.IsOutsideBorder.Is(!isInside);
         }
@@ -104,18 +104,18 @@ namespace Roix.WPF.Tests
         [InlineData(0.5)]
         [InlineData(4.0)]
         [InlineData(12.34)]
-        public void ConvertToNewGauge(double ratio)
+        public void ConvertToNewBorder(double ratio)
         {
             var vector = new RoixVector(10, 20);
             var size = new RoixSize(100, 100);
-            var gv1 = new RoixGaugeVector(vector, size);
+            var bv1 = new RoixBorderVector(vector, size);
 
             var newSize = new RoixSize(size.Width * ratio, size.Height * ratio);
-            var gv2 = gv1.ConvertToNewGauge(newSize);
-            gv2.Vector.Is(new RoixVector(vector.X * ratio, vector.Y * ratio));
+            var bv2 = bv1.ConvertToNewBorder(newSize);
+            bv2.Vector.Is(new RoixVector(vector.X * ratio, vector.Y * ratio));
 
-            Assert.Throws<ArgumentException>(() => gv1.ConvertToNewGauge(RoixSize.Empty));
-            Assert.Throws<ArgumentException>(() => gv1.ConvertToNewGauge(new RoixSize(0, 0)));
+            Assert.Throws<ArgumentException>(() => bv1.ConvertToNewBorder(RoixSize.Empty));
+            Assert.Throws<ArgumentException>(() => bv1.ConvertToNewBorder(new RoixSize(0, 0)));
         }
         #endregion
 

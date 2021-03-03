@@ -4,7 +4,7 @@ using System;
 namespace Roix.Wpf
 {
     [SourceGenerator.RoixStructGenerator]
-    public readonly partial struct RoixGaugePoint
+    public readonly partial struct RoixBorderPoint
     {
         readonly struct SourceValues
         {
@@ -14,29 +14,29 @@ namespace Roix.Wpf
         }
 
         #region ctor
-        public RoixGaugePoint(in RoixPoint point, in RoixSize border)
+        public RoixBorderPoint(in RoixPoint point, in RoixSize border)
         {
             if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             _values = new(point, border);
         }
 
-        public RoixGaugePoint(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+        public RoixBorderPoint(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
         #endregion
 
         #region implicit
         #endregion
 
         #region explicit
-        //public static explicit operator RoixGaugeSize(in RoixGaugePoint gaugePoint) => new((RoixSize)gaugePoint.Point, gaugePoint.Border);
-        //public static explicit operator RoixGaugeVector(in RoixGaugePoint gaugePoint) => new((RoixVector)gaugePoint.Point, gaugePoint.Border);
+        //public static explicit operator RoixBorderSize(in RoixBorderPoint borderPoint) => new((RoixSize)borderPoint.Point, borderPoint.Border);
+        //public static explicit operator RoixBorderVector(in RoixBorderPoint borderPoint) => new((RoixVector)borderPoint.Point, borderPoint.Border);
         #endregion
 
         #region operator
-        public static RoixGaugePoint operator +(in RoixGaugePoint gaugePoint, in RoixGaugeVector gaugeVector) => (gaugePoint.Border == gaugeVector.Border) ? new(gaugePoint.Point + gaugeVector.Vector, gaugePoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? new(borderPoint.Point + borderVector.Vector, borderPoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
 
-        public static RoixGaugePoint operator -(in RoixGaugePoint gaugePoint, in RoixGaugeVector gaugeVector) => (gaugePoint.Border == gaugeVector.Border) ? new(gaugePoint.Point - gaugeVector.Vector, gaugePoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? new(borderPoint.Point - borderVector.Vector, borderPoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
 
-        public static RoixGaugeVector operator -(in RoixGaugePoint gaugePoint1, in RoixGaugePoint gaugePoint2) => (gaugePoint1.Border == gaugePoint2.Border) ? new(gaugePoint1.Point - gaugePoint2.Point, gaugePoint1.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? new(borderPoint1.Point - borderPoint2.Point, borderPoint1.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
         #endregion
 
         #region Properties
@@ -46,7 +46,7 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixGaugePoint ConvertToNewGauge(in RoixSize newBorder)
+        public RoixBorderPoint ConvertToNewBorder(in RoixSize newBorder)
         {
             if (Border.IsInvalid) return this;
             if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
@@ -68,11 +68,11 @@ namespace Roix.Wpf
             return new(x, y);
         }
 
-        public RoixGaugeRect CreateRoixGaugeRect(in RoixVector vector) => new RoixGaugeRect(new RoixRect(Point, vector), Border);
-        public RoixGaugeRect CreateRoixGaugeRect(in RoixGaugeVector gaugeVector)
+        public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new RoixBorderRect(new RoixRect(Point, vector), Border);
+        public RoixBorderRect CreateRoixBorderRect(in RoixBorderVector borderVector)
         {
-            if (Border != gaugeVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
-            return CreateRoixGaugeRect(gaugeVector.Vector);
+            if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            return CreateRoixBorderRect(borderVector.Vector);
         }
         #endregion
 
