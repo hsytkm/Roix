@@ -146,7 +146,7 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);
-            var r = new RoixIntRect(point, size);
+            var r = new RoixIntRect((RoixIntPoint)point, (RoixIntSize)size);
 
             r.X.Is(r.Location.X);
             r.Y.Is(r.Location.Y);

@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Roix.SourceGenerator
+namespace Roix.SourceGenerator.Extensions
 {
-    static class SyntaxExtensions
+    static class SyntaxExtension
     {
         private static readonly SyntaxToken PartialToken = Token(SyntaxKind.PartialKeyword);
 

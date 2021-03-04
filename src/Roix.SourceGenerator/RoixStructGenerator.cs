@@ -1,11 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
+using Roix.SourceGenerator.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Roix.SourceGenerator
 {
@@ -13,15 +12,6 @@ namespace Roix.SourceGenerator
     public sealed class RoixStructGenerator : ISourceGenerator
     {
         private const string _attributeName = nameof(RoixStructGenerator) + "Attribute";
-        private readonly static string _attributeSource = $@"
-using System;
-namespace {Consts.Namespace}
-{{
-    [AttributeUsage(AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-    public sealed class {_attributeName}: Attribute
-    {{
-    }}
-}}";
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -36,7 +26,8 @@ namespace {Consts.Namespace}
 
         public void Execute(GeneratorExecutionContext context)
         {
-            context.AddSource($"{_attributeName}.cs", SourceText.From(_attributeSource, Encoding.UTF8));
+            var attrCode = new RoixStructGeneratorAttributeTemplate().TransformText();
+            context.AddSource(_attributeName + ".cs", attrCode);
 
             try
             {

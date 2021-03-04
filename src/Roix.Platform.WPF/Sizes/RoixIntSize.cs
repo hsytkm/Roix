@@ -22,14 +22,13 @@ namespace Roix.Wpf
         #endregion
 
         #region implicit
-        public static implicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         public static implicit operator RoixSize(in RoixIntSize size) => new(size.Width, size.Height);
-
-        public static implicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         public static implicit operator System.Windows.Size(in RoixIntSize size) => new(size.Width, size.Height);
         #endregion
 
         #region explicit
+        public static explicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        public static explicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         #endregion
 
         #region operator
