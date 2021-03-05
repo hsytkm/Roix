@@ -1,9 +1,10 @@
-﻿using Roix.Wpf.Internals;
+﻿using Roix.SourceGenerator;
+using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
 {
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
     public readonly partial struct RoixBorderPoint
     {
         readonly struct SourceValues
@@ -12,6 +13,8 @@ namespace Roix.Wpf
             public readonly RoixSize Border;
             public SourceValues(in RoixPoint point, in RoixSize border) => (Point, Border) = (point, border);
         }
+
+        private RoixPoint Value => _values.Point;
 
         #region ctor
         public RoixBorderPoint(in RoixPoint point, in RoixSize border)
@@ -40,8 +43,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public bool IsInsideBorder => Point.X.IsInside(0, Border.Width) && Point.Y.IsInside(0, Border.Height);
-        public bool IsOutsideBorder => !IsInsideBorder;
         public RoixPoint ClippedRoixPoint => new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height));
         #endregion
 

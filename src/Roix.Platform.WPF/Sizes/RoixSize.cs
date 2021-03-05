@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Roix.SourceGenerator;
+using System;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Size.cs
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixSize
     {
         readonly struct SourceValues
@@ -16,12 +17,12 @@ namespace Roix.Wpf
         public static RoixSize Empty { get; } = new(double.NegativeInfinity);
 
         #region ctor
-        private RoixSize(double value) => _values = new(value, value);  // forEmpty(SkipCheck)
+        private RoixSize(double value) => _values = new(value, value);  // forEmpty(skip Validate)
 
-        public RoixSize(double width, double height)
+        private partial void Validate(in RoixSize value)
         {
-            if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            _values = new(width, height);
+            if (double.IsNegative(value.Width) || double.IsNegative(value.Height))
+                throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
         }
         #endregion
 
@@ -60,7 +61,7 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public bool IsInside(in RoixSize border) => ((RoixPoint)this).IsInside(border);
+        public bool IsInside(in RoixSize border) => (0 <= Width && Width <= border.Width) && (0 <= Height && Height <= border.Height);
         public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 

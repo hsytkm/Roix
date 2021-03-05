@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Roix.SourceGenerator;
+using System;
 
 namespace Roix.Wpf
 {
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
     public readonly partial struct RoixBorderSize
     {
         readonly struct SourceValues
@@ -11,6 +12,8 @@ namespace Roix.Wpf
             public readonly RoixSize Border;
             public SourceValues(in RoixSize size, in RoixSize border) => (Size, Border) = (size, border);
         }
+
+        private RoixSize Value => _values.Size;
 
         #region ctor
         public RoixBorderSize(in RoixSize size, in RoixSize border)
@@ -33,8 +36,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public bool IsInsideBorder => Size.IsInside(Border);
-        public bool IsOutsideBorder => !IsInsideBorder;
         #endregion
 
         #region Methods

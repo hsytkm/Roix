@@ -33,13 +33,19 @@ namespace Roix.SourceGenerator
             {
                 if (context.SyntaxReceiver is not SyntaxReceiver receiver) return;
 
-                foreach (var (self, parent) in receiver.CandidateStructs)
+                foreach (var (parent, record, options) in receiver.Targets)
                 {
                     var model = context.Compilation.GetSemanticModel(parent.SyntaxTree);
-                    if (model.GetDeclaredSymbol(parent) is INamedTypeSymbol type)
+                    if (model.GetDeclaredSymbol(parent) is INamedTypeSymbol typeSymbol)
                     {
-                        var source = new Generator().GeneratePartialDeclaration(type, parent).ToFullString();
-                        context.AddSource(type.GenerateHintName(), source);
+                        var template = new CodeTemplate(parent, record)
+                        {
+                            Namespace = typeSymbol.ContainingNamespace.ToDisplayString(),
+                            Options = options,
+                        };
+
+                        var text = template.TransformText();
+                        context.AddSource(typeSymbol.GenerateHintName(), text);
                     }
                 }
             }
@@ -51,7 +57,7 @@ namespace Roix.SourceGenerator
 
         private sealed class SyntaxReceiver : ISyntaxReceiver
         {
-            internal List<(StructDeclarationSyntax self, StructDeclarationSyntax parent)> CandidateStructs { get; } = new();
+            internal List<(StructDeclarationSyntax parent, StructDeclarationSyntax record, RoixStructGeneratorOptions options)> Targets { get; } = new();
 
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
@@ -62,20 +68,38 @@ namespace Roix.SourceGenerator
                 static StructDeclarationSyntax? GetParentStructDeclarationSyntax(StructDeclarationSyntax structDeclarationSyntax)
                     => structDeclarationSyntax.FirstAncestorOrSelf<StructDeclarationSyntax>(x => x != structDeclarationSyntax);
 
-                if (syntaxNode is not StructDeclarationSyntax structDeclarationSyntax) return;
+                if (syntaxNode is not StructDeclarationSyntax record) return;
 
-                if (structDeclarationSyntax.Identifier.Text != Consts.SourceValuesStruct) return;
-                if (!IsReadOnlyStruct(structDeclarationSyntax)) return;
+                if (record.Identifier.Text != Consts.SourceValuesStruct) return;
+                if (!IsReadOnlyStruct(record)) return;
 
-                var parent = GetParentStructDeclarationSyntax(structDeclarationSyntax);
+                var parent = GetParentStructDeclarationSyntax(record);
                 if (parent is null) return;
 
                 parent.AttributeLists.SelectMany(x => x.Attributes).Any(x => x.ToString() == _attributeName);
 
                 if (!IsReadOnlyStruct(parent)) return;
-                if (!parent.ChildNodes().Any(n => n == structDeclarationSyntax)) return;
+                if (!parent.ChildNodes().Any(n => n == record)) return;
 
-                CandidateStructs.Add((structDeclarationSyntax, parent));
+                var options = GetOptionsFromAttribute(parent);
+
+                Targets.Add((parent, record, options));
+            }
+
+            private static RoixStructGeneratorOptions GetOptionsFromAttribute(StructDeclarationSyntax structDeclarationSyntax)
+            {
+                var attr = structDeclarationSyntax.AttributeLists.SelectMany(x => x.Attributes)
+                    .FirstOrDefault(x => x.Name.ToString() is nameof(RoixStructGenerator) or _attributeName);
+
+                var argSyntax = attr?.ArgumentList?.Arguments.FirstOrDefault();
+
+                if (argSyntax is null) return RoixStructGeneratorOptions.None;
+
+                // e.g. UnitGenerateOptions.ImplicitOperator | UnitGenerateOptions.ParseMethod => ImplicitOperatior, ParseMethod
+                var parsed = Enum.Parse(typeof(RoixStructGeneratorOptions),
+                    argSyntax.Expression.ToString().Replace(nameof(RoixStructGeneratorOptions) + ".", "").Replace("|", ","));
+
+                return (RoixStructGeneratorOptions)parsed;
             }
         }
     }

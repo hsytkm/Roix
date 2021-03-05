@@ -1,11 +1,12 @@
-﻿using Roix.Wpf.Internals;
+﻿using Roix.SourceGenerator;
+using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Point.cs
 
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair)]
     public readonly partial struct RoixPoint
     {
         readonly struct SourceValues
@@ -32,11 +33,11 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
+        public bool IsInside(in RoixSize border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
+        public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
         #region Methods
-        public bool IsInside(in RoixSize border) => X.IsInside(0, border.Width) && Y.IsInside(0, border.Height);
-        public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
     }

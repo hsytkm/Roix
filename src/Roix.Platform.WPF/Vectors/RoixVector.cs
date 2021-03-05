@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Roix.SourceGenerator;
+using System;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Vector.cs
 
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator)]
     public readonly partial struct RoixVector
     {
         readonly struct SourceValues
@@ -27,12 +28,12 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        public static RoixVector operator +(in RoixVector vector1, in RoixVector vector2) => new(vector1.X + vector2.X, vector1.Y + vector2.Y);
         public static RoixVector operator -(in RoixVector vector) => Zero - vector;
-        public static RoixVector operator -(in RoixVector vector1, in RoixVector vector2) => new(vector1.X - vector2.X, vector1.Y - vector2.Y);
         #endregion
 
         #region Properties
+        public bool IsInside(in RoixSize border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
+        public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
     }

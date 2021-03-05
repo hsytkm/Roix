@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Roix.SourceGenerator;
+using System;
 using System.Linq;
 
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Rect.cs
 
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator]
     public readonly partial struct RoixRect
     {
         readonly struct SourceValues

@@ -1,9 +1,10 @@
-﻿using Roix.Wpf.Internals;
+﻿using Roix.SourceGenerator;
+using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
 {
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.TypeInt | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixIntSize
     {
         readonly struct SourceValues
@@ -14,10 +15,10 @@ namespace Roix.Wpf
         }
 
         #region ctor
-        public RoixIntSize(int width, int height)
+        private partial void Validate(in RoixIntSize value)
         {
-            if (width < 0 || height < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            _values = new(width, height);
+            if (value.Width < 0 || value.Height < 0)
+                throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
         }
         #endregion
 

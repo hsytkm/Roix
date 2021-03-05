@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Roix.SourceGenerator;
+using System;
 
 namespace Roix.Wpf
 {
-    [SourceGenerator.RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.TypeInt)]
     public readonly partial struct RoixIntRect
     {
         readonly struct SourceValues

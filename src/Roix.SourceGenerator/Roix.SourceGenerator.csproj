@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="CodeTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CodeTemplate.cs</LastGenOutput>
+    </None>
     <None Update="RoixStructGeneratorAttributeTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>RoixStructGeneratorAttributeTemplate.cs</LastGenOutput>
@@ -22,6 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="CodeTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CodeTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Update="RoixStructGeneratorAttributeTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
