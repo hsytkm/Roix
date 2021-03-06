@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.TypeInt)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixIntRect
     {
         readonly struct SourceValues
@@ -33,18 +33,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public int X => Location.X;
-        public int Y => Location.Y;
-        public int Width => Size.Width;
-        public int Height => Size.Height;
-        public int Left => Location.X;
-        public int Right => Location.X + Size.Width;
-        public int Top => Location.Y;
-        public int Bottom => Location.Y + Size.Height;
-        public RoixIntPoint TopLeft => Location;
-        public RoixIntPoint TopRight => new(Right, Top);
-        public RoixIntPoint BottomLeft => new(Left, Bottom);
-        public RoixIntPoint BottomRight => new(Right, Bottom);
         #endregion
 
     }

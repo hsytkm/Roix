@@ -6,7 +6,7 @@ namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Rect.cs
 
-    [RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixRect
     {
         readonly struct SourceValues
@@ -75,19 +75,6 @@ namespace Roix.Wpf
 
         #region Properties
         public bool IsEmpty => this == Empty;
-
-        public double X => Location.X;
-        public double Y => Location.Y;
-        public double Width => Size.Width;
-        public double Height => Size.Height;
-        public double Left => Location.X;
-        public double Right => Location.X + Size.Width;
-        public double Top => Location.Y;
-        public double Bottom => Location.Y + Size.Height;
-        public RoixPoint TopLeft => Location;
-        public RoixPoint TopRight => new(Right, Top);
-        public RoixPoint BottomLeft => new(Left, Bottom);
-        public RoixPoint BottomRight => new(Right, Bottom);
         #endregion
 
         #region Methods

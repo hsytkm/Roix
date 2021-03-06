@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderPoint
     {
         readonly struct SourceValues

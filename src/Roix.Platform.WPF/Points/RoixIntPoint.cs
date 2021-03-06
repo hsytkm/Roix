@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair | RoixStructGeneratorOptions.TypeInt)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator2)]
     public readonly partial struct RoixIntPoint
     {
         readonly struct SourceValues
@@ -13,6 +13,10 @@ namespace Roix.Wpf
             public readonly int Y;
             public SourceValues(int x, int y) => (X, Y) = (x, y);
         }
+
+        #region ctor
+        public RoixIntPoint(double x, double y) => _values = new(x.FloorToInt(), y.FloorToInt());
+        #endregion
 
         #region implicit
         public static implicit operator RoixPoint(in RoixIntPoint point) => new(point.X, point.Y);

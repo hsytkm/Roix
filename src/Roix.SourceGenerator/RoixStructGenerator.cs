@@ -38,10 +38,9 @@ namespace Roix.SourceGenerator
                     var model = context.Compilation.GetSemanticModel(parent.SyntaxTree);
                     if (model.GetDeclaredSymbol(parent) is INamedTypeSymbol typeSymbol)
                     {
-                        var template = new CodeTemplate(parent, record)
+                        var template = new CodeTemplate(parent, record, options)
                         {
                             Namespace = typeSymbol.ContainingNamespace.ToDisplayString(),
-                            Options = options,
                         };
 
                         var text = template.TransformText();

@@ -8,6 +8,9 @@ namespace Roix.Wpf.Internals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RoundToInt(this double value) => (int)Math.Round(value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FloorToInt(this double value) => (int)Math.Floor(value);
+
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public static bool IsInside(this double value, double min, double max) => min <= value && value <= max;
 

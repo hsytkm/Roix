@@ -16,7 +16,7 @@ namespace Roix.SourceGenerator
 
         internal string Namespace { get; set; } = "";
         internal string? Type { get; set; }
-        internal RoixStructGeneratorOptions Options { get; set; }
+        internal RoixStructGeneratorOptions Options { get; }
         public string? ToStringFormat { get; set; }
 
         internal string Name { get; }
@@ -24,10 +24,11 @@ namespace Roix.SourceGenerator
         internal IReadOnlyList<SimpleProperty> Properties { get; }
         internal bool IsConstructorDeclared { get; }
 
-        public CodeTemplate(StructDeclarationSyntax parentDecl, StructDeclarationSyntax recordDecl)
+        internal CodeTemplate(StructDeclarationSyntax parentDecl, StructDeclarationSyntax recordDecl, RoixStructGeneratorOptions options)
         {
-            Name = parentDecl.GetGenericTypeName();
             ParentSyntax = parentDecl;
+            Name = parentDecl.GetGenericTypeName();
+            Options = options | GetOptionsFromName(Name);
             Properties = SimpleProperty.New(recordDecl).ToArray();
             IsConstructorDeclared = GetIsConstructorDeclared(parentDecl, Properties);
         }
@@ -49,5 +50,27 @@ namespace Roix.SourceGenerator
 
         internal bool HasFlag(RoixStructGeneratorOptions options) => Options.HasFlag(options);
 
+        internal RoixStructGeneratorOptions GetOptionsFromName(string structName)
+        {
+            var isRoix = structName.Contains("Roix");
+            var isInt = structName.Contains("Int");
+            var isBorder = structName.Contains("Border");
+            var isPoint = structName.Contains("Point");
+            var isVector = structName.Contains("Vector");
+            var isSize = structName.Contains("Size");
+            var isRect = structName.Contains("Rect");
+
+            var option = RoixStructGeneratorOptions.None;
+            if (!isRoix) return option;
+
+            if (isInt) option |= RoixStructGeneratorOptions.TypeInt;
+            if (isBorder) option |= RoixStructGeneratorOptions.WithBorder;
+            if (!isBorder)
+            {
+                if (isPoint || isVector || isSize) option |= RoixStructGeneratorOptions.XYPair;
+                if (isRect) option |= RoixStructGeneratorOptions.Rect;
+            }
+            return option;
+        }
     }
 }

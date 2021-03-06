@@ -4,7 +4,7 @@ using System;
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Size.cs
-    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair | RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixSize
     {
         readonly struct SourceValues
@@ -80,7 +80,6 @@ namespace Roix.Wpf
 
         #region Properties
         public bool IsEmpty => this == Empty;
-        public bool IsIncludeZero => X == 0 || Y == 0;
         public bool IsIncludeNegative => double.IsNegative(X) || double.IsNegative(Y);
         #endregion
 

@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderSize
     {
         readonly struct SourceValues

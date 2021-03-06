@@ -45,10 +45,20 @@ using System;
     {
         return string.Join(", ", Properties.Select(p => p.Name + " = {" + p.Name + ".ToString(format, formatProvider)}"));
     }
-
+    
     string GetRoixSizeStructName()
     {
         return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntSize" : "RoixSize";
+    }
+    
+    string GetRoixPointStructName()
+    {
+        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntPoint" : "RoixPoint";
+    }
+    
+    string GetRoixBuiltInType()
+    {
+        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
     }
     
     string GetOperatorString(ArithmeticOperators ope)
@@ -65,13 +75,31 @@ using System;
         var os = GetOperatorString(ope);
         return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + name2 + "." + p.Name));
     }
+
+    string GetRatioProperty(int index)
+    {
+        return ((index & 1) == 0) ? "X" : "Y";
+    }
+    
+    string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name1, string name2)
+    {
+        var os = GetOperatorString(ope);
+        var roixs = Properties.Select(p => name1 + "." + p.Name).ToArray();
+
+        var opes = new string[roixs.Length];
+        for (int i = 0; i < roixs.Length; ++i)
+        {
+            opes[i] = roixs[i] + os + (name2 + "." + GetRatioProperty(i));
+        }
+        return string.Join(", ", opes);
+    }
     
     string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
     {
         var os = GetOperatorString(ope);
         return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + value2));
     }
-
+    
 #>
 
 <# if (!string.IsNullOrEmpty(Namespace)) { #>
@@ -95,7 +123,8 @@ namespace <#= Namespace #>
   <# } #>
         }
 <# } #>
-<# if (HasFlag(RoixStructGeneratorOptions.Validate)) { #> 
+<# if (HasFlag(RoixStructGeneratorOptions.Validate)) { #>
+        // RoixStructGeneratorOptions.Validate
         private partial void Validate(in <#= Name #> value);
 <# } #>
         public void Deconstruct(<#= GetTypeAndLowerNames("out {0} {1}") #>) => (<#= GetLowerNames() #>) = (<#= GetNames() #>);
@@ -112,12 +141,29 @@ namespace <#= Namespace #>
         public static <#= Name #> Zero { get; } = default;
         public bool IsZero => this == Zero;
         public bool IsNotZero => !this.IsZero;
-
+<# if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
+        // RoixStructGeneratorOptions.Rect
+        public <#= GetRoixBuiltInType() #> X => Location.X;
+        public <#= GetRoixBuiltInType() #> Y => Location.Y;
+        public <#= GetRoixBuiltInType() #> Width => Size.Width;
+        public <#= GetRoixBuiltInType() #> Height => Size.Height;
+        public <#= GetRoixBuiltInType() #> Left => Location.X;
+        public <#= GetRoixBuiltInType() #> Right => Location.X + Size.Width;
+        public <#= GetRoixBuiltInType() #> Top => Location.Y;
+        public <#= GetRoixBuiltInType() #> Bottom => Location.Y + Size.Height;
+        public <#= GetRoixPointStructName() #> TopLeft => Location;
+        public <#= GetRoixPointStructName() #> TopRight => new(Right, Top);
+        public <#= GetRoixPointStructName() #> BottomLeft => new(Left, Bottom);
+        public <#= GetRoixPointStructName() #> BottomRight => new(Right, Bottom);
+<# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+        // RoixStructGeneratorOptions.XYPair
+        public bool IsIncludeZero => (X == 0 || Y == 0);
         public bool IsInside(in <#= GetRoixSizeStructName() #> border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
         public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
+        // RoixStructGeneratorOptions.WithBorder
         public bool IsInsideBorder => this.Value.IsInside(this.Border);
         public bool IsOutsideBorder => !this.IsInsideBorder;
 
@@ -130,8 +176,8 @@ namespace <#= Namespace #>
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
 <# } #>
-
 <# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator1)) { #>
+        // RoixStructGeneratorOptions.ArithmeticOperator1
         public static <#= Name #> operator +(in <#= Name #> value1, in <#= Name #> value2)
         {
             return new(<#= GetOperate2Value(ArithmeticOperators.Add, "value1", "value2") #>);
@@ -142,8 +188,8 @@ namespace <#= Namespace #>
             return new(<#= GetOperate2Value(ArithmeticOperators.Subtract, "value1", "value2") #>);
         }
 <# } #>
-
 <# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator2)) { #>
+        // RoixStructGeneratorOptions.ArithmeticOperator2
         public static <#= Name #> operator *(in <#= Name #> value, double scalar)
         {
             return new(<#= GetOperate1Value(ArithmeticOperators.Multiply, "value", "scalar") #>);
@@ -157,18 +203,18 @@ namespace <#= Namespace #>
 
         public static <#= Name #> operator *(in <#= Name #> value, in RoixRatioXY ratio)
         {
-            return new(<#= GetOperate2Value(ArithmeticOperators.Multiply, "value", "ratio") #>);
+            return new(<#= GetOperatorRoixAndRatio(ArithmeticOperators.Multiply, "value", "ratio") #>);
         }
 
         public static <#= Name #> operator /(in <#= Name #> value, in RoixRatioXY ratio)
         {
-            if (ratio.X == 0 || ratio.Y == 0) throw new DivideByZeroException();
-            return new(<#= GetOperate2Value(ArithmeticOperators.Divide, "value", "ratio") #>);
+            if (ratio.IsIncludeZero) throw new DivideByZeroException();
+            return new(<#= GetOperatorRoixAndRatio(ArithmeticOperators.Divide, "value", "ratio") #>);
         }
 
         public static RoixRatioXY operator /(in <#= Name #> value1, in <#= Name #> value2)
         {
-            if (value2.X == 0 || value2.Y == 0) throw new DivideByZeroException();
+            if (value2.IsIncludeZero) throw new DivideByZeroException();
             return new(<#= GetOperate2Value(ArithmeticOperators.Divide, "value1", "value2") #>);
         }
 <# } #>

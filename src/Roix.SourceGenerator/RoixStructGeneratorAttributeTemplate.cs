@@ -48,18 +48,23 @@ namespace Roix.SourceGenerator
     [Flags]
     internal enum RoixStructGeneratorOptions
     {
-        None = 0,
-        XYPair = 1,
-        WithBorder = 2,
-        TypeInt = 4,
-        Validate = 8,
-        ArithmeticOperator1 = 16,
-        ArithmeticOperator2 = 32,
-        E6 = 32,
-        E7 = 64,
-        E8 = 128,
-        E9 = 256,
-
+        None = 0x0000,
+        XYPair = 0x0001,
+        Rect = 0x0002,
+        WithBorder = 0x0004,
+        TypeInt = 0x0008,
+        Validate = 0x0010,
+        ArithmeticOperator1 = 0x0020,
+        ArithmeticOperator2 = 0x0040,
+        Flag8 = 0x0080,
+        Flag9 = 0x0100,
+        Flag10 = 0x0200,
+        Flag11 = 0x0400,
+        Flag12 = 0x0800,
+        Flag13 = 0x1000,
+        Flag14 = 0x2000,
+        Flag15 = 0x4000,
+        Flag16 = 0x8000,
     }
 }");
             return this.GenerationEnvironment.ToString();
