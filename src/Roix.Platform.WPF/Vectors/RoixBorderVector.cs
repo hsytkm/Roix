@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderVector
     {
         readonly struct SourceValues
@@ -16,13 +16,12 @@ namespace Roix.Wpf
         private RoixVector Value => _values.Vector;
 
         #region ctor
-        public RoixBorderVector(in RoixVector vector, in RoixSize border)
-        {
-            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-            _values = new(vector, border);
-        }
-
         public RoixBorderVector(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+
+        private partial void Validate(in RoixBorderVector value)
+        {
+            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        }
         #endregion
 
         #region implicit
@@ -39,14 +38,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderVector ConvertToNewBorder(in RoixSize newBorder)
-        {
-            if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
-
-            var newVector = new RoixVector(Vector.X * newBorder.Width / Border.Width, Vector.Y * newBorder.Height / Border.Height);
-            return new(newVector, newBorder);
-        }
         #endregion
 
     }

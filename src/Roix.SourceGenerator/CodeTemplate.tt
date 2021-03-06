@@ -65,6 +65,12 @@ using System;
         var os = GetOperatorString(ope);
         return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + name2 + "." + p.Name));
     }
+    
+    string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
+    {
+        var os = GetOperatorString(ope);
+        return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + value2));
+    }
 
 #>
 
@@ -106,11 +112,26 @@ namespace <#= Namespace #>
         public static <#= Name #> Zero { get; } = default;
         public bool IsZero => this == Zero;
         public bool IsNotZero => !this.IsZero;
-<# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
-        public bool IsInsideBorder => this.Value.IsInside(Border);
-        public bool IsOutsideBorder => !this.IsInsideBorder;
+
+<# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+        public bool IsInside(in <#= GetRoixSizeStructName() #> border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
+        public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
 <# } #>
-<# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator)) { #>
+<# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
+        public bool IsInsideBorder => this.Value.IsInside(this.Border);
+        public bool IsOutsideBorder => !this.IsInsideBorder;
+
+        public <#= Name #> ConvertToNewBorder(in <#= GetRoixSizeStructName() #> newBorder)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero) return this;
+            if (newBorder.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+
+            return new(this.Value * (newBorder / this.Border), newBorder);
+        }
+<# } #>
+
+<# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator1)) { #>
         public static <#= Name #> operator +(in <#= Name #> value1, in <#= Name #> value2)
         {
             return new(<#= GetOperate2Value(ArithmeticOperators.Add, "value1", "value2") #>);
@@ -119,6 +140,19 @@ namespace <#= Namespace #>
         public static <#= Name #> operator -(in <#= Name #> value1, in <#= Name #> value2)
         {
             return new(<#= GetOperate2Value(ArithmeticOperators.Subtract, "value1", "value2") #>);
+        }
+<# } #>
+
+<# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator2)) { #>
+        public static <#= Name #> operator *(in <#= Name #> value, double scalar)
+        {
+            return new(<#= GetOperate1Value(ArithmeticOperators.Multiply, "value", "scalar") #>);
+        }
+
+        public static <#= Name #> operator /(in <#= Name #> value, double scalar)
+        {
+            if (scalar == 0) throw new DivideByZeroException();
+            return new(<#= GetOperate1Value(ArithmeticOperators.Divide, "value", "scalar") #>);
         }
 
         public static <#= Name #> operator *(in <#= Name #> value, in RoixRatioXY ratio)

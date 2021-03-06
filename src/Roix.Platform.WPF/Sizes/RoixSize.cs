@@ -4,7 +4,7 @@ using System;
 namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Size.cs
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixSize
     {
         readonly struct SourceValues
@@ -16,13 +16,15 @@ namespace Roix.Wpf
 
         public static RoixSize Empty { get; } = new(double.NegativeInfinity);
 
+        private double X => Width;
+        private double Y => Height;
+
         #region ctor
         private RoixSize(double value) => _values = new(value, value);  // forEmpty(skip Validate)
 
         private partial void Validate(in RoixSize value)
         {
-            if (double.IsNegative(value.Width) || double.IsNegative(value.Height))
-                throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            if (value.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
         }
         #endregion
 
@@ -37,32 +39,52 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        public static RoixSize operator *(in RoixSize size, double mul)
+        public static RoixSize operator *(in RoixSize size, double scalar)
         {
             if (size.IsEmpty) return Empty;
-            if (mul < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(size.Width * mul, size.Height * mul);
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(size.Width * scalar, size.Height * scalar);
         }
 
-        public static RoixSize operator /(in RoixSize size, double div)
+        public static RoixSize operator /(in RoixSize size, double scalar)
         {
-            if (div == 0) throw new DivideByZeroException();
-            return size * (1d / div);
+            if (size.IsEmpty) return Empty;
+            if (scalar == 0) throw new DivideByZeroException();
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return size * (1d / scalar);
+        }
+
+        public static RoixSize operator *(in RoixSize size, in RoixRatioXY ratio)
+        {
+            if (size.IsEmpty) return Empty;
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(size.X * ratio.X, size.Y * ratio.Y);
+        }
+
+        public static RoixSize operator /(in RoixSize size, in RoixRatioXY ratio)
+        {
+            if (size.IsEmpty) return Empty;
+            if (ratio.IsIncludeZero) throw new DivideByZeroException();
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(size.X / ratio.X, size.Y / ratio.Y);
+        }
+
+        public static RoixRatioXY operator /(in RoixSize size1, in RoixSize size2)
+        {
+            if (size1.IsEmpty || size2.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (size2.IsIncludeZero) throw new DivideByZeroException();
+            if (size2.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(size1.Width / size2.Width, size1.Height / size2.Height);
         }
         #endregion
 
         #region Properties
         public bool IsEmpty => this == Empty;
-
-        /// <summary>Length=0 is Invalid</summary>
-        public bool IsInvalid => IsEmpty || IsZero;
-
-        public bool IsValid => !IsInvalid;
+        public bool IsIncludeZero => X == 0 || Y == 0;
+        public bool IsIncludeNegative => double.IsNegative(X) || double.IsNegative(Y);
         #endregion
 
         #region Methods
-        public bool IsInside(in RoixSize border) => (0 <= Width && Width <= border.Width) && (0 <= Height && Height <= border.Height);
-        public bool IsOutside(in RoixSize border) => !IsInside(border);
         #endregion
 
 

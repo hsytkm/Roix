@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.TypeInt)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair | RoixStructGeneratorOptions.TypeInt)]
     public readonly partial struct RoixIntPoint
     {
         readonly struct SourceValues
@@ -29,8 +29,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        public bool IsInside(in RoixIntSize border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
-        public bool IsOutside(in RoixIntSize border) => !IsInside(border);
         #endregion
 
     }

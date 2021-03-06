@@ -15,5 +15,8 @@ namespace Roix.Wpf
 
         public RoixRatioXY(double d) => _values = new(d, d);
 
+        public bool IsIncludeZero => X == 0 || Y == 0;
+        public bool IsIncludeNegative => double.IsNegative(X) || double.IsNegative(Y);
+
     }
 }

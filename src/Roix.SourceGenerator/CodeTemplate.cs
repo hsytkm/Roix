@@ -83,6 +83,12 @@ namespace Roix.SourceGenerator
         var os = GetOperatorString(ope);
         return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + name2 + "." + p.Name));
     }
+    
+    string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
+    {
+        var os = GetOperatorString(ope);
+        return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + value2));
+    }
 
 
             this.Write("\r\n");
@@ -162,12 +168,33 @@ namespace Roix.SourceGenerator
             this.Write(" }}\";\r\n\r\n        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" Zero { get; } = default;\r\n        public bool IsZero => this == Zero;\r\n        p" +
-                    "ublic bool IsNotZero => !this.IsZero;\r\n");
- if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
-            this.Write("        public bool IsInsideBorder => this.Value.IsInside(Border);\r\n        publi" +
-                    "c bool IsOutsideBorder => !this.IsInsideBorder;\r\n");
+                    "ublic bool IsNotZero => !this.IsZero;\r\n\r\n");
+ if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+            this.Write("        public bool IsInside(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);\r\n   " +
+                    "     public bool IsOutside(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" border) => !IsInside(border);\r\n");
  } 
- if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator)) { 
+ if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
+            this.Write("        public bool IsInsideBorder => this.Value.IsInside(this.Border);\r\n        " +
+                    "public bool IsOutsideBorder => !this.IsInsideBorder;\r\n\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ConvertToNewBorder(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(@" newBorder)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero) return this;
+            if (newBorder.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+
+            return new(this.Value * (newBorder / this.Border), newBorder);
+        }
+");
+ } 
+            this.Write("\r\n");
+ if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator1)) { 
             this.Write("        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" operator +(in ");
@@ -184,6 +211,23 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value2)\r\n        {\r\n            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate2Value(ArithmeticOperators.Subtract, "value1", "value2")));
+            this.Write(");\r\n        }\r\n");
+ } 
+            this.Write("\r\n");
+ if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator2)) { 
+            this.Write("        public static ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" operator *(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" value, double scalar)\r\n        {\r\n            return new(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate1Value(ArithmeticOperators.Multiply, "value", "scalar")));
+            this.Write(");\r\n        }\r\n\r\n        public static ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" operator /(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" value, double scalar)\r\n        {\r\n            if (scalar == 0) throw new DivideB" +
+                    "yZeroException();\r\n            return new(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate1Value(ArithmeticOperators.Divide, "value", "scalar")));
             this.Write(");\r\n        }\r\n\r\n        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" operator *(in ");

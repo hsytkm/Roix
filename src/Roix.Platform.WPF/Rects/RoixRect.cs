@@ -42,6 +42,35 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
+        public static RoixRect operator *(in RoixRect rect, double scalar)
+        {
+            if (rect.IsEmpty) return Empty;
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(rect.X * scalar, rect.Y * scalar, rect.Width * scalar, rect.Height * scalar);
+        }
+
+        public static RoixRect operator /(in RoixRect rect, double scalar)
+        {
+            if (rect.IsEmpty) return Empty;
+            if (scalar == 0) throw new DivideByZeroException();
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return rect * (1d / scalar);
+        }
+
+        public static RoixRect operator *(in RoixRect rect, in RoixRatioXY ratio)
+        {
+            if (rect.IsEmpty) return Empty;
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(rect.X * ratio.X, rect.Y * ratio.Y, rect.Width * ratio.X, rect.Height * ratio.Y);
+        }
+
+        public static RoixRect operator /(in RoixRect rect, in RoixRatioXY ratio)
+        {
+            if (rect.IsEmpty) return Empty;
+            if (ratio.IsIncludeZero) throw new DivideByZeroException();
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(rect.X / ratio.X, rect.Y / ratio.Y, rect.Width / ratio.X, rect.Height / ratio.Y);
+        }
         #endregion
 
         #region Properties

@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderSize
     {
         readonly struct SourceValues
@@ -16,10 +16,9 @@ namespace Roix.Wpf
         private RoixSize Value => _values.Size;
 
         #region ctor
-        public RoixBorderSize(in RoixSize size, in RoixSize border)
+        private partial void Validate(in RoixBorderSize value)
         {
-            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-            _values = new(size, border);
+            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         }
         #endregion
 
@@ -39,15 +38,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderSize ConvertToNewBorder(in RoixSize newBorder)
-        {
-            if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-
-            var newSize = new RoixSize(Size.Width * newBorder.Width / Border.Width, Size.Height * newBorder.Height / Border.Height);
-            return new(newSize, newBorder);
-        }
-
         public RoixIntSize ToRoixIntSize(bool isCheckBorder = true)
         {
             if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);

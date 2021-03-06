@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderRect
     {
         readonly struct SourceValues
@@ -16,26 +16,26 @@ namespace Roix.Wpf
         private RoixRect Value => _values.Roi;
 
         #region ctor
-        public RoixBorderRect(in RoixRect roi, in RoixSize border)
-        {
-            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-            _values = new(roi, border);
-        }
-
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderSize borderSize)
         {
             if (borderPoint.Border != borderSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             _values = new(new RoixRect(borderPoint.Point, borderSize.Size), borderPoint.Border);
+            Validate(this);
         }
 
         public RoixBorderRect(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2)
         {
             if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             _values = new(new RoixRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border);
+            Validate(this);
         }
 
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
 
+        private partial void Validate(in RoixBorderRect value)
+        {
+            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        }
         #endregion
 
         #region implicit
@@ -51,16 +51,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderRect ConvertToNewBorder(in RoixSize newBorder)
-        {
-            if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
-
-            var newPoint = new RoixPoint(Roi.X * newBorder.Width / Border.Width, Roi.Y * newBorder.Height / Border.Height);
-            var newSize = new RoixSize(Roi.Width * newBorder.Width / Border.Width, Roi.Height * newBorder.Height / Border.Height);
-            return new(new(newPoint, newSize), newBorder);
-        }
-
         public RoixIntRect ToRoixIntRect(bool isCheckBorder = true)
         {
             if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
@@ -119,7 +109,8 @@ namespace Roix.Wpf
             }
         }
 
-        public RoixBorderRect GetClippedBorderRect(bool isPointPriority = true) => isPointPriority ? GetClippedBorderRectByPointPriority() : GetClippedBorderRectBySizePriority();
+        public RoixBorderRect GetClippedBorderRect(bool isPointPriority = true)
+            => isPointPriority ? GetClippedBorderRectByPointPriority() : GetClippedBorderRectBySizePriority();
         #endregion
 
     }

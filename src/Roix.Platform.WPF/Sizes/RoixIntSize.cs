@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.TypeInt | RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.XYPair | RoixStructGeneratorOptions.TypeInt | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixIntSize
     {
         readonly struct SourceValues
@@ -13,6 +13,9 @@ namespace Roix.Wpf
             public readonly int Height;
             public SourceValues(int width, int height) => (Width, Height) = (width, height);
         }
+
+        private double X => Width;
+        private double Y => Height;
 
         #region ctor
         private partial void Validate(in RoixIntSize value)

@@ -166,19 +166,6 @@ namespace Roix.WPF.Tests
             RoixSize.Empty.IsZero.IsFalse();
             RoixSize.Zero.IsZero.IsTrue();
         }
-
-        [Fact]
-        public void IsValid()
-        {
-            new RoixSize(1.1, 2.2).IsValid.IsTrue();
-            new RoixSize(1.1, 2.2).IsInvalid.IsFalse();
-
-            new RoixSize(0, 0).IsValid.IsFalse();
-            new RoixSize(0, 0).IsInvalid.IsTrue();
-
-            RoixSize.Empty.IsValid.IsFalse();
-            RoixSize.Empty.IsInvalid.IsTrue();
-        }
         #endregion
 
         #region Methods

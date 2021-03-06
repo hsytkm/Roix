@@ -4,7 +4,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.WithBorder | RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixBorderPoint
     {
         readonly struct SourceValues
@@ -17,13 +17,12 @@ namespace Roix.Wpf
         private RoixPoint Value => _values.Point;
 
         #region ctor
-        public RoixBorderPoint(in RoixPoint point, in RoixSize border)
-        {
-            if (border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-            _values = new(point, border);
-        }
-
         public RoixBorderPoint(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+
+        private partial void Validate(in RoixBorderPoint value)
+        {
+            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        }
         #endregion
 
         #region implicit
@@ -47,15 +46,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderPoint ConvertToNewBorder(in RoixSize newBorder)
-        {
-            if (Border.IsInvalid) return this;
-            if (newBorder.IsInvalid) throw new ArgumentException(ExceptionMessages.SizeIsInvalid);
-
-            var newPoint = new RoixPoint(Point.X * newBorder.Width / Border.Width, Point.Y * newBorder.Height / Border.Height);
-            return new(newPoint, newBorder);
-        }
-
         public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
         {
             if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
@@ -69,7 +59,7 @@ namespace Roix.Wpf
             return new(x, y);
         }
 
-        public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new RoixBorderRect(new RoixRect(Point, vector), Border);
+        public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new(new RoixRect(Point, vector), Border);
         public RoixBorderRect CreateRoixBorderRect(in RoixBorderVector borderVector)
         {
             if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
