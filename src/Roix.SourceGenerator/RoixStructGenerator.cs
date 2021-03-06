@@ -75,7 +75,8 @@ namespace Roix.SourceGenerator
                 var parent = GetParentStructDeclarationSyntax(record);
                 if (parent is null) return;
 
-                parent.AttributeLists.SelectMany(x => x.Attributes).Any(x => x.ToString() == _attributeName);
+                if (!parent.AttributeLists.SelectMany(x => x.Attributes).Any(x => x.Name.ToString() is nameof(RoixStructGenerator) or _attributeName))
+                    return;
 
                 if (!IsReadOnlyStruct(parent)) return;
                 if (!parent.ChildNodes().Any(n => n == record)) return;

@@ -78,9 +78,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public bool IsInside(in RoixSize border) => 0 <= Left && Right <= border.Width && 0 <= Top && Bottom <= border.Height;
-        public bool IsOutside(in RoixSize border) => !IsInside(border);
-
         public System.Windows.Media.PointCollection ToPointCollection()
         {
             if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);

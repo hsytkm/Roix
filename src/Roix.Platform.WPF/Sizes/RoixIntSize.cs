@@ -41,6 +41,7 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
+        public bool IsEmpty => false;   // Not implement in RoixIntSize
         #endregion
 
     }

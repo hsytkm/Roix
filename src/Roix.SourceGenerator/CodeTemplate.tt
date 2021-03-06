@@ -155,6 +155,9 @@ namespace <#= Namespace #>
         public <#= GetRoixPointStructName() #> TopRight => new(Right, Top);
         public <#= GetRoixPointStructName() #> BottomLeft => new(Left, Bottom);
         public <#= GetRoixPointStructName() #> BottomRight => new(Right, Bottom);
+
+        public bool IsInside(in <#= GetRoixSizeStructName() #> border) => 0 <= Left && Right <= border.Width && 0 <= Top && Bottom <= border.Height;
+        public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
         // RoixStructGeneratorOptions.XYPair

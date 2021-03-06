@@ -223,7 +223,12 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixPointStructName()));
             this.Write(" BottomLeft => new(Left, Bottom);\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixPointStructName()));
-            this.Write(" BottomRight => new(Right, Bottom);\r\n");
+            this.Write(" BottomRight => new(Right, Bottom);\r\n\r\n        public bool IsInside(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" border) => 0 <= Left && Right <= border.Width && 0 <= Top && Bottom <= border.He" +
+                    "ight;\r\n        public bool IsOutside(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" border) => !IsInside(border);\r\n");
  } 
  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
             this.Write("        // RoixStructGeneratorOptions.XYPair\r\n        public bool IsIncludeZero =" +
