@@ -19,6 +19,7 @@ namespace Roix.Wpf
         #endregion
 
         #region implicit
+        public static implicit operator RoixBorderSize(in RoixBorderIntSize borderSize) => new(borderSize.Size, borderSize.Border);
         #endregion
 
         #region explicit

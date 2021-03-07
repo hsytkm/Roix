@@ -25,14 +25,29 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixIntPoint(in RoixPoint point) => new(point.X.RoundToInt(), point.Y.RoundToInt());
-        public static explicit operator RoixIntPoint(System.Windows.Point point) => new(point.X.RoundToInt(), point.Y.RoundToInt());
+        public static explicit operator RoixIntPoint(in RoixPoint point) => new(point.X.FloorToInt(), point.Y.FloorToInt());
+        public static explicit operator RoixIntPoint(System.Windows.Point point) => new(point.X.FloorToInt(), point.Y.FloorToInt());
         #endregion
 
         #region operator
         #endregion
 
         #region Properties
+
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize)
+        {
+            var point = srcPoint * (destSize / srcSize);
+            return new RoixIntPoint(point.X.RoundToInt(), point.Y.RoundToInt());
+        }
+
+        public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)
+        {
+            var x = Math.Clamp(X, 0, size.Width - 1);
+            var y = Math.Clamp(Y, 0, size.Height - 1);
+            return new RoixIntPoint(x, y);
+        }
+
         #endregion
 
     }

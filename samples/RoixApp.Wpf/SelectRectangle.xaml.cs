@@ -49,14 +49,14 @@ namespace RoixApp.Wpf
             SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
             ClickedFixedBorderRectangle = new ReactivePropertySlim<RoixBorderRect>();
 
-            var imageSourceSize = MyImage.PixelSizeToRoixSize();
+            var imageSourceSize = MyImage.PixelSizeToRoixIntSize();
 
             #region CursorPoint
             CursorBorderPoint = MouseMovePoint.ToReadOnlyReactivePropertySlim();
 
             CursorPointToModel = CursorBorderPoint
-                .Where(bp => bp.IsNotZero)
-                .Select(bp => bp.ConvertToNewBorder(imageSourceSize).ToRoixIntPoint(isCheckBorder: false))
+                .Where(borderPoint => borderPoint.IsNotZero)
+                .Select(borderPoint => borderPoint.ConvertToRoixInt(imageSourceSize).Point)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -71,13 +71,21 @@ namespace RoixApp.Wpf
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     if (startPoint == latestPoint) return;
 
-                    // ドラッグ枠の確定
-                    var borderRectOnView = new RoixBorderRect(startPoint, latestPoint);
-                    var borderRectOnModel = borderRectOnView.ConvertToNewBorder(imageSourceSize);
-                    SelectedRectangleToModel.Value = borderRectOnModel.GetClippedBorderRect().ToRoixIntRect(isCheckBorder: true);
+                    // ドラッグ枠確定後
+                    var intStartPoint = startPoint.ConvertToRoixInt(imageSourceSize);
+                    var intLatestPoint = latestPoint.ConvertToRoixInt(imageSourceSize);
+                    var intRect = new RoixBorderIntRect(intStartPoint, intLatestPoint);
+                    SelectedRectangleToModel.Value = intRect.Roi;
                 })
                 .Repeat()
-                .Subscribe(x => SelectedBorderRectangle.Value = new RoixBorderRect(x.latestPoint, x.startPoint).GetClippedBorderRect());
+                .Subscribe(x =>
+                {
+                    var intStartPoint = x.startPoint.ConvertToRoixInt(imageSourceSize);
+                    var intLatestPoint = x.latestPoint.ConvertToRoixInt(imageSourceSize);
+                    var intRect = new RoixBorderIntRect(intStartPoint, intLatestPoint);
+                    var viewRect = intRect.ConvertToNewBorder(x.startPoint.Border);
+                    SelectedBorderRectangle.Value = viewRect;
+                });
             #endregion
 
             #region ClickedFixedRectangle
@@ -86,18 +94,26 @@ namespace RoixApp.Wpf
                 .Where(border => border.Border.IsNotZero)
                 .Subscribe(borderPointOnView =>
                 {
-                    var borderSizeOnModel = new RoixBorderSize(new RoixSize(100, 100), imageSourceSize);
+                    var length = 100;
                     var borderOnView = borderPointOnView.Border;
+
+                    var borderSizeOnModel = new RoixBorderIntSize(new RoixIntSize(length), imageSourceSize);
+                    var borderHalfSizeOnModel = new RoixBorderIntSize(borderSizeOnModel.Size / 2, borderSizeOnModel.Border);
                     var borderSizeOnView = borderSizeOnModel.ConvertToNewBorder(borderOnView);
-                    var newPointOnView = borderPointOnView.Point - (RoixVector)(borderSizeOnView.Size / 2);
-                    var borderRectOnView = new RoixBorderRect(new RoixRect(newPointOnView, borderSizeOnView.Size), borderOnView);
+                    var borderHalfSizeOnView = borderHalfSizeOnModel.ConvertToNewBorder(borderOnView);
+
+                    var newPointOnView = borderPointOnView.ConvertToRoixInt(imageSourceSize);
+                    var newPointOnModel = newPointOnView.ConvertToNewBorder(borderOnView);
+                    var newLeftTopPointOnModel = (RoixPoint)(newPointOnModel.Point - (RoixPoint)borderHalfSizeOnView.Size);
+
+                    var borderRectOnView = new RoixBorderRect(new(newLeftTopPointOnModel, borderSizeOnView.Size), borderSizeOnView.Border);
                     ClickedFixedBorderRectangle.Value = borderRectOnView.GetClippedBorderRect(isPointPriority: false);
                 });
 
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedBorderRectangle
                 .Where(border => border.Border.IsNotZero)
-                .Select(borderRectOnView => borderRectOnView.ConvertToNewBorder(imageSourceSize).ToRoixIntRect(isCheckBorder: false))
+                .Select(borderRectOnView => borderRectOnView.ConvertToRoixInt(imageSourceSize).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 

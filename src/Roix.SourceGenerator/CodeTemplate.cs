@@ -45,13 +45,26 @@ namespace Roix.SourceGenerator
     {
         return GetProperties(Properties.Select(p => p.Name.ToLower()), format);
     }
+    
+    string GetInTypeIfNecessary(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax typeSyntax)
+    {
+        var type = typeSyntax.ToString();
+        switch (type)
+        {
+            case "int":
+            case "double":
+                return type;
+            default:
+                return "in " + type;
+        }
+    }
 
     string GetTypeAndLowerNames(string format = "")
     {
         if (!string.IsNullOrWhiteSpace(format))
             return string.Join(", ", Properties.Select(p => string.Format(format, p.Type, p.Name.ToLower())));
 
-        return string.Join(", ", Properties.Select(p => p.Type + " " + p.Name.ToLower()));
+        return string.Join(", ", Properties.Select(p => GetInTypeIfNecessary(p.Type) + " " + p.Name.ToLower()));
     }
 
     string GetToString()
@@ -79,6 +92,11 @@ namespace Roix.SourceGenerator
         return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
     }
     
+    string GetRoixNameWithoutInt()
+    {
+        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
+    }
+
     string GetOperatorString(ArithmeticOperators ope)
     {
         if (ope == ArithmeticOperators.Add) return " + ";
@@ -254,7 +272,21 @@ namespace Roix.SourceGenerator
 
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
-");
+  ");
+ if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
+            this.Write("        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithoutInt()));
+            this.Write(@" ConvertToNewBorder(in RoixSize newBorder)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero) return this;
+            if (newBorder.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+
+            return new(this.Value * (newBorder / this.Border), newBorder);
+        }
+  ");
+ } 
+            this.Write("\r\n");
  } 
  if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator1)) { 
             this.Write("        // RoixStructGeneratorOptions.ArithmeticOperator1\r\n        public static " +

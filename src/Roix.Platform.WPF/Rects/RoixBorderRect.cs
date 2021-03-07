@@ -111,6 +111,21 @@ namespace Roix.Wpf
 
         public RoixBorderRect GetClippedBorderRect(bool isPointPriority = true)
             => isPointPriority ? GetClippedBorderRectByPointPriority() : GetClippedBorderRectBySizePriority();
+
+
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize)
+        {
+            var rect = RoixIntRect.Create(this.Roi, this.Border, destIntSize);
+
+            // WithBorderなのでサイズ内に納める
+            if (rect.IsOutside(destIntSize))
+            {
+                rect = rect.GetClippedIntRect(destIntSize);
+            }
+            return new(rect, destIntSize);
+        }
+
         #endregion
 
     }

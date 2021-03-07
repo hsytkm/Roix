@@ -112,7 +112,7 @@ namespace Roix.WPF.Tests
         }
 
         [Theory]
-        [InlineData(1.1, 1.9, 1, 2)]
+        [InlineData(1.1, 2.9, 1, 2)]
         [InlineData(0, 10, 0, 9)]       // 0~Length-1
         public void ToRoixIntSize_Ok(double width, double height, int ansWidth, int ansHeight)
         {

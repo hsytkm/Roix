@@ -65,6 +65,26 @@ namespace Roix.Wpf
             if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             return CreateRoixBorderRect(borderVector.Vector);
         }
+
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize)
+        {
+            var point = RoixIntPoint.Create(this.Point, this.Border, destIntSize);
+
+            if (point.IsOutside(destIntSize))
+            {
+                point = point.GetClippedIntPoint(destIntSize);
+            }
+            return new(point, destIntSize);
+        }
+
+        /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
+        public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize)
+        {
+            var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize);
+            return new(point, this.Border);
+        }
+
         #endregion
 
     }

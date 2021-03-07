@@ -18,6 +18,7 @@ namespace Roix.Wpf
         private double Y => Height;
 
         #region ctor
+        public RoixIntSize(int length) => _values = new(length, length);
         public RoixIntSize(double x, double y) => _values = new(x.FloorToInt(), y.FloorToInt());
 
         private partial void Validate(in RoixIntSize value)
@@ -33,8 +34,8 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-        public static explicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.RoundToInt(), size.Height.RoundToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        public static explicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.FloorToInt(), size.Height.FloorToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+        public static explicit operator RoixIntSize(System.Windows.Size size) => !size.IsEmpty ? new(size.Width.FloorToInt(), size.Height.FloorToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         #endregion
 
         #region operator
@@ -43,6 +44,20 @@ namespace Roix.Wpf
         #region Properties
         public bool IsEmpty => false;   // Not implement in RoixIntSize
         #endregion
+
+        #region Methods
+        /// <summary>指定値でサイズを制限する</summary>
+        public RoixIntSize ClippedByMinimumSize(in RoixIntSize minSize)
+        {
+            if (this.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (minSize.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+
+            var width = Math.Max(Width, minSize.Width);
+            var height = Math.Max(Height, minSize.Height);
+            return new(width, height);
+        }
+        #endregion
+
 
     }
 }

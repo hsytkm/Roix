@@ -15,7 +15,6 @@ namespace Roix.SourceGenerator
         }
 
         internal string Namespace { get; set; } = "";
-        internal string? Type { get; set; }
         internal RoixStructGeneratorOptions Options { get; }
         public string? ToStringFormat { get; set; }
 

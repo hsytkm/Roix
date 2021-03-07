@@ -20,6 +20,7 @@ namespace Roix.Wpf
         #endregion
 
         #region implicit
+        public static implicit operator RoixBorderPoint(in RoixBorderIntPoint borderPoint) => new(borderPoint.Point, borderPoint.Border);
         #endregion
 
         #region explicit

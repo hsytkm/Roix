@@ -28,22 +28,47 @@
     </UserControl.Resources>
 
     <DockPanel ClipToBounds="True" Margin="10,5" Background="Gray" >
-        <StackPanel DockPanel.Dock="Top" Margin="10,5" >
-            <TextBlock >
-                <Run Text="{Binding MyImage.PixelWidth, Mode=OneWay, StringFormat='SourceImageSize:  {0} x'}" />
-                <Run Text="{Binding MyImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}" />
-            </TextBlock>
-            <TextBlock Foreground="Green" Text="{Binding CursorBorderPoint.Value.Point, Mode=OneWay, StringFormat='ViewPoint:  {0:f1}'}" />
-            <TextBlock Foreground="Green" Text="{Binding CursorPointToModel.Value, Mode=OneWay, StringFormat='ModelPoint:  {0}'}" />
-            <TextBlock Foreground="Crimson" Text="{Binding SelectedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
-            <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0:f1}'}" />
-            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
-            <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
-        </StackPanel>
+        <Grid DockPanel.Dock="Top" >
+            <StackPanel Margin="10,5" >
+                <TextBlock >
+                    <Run Text="{Binding MyImage.PixelWidth, Mode=OneWay, StringFormat='SourceImageSize:  {0} x'}" />
+                    <Run Text="{Binding MyImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}" />
+                </TextBlock>
+                <TextBlock Foreground="Green" Text="{Binding CursorBorderPoint.Value.Point, Mode=OneWay, StringFormat='ViewPoint:  {0:f1}'}" />
+                <TextBlock Foreground="Green" Text="{Binding CursorPointToModel.Value, Mode=OneWay, StringFormat='ModelPoint:  {0}'}" />
+                <TextBlock Foreground="Crimson" Text="{Binding SelectedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+                <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0:f1}'}" />
+                <TextBlock Foreground="Blue" Text="{Binding ClickedFixedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+                <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
+            </StackPanel>
+
+            <CheckBox x:Name="zoomCheckBox" Content="x100 Zoom" IsChecked="True"
+                      HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" />
+        </Grid>
 
         <Grid>
-            <Image x:Name="image" Source="{Binding MyImage, Mode=OneTime}" >
+            <Image x:Name="mainImage" Source="{Binding MyImage, Mode=OneTime}" >
+                <Image.Resources>
+                    <Style x:Key="EntireImageStyle" TargetType="{x:Type Image}" >
+                        <Setter Property="Width" Value="Auto" />
+                        <Setter Property="Height" Value="Auto" />
+                        <Setter Property="RenderOptions.BitmapScalingMode" Value="LowQuality" />
+                    </Style>
+                    <Style x:Key="ZoomImageStyle" TargetType="{x:Type Image}" >
+                        <Setter Property="Width" Value="64000" />
+                        <Setter Property="Height" Value="48000" />
+                        <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+                    </Style>
+                </Image.Resources>
+                    
                 <i:Interaction.Triggers>
+                    <i:DataTrigger Binding="{Binding IsChecked, ElementName=zoomCheckBox}" Value="False" >
+                        <i:ChangePropertyAction PropertyName="Style" Value="{StaticResource EntireImageStyle}" />
+                    </i:DataTrigger>
+                    <i:DataTrigger Binding="{Binding IsChecked, ElementName=zoomCheckBox}" Value="True" >
+                        <i:ChangePropertyAction PropertyName="Style" Value="{StaticResource ZoomImageStyle}" />
+                    </i:DataTrigger>
+
                     <!-- Get Mouse -->
                     <i:EventTrigger EventName="MouseLeftButtonDown" >
                         <action:CaptureMousePointAction MousePoint="{Binding MouseLeftDownPoint.Value, Mode=OneWayToSource}" />
@@ -67,9 +92,9 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>
-           
-            <Grid Width="{Binding ActualWidth, ElementName=image}"
-                  Height="{Binding ActualHeight, ElementName=image}" >
+
+            <Grid Width="{Binding ActualWidth, ElementName=mainImage}"
+                  Height="{Binding ActualHeight, ElementName=mainImage}" >
                 <Polygon Style="{StaticResource selectedPolygonStyle}"
                          Points="{Binding SelectedBorderRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
 

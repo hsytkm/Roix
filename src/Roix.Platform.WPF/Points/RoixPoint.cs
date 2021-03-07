@@ -36,6 +36,20 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
+
+        public static RoixPoint CreateRoixPoint(in RoixIntPoint srcPoint, in RoixIntSize srcSize, in RoixSize destSize)
+            => srcPoint * (destSize / srcSize);
+
+        //public RoixIntPoint ConvertToRoixIntPoint(in RoixSize srcSize, in RoixIntSize destIntSize)
+        //    => RoixIntPoint.Create(this, srcSize, destIntSize);
+
+        public RoixPoint AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize)
+        {
+            // 画像座標系(int)の IntPoint を求めて、元の座標系(double) に戻す
+            var destIntPoint = RoixIntPoint.Create(this, srcSize, destIntSize);
+            return CreateRoixPoint(destIntPoint, destIntSize, srcSize);
+        }
+
         #endregion
 
     }

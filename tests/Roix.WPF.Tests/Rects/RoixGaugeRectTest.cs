@@ -139,7 +139,7 @@ namespace Roix.WPF.Tests
         }
 
         [Theory]
-        [InlineData(1.1, 1.9, 3.1, 3.9, 1, 2, 3, 4)]
+        [InlineData(1.1, 2.9, 3.1, 4.9, 1, 2, 3, 4)]
         [InlineData(0, 0, 10, 10, 0, 0, 10, 10)]
         [InlineData(9, 2, 1, 3, 9, 2, 1, 3)]       // 0~Length-1
         public void ToRoixIntRect_Ok(double x, double y, double width, double height, int ansX, int ansY, int ansWidth, int ansHeight)
