@@ -31,11 +31,11 @@ namespace RoixApp.Wpf
         public IReadOnlyReactiveProperty<RoixBorderPoint> CursorBorderPoint { get; }
         public IReadOnlyReactiveProperty<RoixIntPoint> CursorPointToModel { get; }
 
-        public IReactiveProperty<RoixBorderRect> SelectedBorderRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixBorderRect> SelectedBorderRectangle { get; }
         public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
         public IReactiveProperty<RoixBorderPoint> MouseRightDownPoint { get; }
-        public IReactiveProperty<RoixBorderRect> ClickedFixedBorderRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixBorderRect> ClickedFixedBorderRectangle { get; }
         public IReadOnlyReactiveProperty<RoixIntRect> ClickedFixedRectangleToModel { get; }
 
         public SelectRectangleViewModel()
@@ -45,9 +45,7 @@ namespace RoixApp.Wpf
             MouseMovePoint = new ReactivePropertySlim<RoixBorderPoint>();
             ViewBorderSize = new ReactivePropertySlim<RoixSize>();
             MouseRightDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
-            SelectedBorderRectangle = new ReactivePropertySlim<RoixBorderRect>();
             SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
-            ClickedFixedBorderRectangle = new ReactivePropertySlim<RoixBorderRect>();
 
             var imageSourceSize = MyImage.PixelSizeToRoixIntSize();
 
@@ -61,77 +59,54 @@ namespace RoixApp.Wpf
             #endregion
 
             #region SelectedRectangle
-            // マウス操作中に枠を更新 + 操作完了時に枠位置を通知する
-            MouseMovePoint
+            // 画像座標系の選択枠(これを基準に管理する) マウス操作中に枠を更新 + 操作完了時に枠位置を通知する
+            var selectedRectangleOnImage = MouseMovePoint
                 .Select(latestPoint => (startPoint: MouseLeftDownPoint.Value, latestPoint))
                 .SkipUntil(MouseLeftDownPoint.ToUnit())
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
                 {
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
-                    if (startPoint == latestPoint) return;
-
-                    // ドラッグ枠確定後
-                    var intStartPoint = startPoint.ConvertToRoixInt(imageSourceSize);
-                    var intLatestPoint = latestPoint.ConvertToRoixInt(imageSourceSize);
-                    var intRect = new RoixBorderIntRect(intStartPoint, intLatestPoint);
-                    SelectedRectangleToModel.Value = intRect.Roi;
+                    SelectedRectangleToModel.Value = RoixBorderIntRect.Create(startPoint, latestPoint, imageSourceSize).Roi;
                 })
                 .Repeat()
-                .Subscribe(x =>
-                {
-                    var intStartPoint = x.startPoint.ConvertToRoixInt(imageSourceSize);
-                    var intLatestPoint = x.latestPoint.ConvertToRoixInt(imageSourceSize);
-                    var intRect = new RoixBorderIntRect(intStartPoint, intLatestPoint);
-                    var viewRect = intRect.ConvertToNewBorder(x.startPoint.Border);
-                    SelectedBorderRectangle.Value = viewRect;
-                });
-            #endregion
+                .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize))
+                .ToReadOnlyReactivePropertySlim();
 
-            #region ClickedFixedRectangle
-            // 右クリックで固定サイズの枠を描画
-            MouseRightDownPoint
-                .Where(border => border.Border.IsNotZero)
-                .Subscribe(borderPointOnView =>
-                {
-                    var length = 100;
-                    var borderOnView = borderPointOnView.Border;
-
-                    var borderSizeOnModel = new RoixBorderIntSize(new RoixIntSize(length), imageSourceSize);
-                    var borderHalfSizeOnModel = new RoixBorderIntSize(borderSizeOnModel.Size / 2, borderSizeOnModel.Border);
-                    var borderSizeOnView = borderSizeOnModel.ConvertToNewBorder(borderOnView);
-                    var borderHalfSizeOnView = borderHalfSizeOnModel.ConvertToNewBorder(borderOnView);
-
-                    var newPointOnView = borderPointOnView.ConvertToRoixInt(imageSourceSize);
-                    var newPointOnModel = newPointOnView.ConvertToNewBorder(borderOnView);
-                    var newLeftTopPointOnModel = (RoixPoint)(newPointOnModel.Point - (RoixPoint)borderHalfSizeOnView.Size);
-
-                    var borderRectOnView = new RoixBorderRect(new(newLeftTopPointOnModel, borderSizeOnView.Size), borderSizeOnView.Border);
-                    ClickedFixedBorderRectangle.Value = borderRectOnView.GetClippedBorderRect(isPointPriority: false);
-                });
-
-            // Model通知用にView座標系から元画像の座標系に正規化
-            ClickedFixedRectangleToModel = ClickedFixedBorderRectangle
-                .Where(border => border.Border.IsNotZero)
-                .Select(borderRectOnView => borderRectOnView.ConvertToRoixInt(imageSourceSize, mode: RoundingMode.Round).Roi)
+            // View座標系の選択枠
+            SelectedBorderRectangle = selectedRectangleOnImage
+                .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border))
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
-            // View画像サイズの変更に応じて枠を伸縮
-            ViewBorderSize
-                .Where(size => size.IsNotZero)
-                .Subscribe(newBorder =>
+            #region ClickedFixedRectangle
+            // 画像座標系の固定サイズ枠(これを基準に管理する) 右クリックで固定サイズの枠を描画する
+            var clickedFixedRectangleOnImage = MouseRightDownPoint
+                .Where(border => border.Border.IsNotZero)
+                .Select(borderPointOnView =>
                 {
-                    static RoixBorderRect Convert(in RoixBorderRect srcBorderRect, in RoixIntSize intSize, in RoixSize newSize)
-                    {
-                        var intRect = srcBorderRect.ConvertToRoixInt(intSize, mode: RoundingMode.Round);
-                        var viewRect = intRect.ConvertToNewBorder(newSize);
-                        return viewRect;
-                    }
+                    var length = 3;
+                    var borderSize = new RoixBorderIntSize(new RoixIntSize(length), imageSourceSize);
+                    var borderShiftVector = (RoixIntVector)(borderSize.Size / 2);
 
-                    SelectedBorderRectangle.Value = Convert(SelectedBorderRectangle.Value, imageSourceSize, newBorder);
-                    ClickedFixedBorderRectangle.Value = Convert(ClickedFixedBorderRectangle.Value, imageSourceSize, newBorder);
-                });
+                    var newCenterPoint = borderPointOnView.ConvertToRoixInt(imageSourceSize);
+                    var newLeftTopPoint = newCenterPoint.Point - borderShiftVector;
+                    var newBorderRect = new RoixBorderIntRect(new(newLeftTopPoint, borderSize.Size), imageSourceSize);
+                    return newBorderRect.GetClippedBorderIntRect(isPointPriority: false);
+                })
+                .ToReadOnlyReactivePropertySlim();
+
+            // Model通知
+            ClickedFixedRectangleToModel = clickedFixedRectangleOnImage
+                .Where(border => border.Border.IsNotZero)
+                .Select(borderRectOnView => borderRectOnView.Roi)
+                .ToReadOnlyReactivePropertySlim();
+
+            // View座標系の選択枠
+            ClickedFixedBorderRectangle = clickedFixedRectangleOnImage
+                .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border))
+                .ToReadOnlyReactivePropertySlim();
+            #endregion
 
         }
     }

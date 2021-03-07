@@ -29,6 +29,9 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
+        public static RoixIntPoint operator +(in RoixIntPoint point, in RoixIntVector vector) => new(point.X + vector.X, point.Y + vector.Y);
+        public static RoixIntVector operator -(in RoixIntPoint point1, in RoixIntPoint point2) => new(point1.X - point2.X, point1.Y - point2.Y);
+        public static RoixIntPoint operator -(in RoixIntPoint point, in RoixIntVector vector) => new(point.X - vector.X, point.Y - vector.Y);
         #endregion
 
         #region Properties
