@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
@@ -35,10 +34,10 @@ namespace Roix.Wpf
         #region Properties
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
-        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize)
+        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
         {
             var point = srcPoint * (destSize / srcSize);
-            return new RoixIntPoint(point.X.RoundToInt(), point.Y.RoundToInt());
+            return new RoixIntPoint(point.X.ToInt(mode), point.Y.ToInt(mode));
         }
 
         public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)

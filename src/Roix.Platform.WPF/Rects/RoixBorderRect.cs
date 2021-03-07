@@ -42,6 +42,7 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
+        public static explicit operator RoixBorderIntRect(in RoixBorderRect borderRect) => new((RoixIntRect)borderRect.Roi, (RoixIntSize)borderRect.Border);
         #endregion
 
         #region operator
@@ -114,16 +115,21 @@ namespace Roix.Wpf
 
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
-        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize)
+        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
         {
-            var rect = RoixIntRect.Create(this.Roi, this.Border, destIntSize);
+            if (this.Border.IsEmpty || this.Border.IsZero) return (RoixBorderIntRect)this;
 
-            // WithBorderなのでサイズ内に納める
-            if (rect.IsOutside(destIntSize))
-            {
-                rect = rect.GetClippedIntRect(destIntSize);
-            }
-            return new(rect, destIntSize);
+            var rect1 = RoixIntRect.Create(this.Roi, this.Border, destIntSize, mode);
+            var rect2 = rect1.GetClippedIntRect(destIntSize);
+            return new(rect2, destIntSize);
+        }
+
+        /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
+        public RoixBorderRect AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero) return this;
+            var rect = this.Roi.AdjustRoixWithResolutionOfImage(this.Border, destIntSize, mode);
+            return new(rect, this.Border);
         }
 
         #endregion

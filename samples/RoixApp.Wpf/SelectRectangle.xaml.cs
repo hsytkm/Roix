@@ -113,7 +113,7 @@ namespace RoixApp.Wpf
             // Model通知用にView座標系から元画像の座標系に正規化
             ClickedFixedRectangleToModel = ClickedFixedBorderRectangle
                 .Where(border => border.Border.IsNotZero)
-                .Select(borderRectOnView => borderRectOnView.ConvertToRoixInt(imageSourceSize).Roi)
+                .Select(borderRectOnView => borderRectOnView.ConvertToRoixInt(imageSourceSize, mode: RoundingMode.Round).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -122,8 +122,15 @@ namespace RoixApp.Wpf
                 .Where(size => size.IsNotZero)
                 .Subscribe(newBorder =>
                 {
-                    SelectedBorderRectangle.Value = SelectedBorderRectangle.Value.ConvertToNewBorder(newBorder);
-                    ClickedFixedBorderRectangle.Value = ClickedFixedBorderRectangle.Value.ConvertToNewBorder(newBorder);
+                    static RoixBorderRect Convert(in RoixBorderRect srcBorderRect, in RoixIntSize intSize, in RoixSize newSize)
+                    {
+                        var intRect = srcBorderRect.ConvertToRoixInt(intSize, mode: RoundingMode.Round);
+                        var viewRect = intRect.ConvertToNewBorder(newSize);
+                        return viewRect;
+                    }
+
+                    SelectedBorderRectangle.Value = Convert(SelectedBorderRectangle.Value, imageSourceSize, newBorder);
+                    ClickedFixedBorderRectangle.Value = Convert(ClickedFixedBorderRectangle.Value, imageSourceSize, newBorder);
                 });
 
         }

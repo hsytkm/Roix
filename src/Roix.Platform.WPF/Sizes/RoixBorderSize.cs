@@ -26,6 +26,7 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
+        public static explicit operator RoixBorderIntSize(in RoixBorderSize borderSize) => new((RoixIntSize)borderSize.Size, (RoixIntSize)borderSize.Border);
         #endregion
 
         #region operator

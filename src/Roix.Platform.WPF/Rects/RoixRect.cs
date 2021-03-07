@@ -39,6 +39,7 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
+        //public static explicit operator RoixIntRect(in RoixRect rect) => new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size);
         #endregion
 
         #region operator
@@ -88,6 +89,16 @@ namespace Roix.Wpf
         {
             if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
             return new(new[] { TopLeft, TopRight, BottomRight, BottomLeft }.Select(static x => (System.Windows.Point)x));
+        }
+
+        public static RoixRect CreateRoixRect(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
+            => srcRect * (destSize / srcSize);
+
+        /// <summary>画像座標系(int)の IntRect を求めて、元の座標系(double) に戻す</summary>
+        public RoixRect AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+        {
+            var intRect = RoixIntRect.Create(this, srcSize, destIntSize, mode);
+            return CreateRoixRect(intRect, destIntSize, srcSize);
         }
 
         #endregion

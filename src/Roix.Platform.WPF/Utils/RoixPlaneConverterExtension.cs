@@ -1,5 +1,4 @@
-﻿using Roix.Wpf.Internals;
-using System;
+﻿using System;
 
 namespace Roix.Wpf.Utils
 {

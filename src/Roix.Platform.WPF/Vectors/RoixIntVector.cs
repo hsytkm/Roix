@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf

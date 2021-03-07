@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
@@ -79,15 +78,15 @@ namespace Roix.Wpf
         public RoixIntRect ClippedByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimumSize(minSize));
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
-        public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize)
+        public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
         {
             var rect = srcRect * (destSize / srcSize);
-            return new RoixIntRect(rect.X.RoundToInt(), rect.Y.RoundToInt(), rect.Width.RoundToInt(), rect.Height.RoundToInt());
+            return new RoixIntRect(rect.X.ToInt(mode), rect.Y.ToInt(mode), rect.Width.ToInt(mode), rect.Height.ToInt(mode));
         }
 
         public RoixIntRect GetClippedIntRect(in RoixIntSize size)
         {
-            // ◆ちゃんと作れてない
+            // ◆ちゃんと実装してない
             var x = Math.Clamp(Location.X, 0, size.Width);
             var y = Math.Clamp(Location.Y, 0, size.Height);
             var width = Math.Clamp(Size.Width, 0, size.Width);

@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
@@ -43,10 +42,10 @@ namespace Roix.Wpf
         //public RoixIntPoint ConvertToRoixIntPoint(in RoixSize srcSize, in RoixIntSize destIntSize)
         //    => RoixIntPoint.Create(this, srcSize, destIntSize);
 
-        public RoixPoint AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize)
+        public RoixPoint AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
         {
             // 画像座標系(int)の IntPoint を求めて、元の座標系(double) に戻す
-            var destIntPoint = RoixIntPoint.Create(this, srcSize, destIntSize);
+            var destIntPoint = RoixIntPoint.Create(this, srcSize, destIntSize, mode);
             return CreateRoixPoint(destIntPoint, destIntSize, srcSize);
         }
 

@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Internals;
 using System;
 
 namespace Roix.Wpf
@@ -29,6 +28,7 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
+        public static explicit operator RoixBorderIntPoint(in RoixBorderPoint borderPoint) => new((RoixIntPoint)borderPoint.Point, (RoixIntSize)borderPoint.Border);
         //public static explicit operator RoixBorderSize(in RoixBorderPoint borderPoint) => new((RoixSize)borderPoint.Point, borderPoint.Border);
         //public static explicit operator RoixBorderVector(in RoixBorderPoint borderPoint) => new((RoixVector)borderPoint.Point, borderPoint.Border);
         #endregion
@@ -67,21 +67,20 @@ namespace Roix.Wpf
         }
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
-        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize)
+        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
         {
-            var point = RoixIntPoint.Create(this.Point, this.Border, destIntSize);
+            if (this.Border.IsEmpty || this.Border.IsZero) return (RoixBorderIntPoint)this;
 
-            if (point.IsOutside(destIntSize))
-            {
-                point = point.GetClippedIntPoint(destIntSize);
-            }
-            return new(point, destIntSize);
+            var point1 = RoixIntPoint.Create(this.Point, this.Border, destIntSize, mode);
+            var point2 = point1.GetClippedIntPoint(destIntSize);
+            return new(point2, destIntSize);
         }
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
-        public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize)
+        public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
         {
-            var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize);
+            if (this.Border.IsEmpty || this.Border.IsZero) return this;
+            var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize, mode);
             return new(point, this.Border);
         }
 

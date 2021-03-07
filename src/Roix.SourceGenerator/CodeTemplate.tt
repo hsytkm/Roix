@@ -28,7 +28,7 @@ using System;
         return GetProperties(Properties.Select(p => p.Name.ToLower()), format);
     }
     
-    string GetInTypeIfNecessary(TypeSyntax typeSyntax)
+    string GetInTypeIfNecessary(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax typeSyntax)
     {
         var type = typeSyntax.ToString();
         switch (type)
