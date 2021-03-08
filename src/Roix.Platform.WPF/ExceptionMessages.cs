@@ -11,6 +11,7 @@ namespace Roix.Wpf
 
         public const string SizeIsEmpty = "size is empty.";
         public const string SizeIsZero = "size is zero.";
+        public const string SizeIsNegative = "size is negative value.";
         public const string RectIsEmpty = "rect is empty.";
     }
 }

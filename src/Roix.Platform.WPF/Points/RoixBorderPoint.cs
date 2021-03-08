@@ -16,21 +16,12 @@ namespace Roix.Wpf
         private RoixPoint Value => _values.Point;
 
         #region ctor
-        public RoixBorderPoint(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+        public RoixBorderPoint(double x, double y, double width, double height) : this(new(x, y), new(width, height)) { }
 
         private partial void Validate(in RoixBorderPoint value)
         {
-            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (value.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
         }
-        #endregion
-
-        #region implicit
-        #endregion
-
-        #region explicit
-        public static explicit operator RoixBorderIntPoint(in RoixBorderPoint borderPoint) => new((RoixIntPoint)borderPoint.Point, (RoixIntSize)borderPoint.Border);
-        //public static explicit operator RoixBorderSize(in RoixBorderPoint borderPoint) => new((RoixSize)borderPoint.Point, borderPoint.Border);
-        //public static explicit operator RoixBorderVector(in RoixBorderPoint borderPoint) => new((RoixVector)borderPoint.Point, borderPoint.Border);
         #endregion
 
         #region operator
@@ -42,10 +33,12 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
+        // ◆これいるか？
         public RoixPoint ClippedRoixPoint => new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height));
         #endregion
 
         #region Methods
+        // ◆これいるか？ ConvertToRoixInt の方が良くない？
         public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
         {
             if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
@@ -59,7 +52,10 @@ namespace Roix.Wpf
             return new(x, y);
         }
 
+        // ◆これいるか？
         public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new(new RoixRect(Point, vector), Border);
+
+        // ◆これいるか？
         public RoixBorderRect CreateRoixBorderRect(in RoixBorderVector borderVector)
         {
             if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
@@ -77,12 +73,12 @@ namespace Roix.Wpf
         }
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
-        public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-        {
-            if (this.Border.IsEmpty || this.Border.IsZero) return this;
-            var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize, mode);
-            return new(point, this.Border);
-        }
+        //public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+        //{
+        //    if (this.Border.IsEmpty || this.Border.IsZero) return this;
+        //    var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize, mode);
+        //    return new(point, this.Border);
+        //}
 
         #endregion
 

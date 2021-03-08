@@ -57,11 +57,11 @@ namespace Roix.WPF.Tests
         {
             var rect = new RoixRect(1, 2, 3, 4);
 
-            var (x, y, w, h) = rect;
-            x.Is(rect.Location.X);
-            y.Is(rect.Location.Y);
-            w.Is(rect.Size.Width);
-            h.Is(rect.Size.Height);
+            var (point, size) = rect;
+            point.X.Is(rect.Location.X);
+            point.Y.Is(rect.Location.Y);
+            size.Width.Is(rect.Size.Width);
+            size.Height.Is(rect.Size.Height);
 
             var (p, s) = rect;
             p.Is(rect.Location);

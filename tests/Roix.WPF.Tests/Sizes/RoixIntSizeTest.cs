@@ -65,26 +65,6 @@ namespace Roix.WPF.Tests
             Assert.Throws<ArgumentException>(() => (RoixIntSize)RoixSize.Empty);
         }
 
-        [Fact]
-        public void ToWindows()
-        {
-            int x = 1, y = 2;
-            var ris1 = new RoixIntSize(x, y);
-            System.Windows.Size ws1 = (System.Windows.Size)ris1;
-            ws1.IsEmpty.IsFalse();
-            ws1.Width.Is(ris1.Width);
-            ws1.Height.Is(ris1.Height);
-        }
-
-        [Fact]
-        public void FromWindows()
-        {
-            double x = 1.1, y = 2.2;
-            var ws1 = new System.Windows.Size(x, y);
-            RoixIntSize ris1 = (RoixIntSize)ws1;
-            ris1.Width.Is((int)Math.Round(ws1.Width));
-            ris1.Height.Is((int)Math.Round(ws1.Height));
-        }
         #endregion
 
         #region Properties

@@ -28,14 +28,11 @@ namespace Roix.Wpf
         #endregion
 
         #region implicit
-        public static implicit operator RoixRect(in RoixIntRect rect) => new(rect.X, rect.Y, rect.Width, rect.Height);
-
-        public static implicit operator System.Windows.Rect(in RoixIntRect rect) => new(rect.X, rect.Y, rect.Width, rect.Height);
+        public static implicit operator RoixRect(in RoixIntRect rect) => new(rect.Location, rect.Size);
         #endregion
 
         #region explicit
         public static explicit operator RoixIntRect(in RoixRect rect) => !rect.IsEmpty ? new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-        public static explicit operator RoixIntRect(System.Windows.Rect rect) => !rect.IsEmpty ? new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
         #endregion
 
         #region operator
@@ -70,29 +67,26 @@ namespace Roix.Wpf
         //}
         #endregion
 
-        #region Properties
-        #endregion
-
         #region Methods
         /// <summary>Roiの最小サイズを指定値で制限する</summary>
-        public RoixIntRect ClippedByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimumSize(minSize));
+        //public RoixIntRect ClippedByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimumSize(minSize));
+
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode modeX, RoundingMode modeY)
+        {
+            if (srcSize.IsIncludeZero) throw new DivideByZeroException();
+
+            var rect = srcRect * (destSize / srcSize);
+            return new RoixIntRect(rect.X.ToInt(modeX), rect.Y.ToInt(modeY), rect.Width.ToInt(modeX), rect.Height.ToInt(modeY));
+        }
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
         public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
-        {
-            var rect = srcRect * (destSize / srcSize);
-            return new RoixIntRect(rect.X.ToInt(mode), rect.Y.ToInt(mode), rect.Width.ToInt(mode), rect.Height.ToInt(mode));
-        }
+            => Create(srcRect, srcSize, destSize, mode, mode);
 
-        public RoixIntRect GetClippedIntRect(in RoixIntSize size)
-        {
-            // ◆ちゃんと実装してない
-            var x = Math.Clamp(Location.X, 0, size.Width);
-            var y = Math.Clamp(Location.Y, 0, size.Height);
-            var width = Math.Clamp(Size.Width, 0, size.Width);
-            var height = Math.Clamp(Size.Height, 0, size.Height);
-            return new RoixIntRect(x, y, width, height);
-        }
+        /// <summary>指定 border の内部に収めた IntRect を返す</summary>
+        public RoixIntRect GetClippedBorderIntRect(in RoixIntSize border, bool isPointPriority = true)
+            => isPointPriority ? GetClippedBorderRectByPointPriority(border) : GetClippedBorderRectBySizePriority(border);
 
         #endregion
 

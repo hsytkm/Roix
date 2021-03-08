@@ -31,8 +31,5 @@ namespace Roix.Wpf
         public static RoixVector operator -(in RoixVector vector) => Zero - vector;
         #endregion
 
-        #region Properties
-        #endregion
-
     }
 }

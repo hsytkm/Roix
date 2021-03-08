@@ -100,33 +100,6 @@ namespace Roix.WPF.Tests
             rir1.Height.Is((int)Math.Round(rr1.Height));
         }
 
-        [Theory]
-        [InlineData(0, 0, 0, 0)]
-        [InlineData(1, 2, 3, 4)]
-        [InlineData(-1, -2, 3, 4)]
-        public void ToWindows(int x, int y, int width, int height)
-        {
-            var rir1 = new RoixIntRect(x, y, width, height);
-            System.Windows.Rect wr1 = (System.Windows.Rect)rir1;
-            wr1.X.Is(rir1.X);
-            wr1.Y.Is(rir1.Y);
-            wr1.Width.Is(rir1.Width);
-            wr1.Height.Is(rir1.Height);
-        }
-
-        [Theory]
-        [InlineData(0, 0, 0, 0)]
-        [InlineData(1, 2, 3, 4)]
-        [InlineData(-1, -2, 3, 4)]
-        public void FromWindows(int x, int y, int width, int height)
-        {
-            var wr1 = new System.Windows.Rect(x, y, width, height);
-            RoixIntRect rir1 = (RoixIntRect)wr1;
-            rir1.X.Is((int)Math.Round(wr1.X));
-            rir1.Y.Is((int)Math.Round(wr1.Y));
-            rir1.Width.Is((int)Math.Round(wr1.Width));
-            rir1.Height.Is((int)Math.Round(wr1.Height));
-        }
         #endregion
 
         #region Properties

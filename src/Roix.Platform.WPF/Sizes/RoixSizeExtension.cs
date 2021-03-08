@@ -9,7 +9,7 @@ namespace Roix.Wpf.Extensions
         public static RoixSize ActualSizeToRoixSize(this FrameworkElement fe) => new(fe.ActualWidth, fe.ActualHeight);
 
         public static RoixIntSize PixelSizeToRoixIntSize(this BitmapSource bitmap) => new(bitmap.PixelWidth, bitmap.PixelHeight);
-        public static RoixSize PixelSizeToRoixSize(this BitmapSource bitmap) => PixelSizeToRoixIntSize(bitmap);
+        public static RoixSize PixelSizeToRoixSize(this BitmapSource bitmap) => new(bitmap.PixelWidth, bitmap.PixelHeight);
 
     }
 }

@@ -8,118 +8,6 @@
 // </auto-generated>
 #nullable enable
 using System;
-
-<#
-    string GetProperties(System.Collections.Generic.IEnumerable<string> items, string format = "")
-    {
-        if (!string.IsNullOrWhiteSpace(format))
-            return string.Join(", ", items.Select(x => string.Format(format, x)));
-
-        return string.Join(", ", items);
-    }
-
-    string GetNames(string format = "")
-    {
-        return GetProperties(Properties.Select(p => p.Name), format);
-    }
-
-    string GetLowerNames(string format = "")
-    {
-        return GetProperties(Properties.Select(p => p.Name.ToLower()), format);
-    }
-    
-    string GetInTypeIfNecessary(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax typeSyntax)
-    {
-        var type = typeSyntax.ToString();
-        switch (type)
-        {
-            case "int":
-            case "double":
-                return type;
-            default:
-                return "in " + type;
-        }
-    }
-
-    string GetTypeAndLowerNames(string format = "")
-    {
-        if (!string.IsNullOrWhiteSpace(format))
-            return string.Join(", ", Properties.Select(p => string.Format(format, p.Type, p.Name.ToLower())));
-
-        return string.Join(", ", Properties.Select(p => GetInTypeIfNecessary(p.Type) + " " + p.Name.ToLower()));
-    }
-
-    string GetToString()
-    {
-        return string.Join(", ", Properties.Select(p => p.Name + " = {" + p.Name + "}"));
-    }
-    
-    string GetToStringWithFormat()
-    {
-        return string.Join(", ", Properties.Select(p => p.Name + " = {" + p.Name + ".ToString(format, formatProvider)}"));
-    }
-    
-    string GetRoixSizeStructName()
-    {
-        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntSize" : "RoixSize";
-    }
-    
-    string GetRoixPointStructName()
-    {
-        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntPoint" : "RoixPoint";
-    }
-    
-    string GetRoixBuiltInType()
-    {
-        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
-    }
-    
-    string GetRoixNameWithoutInt()
-    {
-        return HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
-    }
-
-    string GetOperatorString(ArithmeticOperators ope)
-    {
-        if (ope == ArithmeticOperators.Add) return " + ";
-        if (ope == ArithmeticOperators.Subtract) return " - ";
-        if (ope == ArithmeticOperators.Multiply) return " * ";
-        if (ope == ArithmeticOperators.Divide) return " / ";
-        return "";
-    }
-
-    string GetOperate2Value(ArithmeticOperators ope, string name1, string name2)
-    {
-        var os = GetOperatorString(ope);
-        return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + name2 + "." + p.Name));
-    }
-
-    string GetRatioProperty(int index)
-    {
-        return ((index & 1) == 0) ? "X" : "Y";
-    }
-    
-    string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name1, string name2)
-    {
-        var os = GetOperatorString(ope);
-        var roixs = Properties.Select(p => name1 + "." + p.Name).ToArray();
-
-        var opes = new string[roixs.Length];
-        for (int i = 0; i < roixs.Length; ++i)
-        {
-            opes[i] = roixs[i] + os + (name2 + "." + GetRatioProperty(i));
-        }
-        return string.Join(", ", opes);
-    }
-    
-    string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
-    {
-        var os = GetOperatorString(ope);
-        return string.Join(", ", Properties.Select(p => name1 + "." + p.Name + os + value2));
-    }
-    
-#>
-
 <# if (!string.IsNullOrEmpty(Namespace)) { #>
 namespace <#= Namespace #>
 <# } #>
@@ -133,7 +21,7 @@ namespace <#= Namespace #>
 <# } #>
 
 <# if (!IsConstructorDeclared) { #>
-        public <#= Name #>(<#= GetTypeAndLowerNames() #>)
+        public <#= Name #>(<#= GetTypeAndLowerNamesForArgs("{0} {1}") #>)
         {
             this._values = new(<#= GetLowerNames() #>);
   <# if (HasFlag(RoixStructGeneratorOptions.Validate)) { #> 
@@ -161,14 +49,14 @@ namespace <#= Namespace #>
         public bool IsNotZero => !this.IsZero;
 <# if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
         // RoixStructGeneratorOptions.Rect
-        public <#= GetRoixBuiltInType() #> X => Location.X;
-        public <#= GetRoixBuiltInType() #> Y => Location.Y;
-        public <#= GetRoixBuiltInType() #> Width => Size.Width;
-        public <#= GetRoixBuiltInType() #> Height => Size.Height;
-        public <#= GetRoixBuiltInType() #> Left => Location.X;
-        public <#= GetRoixBuiltInType() #> Right => Location.X + Size.Width;
-        public <#= GetRoixBuiltInType() #> Top => Location.Y;
-        public <#= GetRoixBuiltInType() #> Bottom => Location.Y + Size.Height;
+        public <#= GetRoixDefaultBuiltInType() #> X => Location.X;
+        public <#= GetRoixDefaultBuiltInType() #> Y => Location.Y;
+        public <#= GetRoixDefaultBuiltInType() #> Width => Size.Width;
+        public <#= GetRoixDefaultBuiltInType() #> Height => Size.Height;
+        public <#= GetRoixDefaultBuiltInType() #> Left => Location.X;
+        public <#= GetRoixDefaultBuiltInType() #> Right => Location.X + Size.Width;
+        public <#= GetRoixDefaultBuiltInType() #> Top => Location.Y;
+        public <#= GetRoixDefaultBuiltInType() #> Bottom => Location.Y + Size.Height;
         public <#= GetRoixPointStructName() #> TopLeft => Location;
         public <#= GetRoixPointStructName() #> TopRight => new(Right, Top);
         public <#= GetRoixPointStructName() #> BottomLeft => new(Left, Bottom);
@@ -176,10 +64,52 @@ namespace <#= Namespace #>
 
         public bool IsInside(in <#= GetRoixSizeStructName() #> border) => 0 <= Left && Right <= border.Width && 0 <= Top && Bottom <= border.Height;
         public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
+
+        /// <summary>
+        /// Roi の左上点を優先して Rect を border サイズに収めます。
+        /// Roi の左上点が Border の境界上に乗っている場合は、戻り値の Size が Zero になります。
+        /// </summary>
+        private <#= Name #> GetClippedBorderRectByPointPriority(in <#= GetRoixSizeStructName() #> border)
+        {
+            if (IsInside(border)) return this;
+
+            var left = Math.Clamp(this.Left, 0, border.Width);
+            var top = Math.Clamp(this.Top, 0, border.Height);
+
+            // 最小側にめり込んで制限された場合は正数になる（その値だけ長さを伸縮する）
+            var (deltaLeft, deltaTop) = (left - this.Left, top - this.Top);
+
+            var width = Math.Clamp(this.Width - deltaLeft, 0, border.Width - left);
+            var height = Math.Clamp(this.Height - deltaTop, 0, border.Height - top);
+            return new(new <#= GetRoixPointStructName() #>(left, top), new <#= GetRoixSizeStructName() #>(width, height));
+        }
+
+        /// <summary>
+        /// Roi のサイズを優先して Rect を border サイズに収めます。
+        /// </summary>
+        private <#= Name #> GetClippedBorderRectBySizePriority(in <#= GetRoixSizeStructName() #> border)
+        {
+            if (IsInside(border)) return this;
+
+            var width = Math.Clamp(this.Width, 0, border.Width);
+            var height = Math.Clamp(this.Height, 0, border.Height);
+            var left = Math.Clamp(this.Left - GetJutLength(this.Left, this.Right, 0, border.Width), 0, border.Width - width);
+            var top = Math.Clamp(this.Top - GetJutLength(this.Top, this.Bottom, 0, border.Height), 0, border.Height - height);
+            return new(new <#= GetRoixPointStructName() #>(left, top), new <#= GetRoixSizeStructName() #>(width, height));
+
+            static double GetJutLength(double left, double right, double min, double max)
+            {
+                // 水平方向の場合、左に食み出てたら負数、右に食み出てたら正数を返します
+                if (left < min) return min - left;
+                if (max < right) return right - max;
+                return 0;
+            }
+        }
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
         // RoixStructGeneratorOptions.XYPair
         public bool IsIncludeZero => (X == 0 || Y == 0);
+        public bool IsIncludeNegative => (X < 0 || Y < 0);
         public bool IsInside(in <#= GetRoixSizeStructName() #> border) => (0 <= X && X <= border.Width) && (0 <= Y && Y <= border.Height);
         public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
 <# } #>

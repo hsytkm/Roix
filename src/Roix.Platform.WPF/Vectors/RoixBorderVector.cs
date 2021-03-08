@@ -15,28 +15,12 @@ namespace Roix.Wpf
         private RoixVector Value => _values.Vector;
 
         #region ctor
-        public RoixBorderVector(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+        public RoixBorderVector(double x, double y, double width, double height) : this(new(x, y), new(width, height)) { }
 
         private partial void Validate(in RoixBorderVector value)
         {
-            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
+            if (value.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
         }
-        #endregion
-
-        #region implicit
-        #endregion
-
-        #region explicit
-        //public static explicit operator RoixBorderPoint(in RoixBorderVector borderVector) => new((RoixPoint)borderVector.Vector, borderVector.Border);
-        #endregion
-
-        #region operator
-        #endregion
-
-        #region Properties
-        #endregion
-
-        #region Methods
         #endregion
 
     }

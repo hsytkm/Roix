@@ -31,23 +31,16 @@ namespace Roix.Wpf
         public static RoixPoint operator -(in RoixPoint point, in RoixVector vector) => new(point.X - vector.X, point.Y - vector.Y);
         #endregion
 
-        #region Properties
-        #endregion
-
         #region Methods
+        //public static RoixPoint CreateRoixPoint(in RoixIntPoint srcPoint, in RoixIntSize srcSize, in RoixSize destSize)
+        //    => srcPoint * (destSize / srcSize);
 
-        public static RoixPoint CreateRoixPoint(in RoixIntPoint srcPoint, in RoixIntSize srcSize, in RoixSize destSize)
-            => srcPoint * (destSize / srcSize);
-
-        //public RoixIntPoint ConvertToRoixIntPoint(in RoixSize srcSize, in RoixIntSize destIntSize)
-        //    => RoixIntPoint.Create(this, srcSize, destIntSize);
-
-        public RoixPoint AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-        {
-            // 画像座標系(int)の IntPoint を求めて、元の座標系(double) に戻す
-            var destIntPoint = RoixIntPoint.Create(this, srcSize, destIntSize, mode);
-            return CreateRoixPoint(destIntPoint, destIntSize, srcSize);
-        }
+        //public RoixPoint AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+        //{
+        //    // 画像座標系(int)の IntPoint を求めて、元の座標系(double) に戻す
+        //    var destIntPoint = RoixIntPoint.Create(this, srcSize, destIntSize, mode);
+        //    return CreateRoixPoint(destIntPoint, destIntSize, srcSize);
+        //}
 
         #endregion
 

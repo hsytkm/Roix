@@ -49,7 +49,7 @@ namespace Roix.SourceGenerator
 
         internal bool HasFlag(RoixStructGeneratorOptions options) => Options.HasFlag(options);
 
-        internal RoixStructGeneratorOptions GetOptionsFromName(string structName)
+        private RoixStructGeneratorOptions GetOptionsFromName(string structName)
         {
             var isRoix = structName.Contains("Roix");
             var isInt = structName.Contains("Int");
@@ -71,5 +71,75 @@ namespace Roix.SourceGenerator
             }
             return option;
         }
+
+        private string JoinItemsWithFormat(IEnumerable<string> items, string format = "")
+        {
+            if (string.IsNullOrWhiteSpace(format))
+                return string.Join(", ", items);
+
+            return string.Join(", ", items.Select(x => string.Format(format, x)));
+        }
+
+        internal string GetNames(string format = "") => JoinItemsWithFormat(Properties.Select(p => p.Name), format);
+
+        internal string GetLowerNames(string format = "") => JoinItemsWithFormat(Properties.Select(p => p.Name.ToLower()), format);
+
+        internal string GetToString() => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}}}"));
+
+        internal string GetToStringWithFormat()
+            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}.ToString(format, formatProvider)}}"));
+
+        internal string GetOperate2Value(ArithmeticOperators ope, string name1, string name2)
+            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {name2}.{{0}}"));
+
+        internal string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
+            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {value2}"));
+
+        private string GetInTypeIfNecessary(TypeSyntax typeSyntax)
+        {
+            // built-in types
+            if (typeSyntax is PredefinedTypeSyntax) return typeSyntax.ToString();
+
+            // my structs
+            if (typeSyntax is IdentifierNameSyntax) return $"in {typeSyntax}";
+
+            throw new NotImplementedException();
+        }
+
+        internal string GetTypeAndLowerNames(string format)
+            => string.Join(", ", Properties.Select(p => string.Format(format, p.Type, p.Name.ToLower())));
+
+        internal string GetTypeAndLowerNamesForArgs(string format)
+            => string.Join(", ", Properties.Select(p => string.Format(format, GetInTypeIfNecessary(p.Type), p.Name.ToLower())));
+
+        internal string GetRoixSizeStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntSize" : "RoixSize";
+
+        internal string GetRoixPointStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntPoint" : "RoixPoint";
+
+        internal string GetRoixDefaultBuiltInType() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
+
+        internal string GetRoixNameWithoutInt() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
+
+        private string GetOperatorString(ArithmeticOperators ope) => ope switch
+        {
+            ArithmeticOperators.Add => "+",
+            ArithmeticOperators.Subtract => "-",
+            ArithmeticOperators.Multiply => "*",
+            ArithmeticOperators.Divide => "/",
+            _ => throw new NotImplementedException(),
+        };
+
+        internal string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name, string ratio)
+        {
+            static string GetRatioXYPropertyName(int index) => ((index & 1) == 0) ? "X" : "Y";
+
+            var list = new List<string>();
+            for (int i = 0; i < Properties.Count; ++i)
+            {
+                list.Add(name + "." + Properties[i].Name + " " + GetOperatorString(ope) + " " + ratio + "." + GetRatioXYPropertyName(i));
+            }
+            return string.Join(", ", list);
+        }
+
     }
 }

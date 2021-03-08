@@ -19,7 +19,8 @@ namespace Roix.Wpf
         public static RoixRect Empty { get; } = new(new(double.PositiveInfinity, double.PositiveInfinity), RoixSize.Empty);
 
         #region ctor
-        public RoixRect(double x, double y, double width, double height) => _values = new(new(x, y), new(width, height));
+        public RoixRect(double x, double y, double width, double height) : this(new RoixPoint(x, y), new RoixSize(width, height)) { }
+
         public RoixRect(in RoixPoint point1, in RoixPoint point2)
         {
             var x = Math.Min(point1.X, point2.X);
@@ -30,16 +31,11 @@ namespace Roix.Wpf
         }
         public RoixRect(in RoixPoint point, in RoixVector vector) : this(point, point + vector) { }
 
-        public void Deconstruct(out double x, out double y, out double width, out double height) => (x, y, width, height) = (Location.X, Location.Y, Size.Width, Size.Height);
         #endregion
 
         #region implicit
         public static implicit operator RoixRect(System.Windows.Rect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : Empty;
         public static implicit operator System.Windows.Rect(in RoixRect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : System.Windows.Rect.Empty;
-        #endregion
-
-        #region explicit
-        //public static explicit operator RoixIntRect(in RoixRect rect) => new((RoixIntPoint)rect.Location, (RoixIntSize)rect.Size);
         #endregion
 
         #region operator
@@ -80,26 +76,28 @@ namespace Roix.Wpf
 
         #region Methods
 
-        public static RoixRect ConvertToNewBorder(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
-        {
-            return (RoixRect)srcRect * (destSize / srcSize);
-        }
-
         public System.Windows.Media.PointCollection ToPointCollection()
         {
             if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
             return new(new[] { TopLeft, TopRight, BottomRight, BottomLeft }.Select(static x => (System.Windows.Point)x));
         }
 
-        public static RoixRect CreateRoixRect(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
-            => srcRect * (destSize / srcSize);
+        //public static RoixRect Create(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
+        //{
+        //    if (srcSize.IsIncludeZero) throw new DivideByZeroException();
+        //    return srcRect * (destSize / srcSize);
+        //}
 
         /// <summary>画像座標系(int)の IntRect を求めて、元の座標系(double) に戻す</summary>
-        public RoixRect AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-        {
-            var intRect = RoixIntRect.Create(this, srcSize, destIntSize, mode);
-            return CreateRoixRect(intRect, destIntSize, srcSize);
-        }
+        //public RoixRect AdjustRoixWithResolutionOfImage(in RoixSize srcSize, in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+        //{
+        //    var intRect = RoixIntRect.Create(this, srcSize, destIntSize, mode);
+        //    return CreateRoixRect(intRect, destIntSize, srcSize);
+        //}
+
+        /// <summary>指定 border の内部に収めた IntRect を返します</summary>
+        public RoixRect GetClippedBorderRect(in RoixSize border, bool isPointPriority = true)
+            => isPointPriority ? GetClippedBorderRectByPointPriority(border) : GetClippedBorderRectBySizePriority(border);
 
         #endregion
 

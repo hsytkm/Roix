@@ -22,23 +22,8 @@ namespace Roix.Wpf
         }
         #endregion
 
-        #region implicit
-        #endregion
-
-        #region explicit
-        public static explicit operator RoixBorderIntSize(in RoixBorderSize borderSize) => new((RoixIntSize)borderSize.Size, (RoixIntSize)borderSize.Border);
-        #endregion
-
-        #region operator
-        //public static RoixBorderSize operator *(in RoixBorderSize borderSize, double mul) => new(borderSize.Size * mul, borderSize.Border);
-
-        //public static RoixBorderSize operator /(in RoixBorderSize borderSize, double div) => (div != 0) ? new(borderSize.Size / div, borderSize.Border) : throw new DivideByZeroException();
-        #endregion
-
-        #region Properties
-        #endregion
-
         #region Methods
+        // ◆コレいるか？
         public RoixIntSize ToRoixIntSize(bool isCheckBorder = true)
         {
             if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);

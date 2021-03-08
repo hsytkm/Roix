@@ -27,5 +27,39 @@ namespace Roix.Wpf
     //    {
     //        return X + (int)Y + (int)Z;
     //    }
+
+    //    #region ctor
+    //    #endregion
+
+    //    #region implicit
+    //    #endregion
+
+    //    #region explicit
+    //    #endregion
+
+    //    #region operator
+    //    #endregion
+
+    //    #region Properties
+    //    #endregion
+
+    //    #region Methods
+    //    #endregion
     //}
 }
+
+
+/*  Roix Policy
+ *      - RoixDouble と Windows は互換性があり implicit cast できる（Size に Empty の状態が存在する）
+ *      - Windows と RoixInt 間は cast できない（RoixDouble を挟めば可能）
+ *      - RoixInt → RoixDouble は implicit cast で Int側 に定義
+ *      - RoixDouble → RoixInt は explicit cast で Int側 に定義（小数点は切り捨て固定）
+ *      - Size(Double/Int) には Validate が存在する（Exception.CannotBeNegativeValue）
+ *      - Border（Sizeを含む）にも Validate が存在する（Exception.SizeIsNegative）
+ *
+ *
+ *  未
+ *      - RoixDouble は ConvertToRoixInt メソッドを必ず持つ
+ *
+ *
+ */

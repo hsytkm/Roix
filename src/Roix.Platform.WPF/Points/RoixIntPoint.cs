@@ -20,12 +20,10 @@ namespace Roix.Wpf
         #region implicit
         public static implicit operator RoixPoint(in RoixIntPoint point) => new(point.X, point.Y);
 
-        public static implicit operator System.Windows.Point(in RoixIntPoint point) => new(point.X, point.Y);
         #endregion
 
         #region explicit
         public static explicit operator RoixIntPoint(in RoixPoint point) => new(point.X.FloorToInt(), point.Y.FloorToInt());
-        public static explicit operator RoixIntPoint(System.Windows.Point point) => new(point.X.FloorToInt(), point.Y.FloorToInt());
         #endregion
 
         #region operator
@@ -35,21 +33,26 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
-        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
+        /// <summary>引数で指定したInt型の座標系に変換します</summary>
+        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode modeX, RoundingMode modeY)
         {
+            if (srcSize.IsIncludeZero) throw new DivideByZeroException();
+
             var point = srcPoint * (destSize / srcSize);
-            return new RoixIntPoint(point.X.ToInt(mode), point.Y.ToInt(mode));
+            return new(point.X.ToInt(modeX), point.Y.ToInt(modeY));
         }
 
+        /// <summary>引数で指定したInt型の座標系に変換します</summary>
+        public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
+            => Create(srcPoint, srcSize, destSize, mode, mode);
+
+        /// <summary>引数で指定した IntSize 内に収めた IntPoint を返します</summary>
         public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)
         {
-            var x = Math.Clamp(X, 0, size.Width - 1);
-            var y = Math.Clamp(Y, 0, size.Height - 1);
-            return new RoixIntPoint(x, y);
-        }
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
 
+            return new(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
+        }
         #endregion
 
     }

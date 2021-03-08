@@ -78,14 +78,7 @@ namespace Roix.Wpf
         }
         #endregion
 
-        #region Properties
         public bool IsEmpty => this == Empty;
-        public bool IsIncludeNegative => double.IsNegative(X) || double.IsNegative(Y);
-        #endregion
-
-        #region Methods
-        #endregion
-
 
     }
 }

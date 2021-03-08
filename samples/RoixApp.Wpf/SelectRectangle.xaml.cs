@@ -31,6 +31,9 @@ namespace RoixApp.Wpf
         public IReadOnlyReactiveProperty<RoixBorderPoint> CursorBorderPoint { get; }
         public IReadOnlyReactiveProperty<RoixIntPoint> CursorPointToModel { get; }
 
+        //public IReadOnlyReactiveProperty<RoixPoint> SinglePoint { get; }
+        //public IReadOnlyReactiveProperty<RoixIntPoint> SinglePointToModel { get; }
+
         public IReadOnlyReactiveProperty<RoixBorderRect> SelectedBorderRectangle { get; }
         public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
@@ -56,6 +59,34 @@ namespace RoixApp.Wpf
                 .Where(borderPoint => borderPoint.IsNotZero)
                 .Select(borderPoint => borderPoint.ConvertToRoixInt(imageSourceSize).Point)
                 .ToReadOnlyReactivePropertySlim();
+            #endregion
+
+            #region DoubleClickPoint
+            //var eventAcceptedTime = DateTime.Now;
+            //var mouseDoubleClickPoint = MouseLeftDownPoint
+            //    .TimeInterval()
+            //    .Skip(1)
+            //    .Where(ti =>
+            //    {
+            //        // 前回の MouseDown から一定時間が経過していればダブクリと言わない
+            //        if (ti.Interval > TimeSpan.FromMilliseconds(500)) return false;
+
+            //        var now = DateTime.Now;
+
+            //        // 前回のダブクリ受付から一定時間が経過するまでは、次のダブクリを受け付けない
+            //        if (now - eventAcceptedTime < TimeSpan.FromMilliseconds(500)) return false;
+
+            //        eventAcceptedTime = now;    // ダブクリ受付時間の更新
+            //        return true;
+            //    })
+            //    .Select(x => x.Value)
+            //    .ToReadOnlyReactivePropertySlim();
+
+            //SinglePoint = mouseDoubleClickPoint.Select(x => x.Point).ToReadOnlyReactivePropertySlim();
+
+            //SinglePointToModel = SinglePoint
+            //    .Select(borderPoint => borderPoint.ConvertToNewBorder(imageSourceSize).Point)
+            //    .ToReadOnlyReactivePropertySlim();
             #endregion
 
             #region SelectedRectangle
@@ -85,7 +116,7 @@ namespace RoixApp.Wpf
                 .Where(border => border.Border.IsNotZero)
                 .Select(borderPointOnView =>
                 {
-                    var length = 3;
+                    var length = 100;
                     var borderSize = new RoixBorderIntSize(new RoixIntSize(length), imageSourceSize);
                     var borderShiftVector = (RoixIntVector)(borderSize.Size / 2);
 
