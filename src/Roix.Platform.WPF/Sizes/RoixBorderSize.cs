@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixBorderSize
     {
         readonly struct SourceValues
@@ -15,28 +15,21 @@ namespace Roix.Wpf
 
         private RoixSize Value => _values.Size;
 
-        #region ctor
-        private partial void Validate(in RoixBorderSize value)
-        {
-            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-        }
-        #endregion
+        public RoixBorderIntSize ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
+            => new(Size.ToRoixInt(rounding), Border.ToRoixInt(rounding));
 
-        #region Methods
-        // ◆コレいるか？
-        public RoixIntSize ToRoixIntSize(bool isCheckBorder = true)
-        {
-            if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
+        //public RoixIntSize ToRoixIntSize(bool isCheckBorder = true)
+        //{
+        //    if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
 
-            var srcSize = (RoixIntSize)Size;
-            var intSize = (RoixIntSize)Border;
-            if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
+        //    var srcSize = (RoixIntSize)Size;
+        //    var intSize = (RoixIntSize)Border;
+        //    if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
 
-            var width = Math.Clamp(srcSize.Width, 0, intSize.Width - 1);
-            var height = Math.Clamp(srcSize.Height, 0, intSize.Height - 1);
-            return new(width, height);
-        }
-        #endregion
+        //    var width = Math.Clamp(srcSize.Width, 0, intSize.Width - 1);
+        //    var height = Math.Clamp(srcSize.Height, 0, intSize.Height - 1);
+        //    return new(width, height);
+        //}
 
     }
 }

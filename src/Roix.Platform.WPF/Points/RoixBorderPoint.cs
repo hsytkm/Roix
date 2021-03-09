@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixBorderPoint
     {
         readonly struct SourceValues
@@ -15,15 +15,6 @@ namespace Roix.Wpf
 
         private RoixPoint Value => _values.Point;
 
-        #region ctor
-        public RoixBorderPoint(double x, double y, double width, double height) : this(new(x, y), new(width, height)) { }
-
-        private partial void Validate(in RoixBorderPoint value)
-        {
-            if (value.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-        }
-        #endregion
-
         #region operator
         public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? new(borderPoint.Point + borderVector.Vector, borderPoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
 
@@ -34,40 +25,51 @@ namespace Roix.Wpf
 
         #region Properties
         // ◆これいるか？
-        public RoixPoint ClippedRoixPoint => new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height));
+        //public RoixPoint ClippedRoixPoint => new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height));
         #endregion
 
         #region Methods
+        public RoixBorderIntPoint ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
+            => new(Point.ToRoixInt(rounding), Border.ToRoixInt(rounding));
+
         // ◆これいるか？ ConvertToRoixInt の方が良くない？
-        public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
-        {
-            if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
+        //public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
+        //{
+        //    if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
 
-            var srcPoint = (RoixIntPoint)Point;
-            var intSize = (RoixIntSize)Border;
-            if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
+        //    var srcPoint = (RoixIntPoint)Point;
+        //    var intSize = (RoixIntSize)Border;
+        //    if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
 
-            var x = Math.Clamp(srcPoint.X, 0, intSize.Width - 1);
-            var y = Math.Clamp(srcPoint.Y, 0, intSize.Height - 1);
-            return new(x, y);
-        }
-
-        // ◆これいるか？
-        public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new(new RoixRect(Point, vector), Border);
+        //    var x = Math.Clamp(srcPoint.X, 0, intSize.Width - 1);
+        //    var y = Math.Clamp(srcPoint.Y, 0, intSize.Height - 1);
+        //    return new(x, y);
+        //}
 
         // ◆これいるか？
-        public RoixBorderRect CreateRoixBorderRect(in RoixBorderVector borderVector)
-        {
-            if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
-            return CreateRoixBorderRect(borderVector.Vector);
-        }
+        //public RoixBorderRect CreateRoixBorderRect(in RoixVector vector) => new(new RoixRect(Point, vector), Border);
+
+        // ◆これいるか？
+        //public RoixBorderRect CreateRoixBorderRect(in RoixBorderVector borderVector)
+        //{
+        //    if (Border != borderVector.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+        //    return CreateRoixBorderRect(borderVector.Vector);
+        //}
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
         public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-        {
-            if (this.Border.IsEmpty || this.Border.IsZero) return (RoixBorderIntPoint)this;
+            => ConvertToRoixInt(destIntSize, mode, mode);
 
-            var point1 = RoixIntPoint.Create(this.Point, this.Border, destIntSize, mode);
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero)
+            {
+                if (roundingX != roundingY) throw new NotImplementedException();
+                return new(Point.ToRoixInt(roundingX), RoixIntSize.Zero);
+            }
+
+            var point1 = RoixIntPoint.Create(this.Point, this.Border, destIntSize, roundingX, roundingY);
             var point2 = point1.GetClippedIntPoint(destIntSize);
             return new(point2, destIntSize);
         }

@@ -58,7 +58,7 @@ namespace Roix.WPF.Tests
         {
             double x = 1.1, y = 2.2;
             var rp1 = new RoixPoint(x, y);
-            RoixIntPoint rip1 = (RoixIntPoint)rp1;
+            RoixIntPoint rip1 = rp1.ToRoixInt();
             rip1.X.Is((int)Math.Round(rp1.X));
             rip1.Y.Is((int)Math.Round(rp1.Y));
         }

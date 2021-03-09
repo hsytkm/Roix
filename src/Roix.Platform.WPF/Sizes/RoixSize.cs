@@ -80,5 +80,15 @@ namespace Roix.Wpf
 
         public bool IsEmpty => this == Empty;
 
+        public RoixIntSize ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(Width.ToInt(rounding), Height.ToInt(rounding));
+
+        /// <summary>Size の最小サイズを指定値で制限します</summary>
+        public RoixSize ClippedByMinimum(in RoixSize minSize)
+        {
+            if (IsEmpty) return Empty;
+            if (minSize.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
+            return new(Math.Max(Width, minSize.Width), Math.Max(Height, minSize.Height));
+        }
+
     }
 }

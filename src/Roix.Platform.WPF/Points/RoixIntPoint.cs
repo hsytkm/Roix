@@ -23,7 +23,8 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixIntPoint(in RoixPoint point) => new(point.X.FloorToInt(), point.Y.FloorToInt());
+        public static explicit operator RoixIntSize(in RoixIntPoint point) => new(point.X, point.Y);
+        public static explicit operator RoixIntVector(in RoixIntPoint point) => new(point.X, point.Y);
         #endregion
 
         #region operator

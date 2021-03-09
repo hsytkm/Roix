@@ -31,10 +31,8 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixIntSize(in RoixSize size) => !size.IsEmpty ? new(size.Width.FloorToInt(), size.Height.FloorToInt()) : throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-
-        public static implicit operator RoixIntPoint(in RoixIntSize size) => new(size.Width, size.Height);
-        public static implicit operator RoixIntVector(in RoixIntSize size) => new(size.Width, size.Height);
+        public static explicit operator RoixIntPoint(in RoixIntSize size) => new(size.Width, size.Height);
+        public static explicit operator RoixIntVector(in RoixIntSize size) => new(size.Width, size.Height);
         #endregion
 
         public bool IsEmpty => false;   // Not implement in RoixIntSize

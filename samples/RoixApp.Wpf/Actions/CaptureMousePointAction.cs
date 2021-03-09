@@ -26,7 +26,7 @@ namespace RoixApp.Wpf.Actions
             if (AssociatedObject is not FrameworkElement element) return;
 
             CaptureMouse(element, e);
-            MousePoint = new RoixBorderPoint(e.GetPosition(element), element.ActualSizeToRoixSize());
+            MousePoint = new RoixBorderPoint(e.GetPosition(element), element.ActualSizeToRoix());
         }
 
         /// <summary>マウス操作の補足/解除</summary>

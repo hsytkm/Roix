@@ -22,7 +22,7 @@ namespace Roix.WPF.Tests
             rect1.Size.Width.Is(size.Width);
             rect1.Size.Height.Is(size.Height);
 
-            var rect2 = new RoixIntRect(x, y, width, height);
+            var rect2 = new RoixIntRect(new RoixIntPoint(x, y), new RoixIntSize(width, height));
             rect2.Location.X.Is(point.X);
             rect2.Location.Y.Is(point.Y);
             rect2.Size.Width.Is(size.Width);
@@ -35,19 +35,19 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, int.MinValue, int.MinValue)]
         public void Ctorサイズ負数ダメ(int x, int y, int width, int height)
         {
-            Assert.Throws<ArgumentException>(() => new RoixIntRect(x, y, width, height));
+            Assert.Throws<ArgumentException>(() => new RoixIntRect(new RoixIntPoint(x, y), new RoixIntSize(width, height)));
         }
 
         [Fact]
         public void Deconstruct()
         {
-            var rect = new RoixIntRect(1, 2, 3, 4);
+            var rect = new RoixIntRect(new RoixIntPoint(1, 2), new RoixIntSize(3, 4));
 
-            var (x, y, w, h) = rect;
-            x.Is(rect.Location.X);
-            y.Is(rect.Location.Y);
-            w.Is(rect.Size.Width);
-            h.Is(rect.Size.Height);
+            //var (x, y, w, h) = rect;
+            //x.Is(rect.Location.X);
+            //y.Is(rect.Location.Y);
+            //w.Is(rect.Size.Width);
+            //h.Is(rect.Size.Height);
 
             var (p, s) = rect;
             p.Is(rect.Location);
@@ -59,9 +59,9 @@ namespace Roix.WPF.Tests
         [Fact]
         public void Equal()
         {
-            int x = 1, y = 2, w = 3, h = 4;
-            var rect1 = new RoixIntRect(x, y, w, h);
-            var rect2 = new RoixIntRect(x, y, w, h);
+            int x = 1, y = 2, width = 3, height = 4;
+            var rect1 = new RoixIntRect(new RoixIntPoint(x, y), new RoixIntSize(width, height));
+            var rect2 = new RoixIntRect(new RoixIntPoint(x, y), new RoixIntSize(width, height));
             rect1.Equals(rect2).IsTrue();
             (rect1 == rect2).IsTrue();
             (rect1 != rect2).IsFalse();
@@ -78,7 +78,7 @@ namespace Roix.WPF.Tests
         [InlineData(-1, -2, 3, 4)]
         public void ToRoix(int x, int y, int width, int height)
         {
-            var rir1 = new RoixIntRect(x, y, width, height);
+            var rir1 = new RoixIntRect(new RoixIntPoint(x, y), new RoixIntSize(width, height));
             RoixRect rr1 = (RoixRect)rir1;
             rr1.X.Is(rir1.X);
             rr1.Y.Is(rir1.Y);
@@ -93,7 +93,7 @@ namespace Roix.WPF.Tests
         public void FromRoix(int x, int y, int width, int height)
         {
             var rr1 = new RoixRect(x, y, width, height);
-            RoixIntRect rir1 = (RoixIntRect)rr1;
+            RoixIntRect rir1 = rr1.ToRoixInt();
             rir1.X.Is((int)Math.Round(rr1.X));
             rir1.Y.Is((int)Math.Round(rr1.Y));
             rir1.Width.Is((int)Math.Round(rr1.Width));
@@ -106,8 +106,8 @@ namespace Roix.WPF.Tests
         [Fact]
         public void IsZero()
         {
-            new RoixIntRect(1, 2, 3, 0).IsZero.IsFalse();
-            new RoixIntRect(0, 0, 0, 0).IsZero.IsTrue();
+            new RoixIntRect(new RoixIntPoint(1, 2), new RoixIntSize(3, 0)).IsZero.IsFalse();
+            new RoixIntRect(new RoixIntPoint(0, 0), new RoixIntSize(0, 0)).IsZero.IsTrue();
             RoixIntRect.Zero.IsZero.IsTrue();
         }
 
@@ -119,7 +119,7 @@ namespace Roix.WPF.Tests
         {
             var point = new RoixPoint(x, y);
             var size = new RoixSize(width, height);
-            var r = new RoixIntRect((RoixIntPoint)point, (RoixIntSize)size);
+            var r = new RoixIntRect(point.ToRoixInt(), size.ToRoixInt());
 
             r.X.Is(r.Location.X);
             r.Y.Is(r.Location.Y);

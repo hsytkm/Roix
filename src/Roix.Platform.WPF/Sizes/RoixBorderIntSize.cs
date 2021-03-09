@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixBorderIntSize
     {
         readonly struct SourceValues
@@ -15,20 +15,7 @@ namespace Roix.Wpf
 
         private RoixIntSize Value => _values.Size;
 
-        #region ctor
-        private partial void Validate(in RoixBorderIntSize value)
-        {
-            if (value.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-        }
-        #endregion
-
-        #region implicit
         public static implicit operator RoixBorderSize(in RoixBorderIntSize borderSize) => new(borderSize.Size, borderSize.Border);
-        #endregion
-
-        #region explicit
-        public static explicit operator RoixBorderIntSize(in RoixBorderSize borderSize) => new((RoixIntSize)borderSize.Size, (RoixIntSize)borderSize.Border);
-        #endregion
 
     }
 }

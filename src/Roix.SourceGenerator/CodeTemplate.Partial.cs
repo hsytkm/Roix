@@ -54,10 +54,11 @@ namespace Roix.SourceGenerator
             var isRoix = structName.Contains("Roix");
             var isInt = structName.Contains("Int");
             var isBorder = structName.Contains("Border");
+
             var isPoint = structName.Contains("Point");
-            var isVector = structName.Contains("Vector");
-            var isSize = structName.Contains("Size");
             var isRect = structName.Contains("Rect");
+            var isSize = structName.Contains("Size");
+            var isVector = structName.Contains("Vector");
 
             var option = RoixStructGeneratorOptions.None;
             if (!isRoix) return option;
@@ -66,8 +67,9 @@ namespace Roix.SourceGenerator
             if (isBorder) option |= RoixStructGeneratorOptions.WithBorder;
             if (!isBorder)
             {
-                if (isPoint || isVector || isSize) option |= RoixStructGeneratorOptions.XYPair;
+                if (isPoint || isSize || isVector) option |= RoixStructGeneratorOptions.XYPair;
                 if (isRect) option |= RoixStructGeneratorOptions.Rect;
+                if (isPoint || isRect || isSize || isVector) option |= RoixStructGeneratorOptions.HasParent;
             }
             return option;
         }
@@ -119,6 +121,8 @@ namespace Roix.SourceGenerator
         internal string GetRoixDefaultBuiltInType() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
 
         internal string GetRoixNameWithoutInt() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
+
+        internal string GetRoixBorderName() => HasFlag(RoixStructGeneratorOptions.HasParent) ? Name.Replace("Roix", "RoixBorder") : Name;
 
         private string GetOperatorString(ArithmeticOperators ope) => ope switch
         {

@@ -24,12 +24,15 @@ namespace Roix.Wpf
         public static explicit operator System.Windows.Point(in RoixVector vector) => new(vector.X, vector.Y);
         public static explicit operator RoixVector(System.Windows.Point point) => new(point.X, point.Y);
 
+        public static explicit operator RoixSize(in RoixVector vector) => new(vector.X, vector.Y);
         public static explicit operator RoixPoint(in RoixVector vector) => new(vector.X, vector.Y);
         #endregion
 
         #region operator
         public static RoixVector operator -(in RoixVector vector) => Zero - vector;
         #endregion
+
+        public RoixIntVector ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(X.ToInt(rounding), Y.ToInt(rounding));
 
     }
 }

@@ -138,31 +138,31 @@ namespace Roix.WPF.Tests
             Assert.Throws<ArgumentException>(() => br1.ConvertToNewBorder(new RoixSize(0, 0)));
         }
 
-        [Theory]
-        [InlineData(1.1, 2.9, 3.1, 4.9, 1, 2, 3, 4)]
-        [InlineData(0, 0, 10, 10, 0, 0, 10, 10)]
-        [InlineData(9, 2, 1, 3, 9, 2, 1, 3)]       // 0~Length-1
-        public void ToRoixIntRect_Ok(double x, double y, double width, double height, int ansX, int ansY, int ansWidth, int ansHeight)
-        {
-            var rect = new RoixRect(x, y, width, height);
-            var border = new RoixSize(10, 10);
+        //[Theory]
+        //[InlineData(1.1, 2.9, 3.1, 4.9, 1, 2, 3, 4)]
+        //[InlineData(0, 0, 10, 10, 0, 0, 10, 10)]
+        //[InlineData(9, 2, 1, 3, 9, 2, 1, 3)]       // 0~Length-1
+        //public void ToRoixIntRect_Ok(double x, double y, double width, double height, int ansX, int ansY, int ansWidth, int ansHeight)
+        //{
+        //    var rect = new RoixRect(x, y, width, height);
+        //    var border = new RoixSize(10, 10);
 
-            var ir = new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true);
-            var ansRect = new RoixIntRect(ansX, ansY, ansWidth, ansHeight);
-            ir.Is(ansRect);
-        }
+        //    var ir = new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true);
+        //    var ansRect = new RoixIntRect(ansX, ansY, ansWidth, ansHeight);
+        //    ir.Is(ansRect);
+        //}
 
-        [Theory]
-        [InlineData(10, 2, 1, 4)]   // Outside
-        [InlineData(1, 0, 1, 11)]   // Outside
-        public void ToRoixIntRect_Ng(double x, double y, double width, double height)
-        {
-            var rect = new RoixRect(x, y, width, height);
-            var border = new RoixSize(10, 10);
+        //[Theory]
+        //[InlineData(10, 2, 1, 4)]   // Outside
+        //[InlineData(1, 0, 1, 11)]   // Outside
+        //public void ToRoixIntRect_Ng(double x, double y, double width, double height)
+        //{
+        //    var rect = new RoixRect(x, y, width, height);
+        //    var border = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBorder: true));
-        }
+        //    Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, border).ToRoixIntRect(isCheckBorder: true));
+        //    Assert.Throws<InvalidOperationException>(() => new RoixBorderRect(rect, RoixSize.Zero).ToRoixIntRect(isCheckBorder: true));
+        //}
 
         [Theory]
         [InlineData(0, 0, 4, 4)]

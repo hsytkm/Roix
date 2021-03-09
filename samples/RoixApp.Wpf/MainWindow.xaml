@@ -4,11 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RoixApp.Wpf"
+        xmlns:ctrl="clr-namespace:RoixApp.Wpf.Controls"
         mc:Ignorable="d"
         ResizeMode="CanResizeWithGrip"
         Title="RoixApp.Wpf"
         Height="550" Width="800" >
-    <Grid>
-        <local:SelectRectangle />
-    </Grid>
+    
+    <TabControl Margin="5">
+        <ctrl:LazyTabItem Header="Ratio"
+                          ContentType="{x:Type local:ImageRatio}" />
+
+        <ctrl:LazyTabItem Header="Mouse"
+                          ContentType="{x:Type local:SelectRectangle}" />
+    </TabControl>
 </Window>

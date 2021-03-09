@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator2)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator1 | RoixStructGeneratorOptions.ArithmeticOperator2)]
     public readonly partial struct RoixIntVector
     {
         readonly struct SourceValues
@@ -22,7 +22,12 @@ namespace Roix.Wpf
         #endregion
 
         #region explicit
-        public static explicit operator RoixIntVector(in RoixVector vector) => new(vector.X.FloorToInt(), vector.Y.FloorToInt());
+        public static explicit operator RoixIntSize(in RoixIntVector vector) => new(vector.X, vector.Y);
+        public static explicit operator RoixIntPoint(in RoixIntVector vector) => new(vector.X, vector.Y);
+        #endregion
+
+        #region operator
+        public static RoixIntVector operator -(in RoixIntVector vector) => Zero - vector;
         #endregion
 
     }

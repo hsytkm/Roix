@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
     public readonly partial struct RoixBorderRect
     {
         readonly struct SourceValues
@@ -20,61 +20,73 @@ namespace Roix.Wpf
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderSize borderSize)
         {
             if (borderPoint.Border != borderSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            if (borderPoint.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
+
             _values = new(new RoixRect(borderPoint.Point, borderSize.Size), borderPoint.Border);
-            Validate(this);
         }
 
         // ◆基本のctorにthisしたい
         public RoixBorderRect(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2)
         {
             if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
+
             _values = new(new RoixRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border);
-            Validate(this);
         }
 
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
-
-        private partial void Validate(in RoixBorderRect value)
-        {
-            if (value.Border.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
-        }
-        #endregion
-
-        #region implicit
         #endregion
 
         #region Methods
-        public RoixIntRect ToRoixIntRect(bool isCheckBorder = true)
-        {
-            if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
+        public RoixBorderIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
+            => new(Roi.ToRoixInt(rounding), Border.ToRoixInt(rounding));
 
-            var srcRect = (RoixIntRect)Roi;
-            var intSize = (RoixIntSize)Border;
-            if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
+        public RoixRatioXYWH ToRoixRatioXYWH()
+            => new(Roi.X / Border.Width, Roi.Y / Border.Height, Roi.Width / Border.Width, Roi.Height / Border.Height);
 
-            var x = Math.Clamp(srcRect.X, 0, intSize.Width - 1);
-            var y = Math.Clamp(srcRect.Y, 0, intSize.Height - 1);
-            var width = Math.Clamp(srcRect.Width, 0, intSize.Width - x);
-            var height = Math.Clamp(srcRect.Height, 0, intSize.Height - y);
-            return new(x, y, width, height);
-        }
+        // ◆これいるか？
+        //public RoixIntRect ToRoixIntRect(bool isCheckBorder = true)
+        //{
+        //    if (isCheckBorder && IsOutsideBorder) throw new InvalidOperationException(ExceptionMessages.MustInsideTheBorder);
+
+        //    var srcRect = (RoixIntRect)Roi;
+        //    var intSize = (RoixIntSize)Border;
+        //    if (intSize.IsZero) throw new InvalidOperationException(ExceptionMessages.SizeIsZero);
+
+        //    var x = Math.Clamp(srcRect.X, 0, intSize.Width - 1);
+        //    var y = Math.Clamp(srcRect.Y, 0, intSize.Height - 1);
+        //    var width = Math.Clamp(srcRect.Width, 0, intSize.Width - x);
+        //    var height = Math.Clamp(srcRect.Height, 0, intSize.Height - y);
+        //    return new(x, y, width, height);
+        //}
 
         /// <summary>Border の内部に収めた Rect を返す</summary>
         public RoixBorderRect GetClippedBorderRect(bool isPointPriority = true)
         {
-            var rect = Roi.GetClippedBorderRect(Border, isPointPriority);
+            var rect = Roi.GetClippedRect(Border, isPointPriority);
             return new(rect, Border);
         }
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
-        //public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-        //{
-        //    if (this.Border.IsEmpty || this.Border.IsZero) return (RoixBorderIntRect)this;
+        /// <summary>Rect の最小サイズを指定値で制限します</summary>
+        public RoixBorderRect ClippedRoiSizeByMinimum(in RoixSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
 
-        //    var rect1 = RoixIntRect.Create(this.Roi, this.Border, destIntSize, mode);
-        //    var rect2 = rect1.GetClippedIntRect(destIntSize);
-        //    return new(rect2, destIntSize);
-        //}
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+            => ConvertToRoixInt(destIntSize, mode, mode);
+
+        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero)
+            {
+                if (roundingX != roundingY) throw new NotImplementedException();
+                return new(Roi.ToRoixInt(roundingX), RoixIntSize.Zero);
+            }
+
+            var rect1 = RoixIntRect.Create(this.Roi, this.Border, destIntSize, roundingX, roundingY);
+            var rect2 = rect1.GetClippedIntRect(destIntSize);
+            return new(rect2, destIntSize);
+        }
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
         //public RoixBorderRect AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)

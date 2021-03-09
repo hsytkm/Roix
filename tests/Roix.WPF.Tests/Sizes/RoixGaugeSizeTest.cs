@@ -111,27 +111,27 @@ namespace Roix.WPF.Tests
             Assert.Throws<ArgumentException>(() => bs1.ConvertToNewBorder(new RoixSize(0, 0)));
         }
 
-        [Theory]
-        [InlineData(1.1, 2.9, 1, 2)]
-        [InlineData(0, 10, 0, 9)]       // 0~Length-1
-        public void ToRoixIntSize_Ok(double width, double height, int ansWidth, int ansHeight)
-        {
-            var size = new RoixSize(width, height);
-            var border = new RoixSize(10, 10);
-            var bs = new RoixBorderSize(size, border).ToRoixIntSize(isCheckBorder: true);
-            bs.Width.Is(ansWidth);
-            bs.Height.Is(ansHeight);
-        }
+        //[Theory]
+        //[InlineData(1.1, 2.9, 1, 2)]
+        //[InlineData(0, 10, 0, 9)]       // 0~Length-1
+        //public void ToRoixIntSize_Ok(double width, double height, int ansWidth, int ansHeight)
+        //{
+        //    var size = new RoixSize(width, height);
+        //    var border = new RoixSize(10, 10);
+        //    var bs = new RoixBorderSize(size, border).ToRoixIntSize(isCheckBorder: true);
+        //    bs.Width.Is(ansWidth);
+        //    bs.Height.Is(ansHeight);
+        //}
 
-        [Fact]
-        public void ToRoixIntSize_Ng()
-        {
-            var size = new RoixSize(11, 10);    // Outside
-            var border = new RoixSize(10, 10);
+        //[Fact]
+        //public void ToRoixIntSize_Ng()
+        //{
+        //    var size = new RoixSize(11, 10);    // Outside
+        //    var border = new RoixSize(10, 10);
 
-            Assert.Throws<InvalidOperationException>(() => new RoixBorderSize(size, border).ToRoixIntSize(isCheckBorder: true));
-            Assert.Throws<InvalidOperationException>(() => new RoixBorderSize(size, RoixSize.Zero).ToRoixIntSize(isCheckBorder: true));
-        }
+        //    Assert.Throws<InvalidOperationException>(() => new RoixBorderSize(size, border).ToRoixIntSize(isCheckBorder: true));
+        //    Assert.Throws<InvalidOperationException>(() => new RoixBorderSize(size, RoixSize.Zero).ToRoixIntSize(isCheckBorder: true));
+        //}
 
         #endregion
 

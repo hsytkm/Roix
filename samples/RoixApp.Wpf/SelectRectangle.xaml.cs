@@ -31,14 +31,14 @@ namespace RoixApp.Wpf
         public IReadOnlyReactiveProperty<RoixBorderPoint> CursorBorderPoint { get; }
         public IReadOnlyReactiveProperty<RoixIntPoint> CursorPointToModel { get; }
 
-        //public IReadOnlyReactiveProperty<RoixPoint> SinglePoint { get; }
-        //public IReadOnlyReactiveProperty<RoixIntPoint> SinglePointToModel { get; }
+        public IReadOnlyReactiveProperty<RoixPoint> SinglePoint { get; }
+        public IReadOnlyReactiveProperty<RoixIntPoint> SinglePointToModel { get; }
 
-        public IReadOnlyReactiveProperty<RoixBorderRect> SelectedBorderRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
         public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
         public IReactiveProperty<RoixBorderPoint> MouseRightDownPoint { get; }
-        public IReadOnlyReactiveProperty<RoixBorderRect> ClickedFixedBorderRectangle { get; }
+        public IReadOnlyReactiveProperty<RoixRect> ClickedFixedRectangle { get; }
         public IReadOnlyReactiveProperty<RoixIntRect> ClickedFixedRectangleToModel { get; }
 
         public SelectRectangleViewModel()
@@ -46,11 +46,11 @@ namespace RoixApp.Wpf
             MouseLeftDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             MouseLeftUpPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             MouseMovePoint = new ReactivePropertySlim<RoixBorderPoint>();
-            ViewBorderSize = new ReactivePropertySlim<RoixSize>();
+            ViewBorderSize = new ReactivePropertySlim<RoixSize>(mode: ReactivePropertyMode.DistinctUntilChanged);
             MouseRightDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
 
-            var imageSourceSize = MyImage.PixelSizeToRoixIntSize();
+            var imageSourceSize = MyImage.PixelSizeToRoixInt();
 
             #region CursorPoint
             CursorBorderPoint = MouseMovePoint.ToReadOnlyReactivePropertySlim();
@@ -62,31 +62,44 @@ namespace RoixApp.Wpf
             #endregion
 
             #region DoubleClickPoint
-            //var eventAcceptedTime = DateTime.Now;
-            //var mouseDoubleClickPoint = MouseLeftDownPoint
-            //    .TimeInterval()
-            //    .Skip(1)
-            //    .Where(ti =>
-            //    {
-            //        // 前回の MouseDown から一定時間が経過していればダブクリと言わない
-            //        if (ti.Interval > TimeSpan.FromMilliseconds(500)) return false;
+            var eventAcceptedTime = DateTime.Now;
+            var mouseDoubleClickPoint = MouseLeftDownPoint
+                .TimeInterval()
+                .Skip(1)
+                .Where(ti =>
+                {
+                    // 前回の MouseDown から一定時間が経過していればダブクリと言わない
+                    if (ti.Interval > TimeSpan.FromMilliseconds(500)) return false;
 
-            //        var now = DateTime.Now;
+                    var now = DateTime.Now;
 
-            //        // 前回のダブクリ受付から一定時間が経過するまでは、次のダブクリを受け付けない
-            //        if (now - eventAcceptedTime < TimeSpan.FromMilliseconds(500)) return false;
+                    // 前回のダブクリ受付から一定時間が経過するまでは、次のダブクリを受け付けない
+                    if (now - eventAcceptedTime < TimeSpan.FromMilliseconds(500)) return false;
 
-            //        eventAcceptedTime = now;    // ダブクリ受付時間の更新
-            //        return true;
-            //    })
-            //    .Select(x => x.Value)
-            //    .ToReadOnlyReactivePropertySlim();
+                    eventAcceptedTime = now;    // ダブクリ受付時間の更新
+                    return true;
+                })
+                .Select(x => x.Value)
+                .ToReadOnlyReactivePropertySlim();
 
-            //SinglePoint = mouseDoubleClickPoint.Select(x => x.Point).ToReadOnlyReactivePropertySlim();
+            // 画像座標系の点(これを基準に管理する)
+            var selectedPointOnImage = mouseDoubleClickPoint
+                .Select(borderPoint => borderPoint.ConvertToRoixInt(imageSourceSize))
+                .ToReadOnlyReactivePropertySlim();
 
-            //SinglePointToModel = SinglePoint
-            //    .Select(borderPoint => borderPoint.ConvertToNewBorder(imageSourceSize).Point)
-            //    .ToReadOnlyReactivePropertySlim();
+            SinglePoint = selectedPointOnImage
+                .CombineLatest(ViewBorderSize, (intPoint, viewSize) =>
+                {
+                    var leftTop = intPoint.ConvertToNewBorder(viewSize).Point;
+                    var halfPixelSize = new RoixIntSize(1).ToRoixBorder(imageSourceSize).ConvertToNewBorder(viewSize).Size / 2d;
+                    return leftTop + (RoixVector)halfPixelSize;     // 画素の中央部に点を打つためシフト
+                })
+                .ToReadOnlyReactivePropertySlim();
+
+            SinglePointToModel = selectedPointOnImage
+                .Where(borderPoint => borderPoint.Border.IsNotZero)
+                .Select(borderRectOnView => borderRectOnView.Point)
+                .ToReadOnlyReactivePropertySlim();
             #endregion
 
             #region SelectedRectangle
@@ -104,9 +117,10 @@ namespace RoixApp.Wpf
                 .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize))
                 .ToReadOnlyReactivePropertySlim();
 
-            // View座標系の選択枠
-            SelectedBorderRectangle = selectedRectangleOnImage
-                .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border))
+            // View座標系の選択枠(length=0 だと View の Polygon が変に長くなるので minLength で Clip する)
+            SelectedRectangle = selectedRectangleOnImage
+                .CombineLatest(ViewBorderSize, (rect, border)
+                    => rect.ConvertToNewBorder(border).ClippedRoiSizeByMinimum(new RoixSize(1, 1)).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -117,12 +131,12 @@ namespace RoixApp.Wpf
                 .Select(borderPointOnView =>
                 {
                     var length = 100;
-                    var borderSize = new RoixBorderIntSize(new RoixIntSize(length), imageSourceSize);
-                    var borderShiftVector = (RoixIntVector)(borderSize.Size / 2);
+                    var rectBorderSize = new RoixIntSize(length).ToRoixBorder(imageSourceSize);
+                    var rectHalfSize = (rectBorderSize.Size / 2d);
 
                     var newCenterPoint = borderPointOnView.ConvertToRoixInt(imageSourceSize);
-                    var newLeftTopPoint = newCenterPoint.Point - borderShiftVector;
-                    var newBorderRect = new RoixBorderIntRect(new(newLeftTopPoint, borderSize.Size), imageSourceSize);
+                    var newLeftTopPoint = newCenterPoint.Point - (RoixIntVector)rectHalfSize;
+                    var newBorderRect = new RoixIntRect(newLeftTopPoint, rectBorderSize.Size).ToRoixBorder(imageSourceSize);
                     return newBorderRect.GetClippedBorderIntRect(isPointPriority: false);
                 })
                 .ToReadOnlyReactivePropertySlim();
@@ -134,8 +148,8 @@ namespace RoixApp.Wpf
                 .ToReadOnlyReactivePropertySlim();
 
             // View座標系の選択枠
-            ClickedFixedBorderRectangle = clickedFixedRectangleOnImage
-                .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border))
+            ClickedFixedRectangle = clickedFixedRectangleOnImage
+                .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 

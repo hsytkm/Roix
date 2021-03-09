@@ -8,7 +8,6 @@
              xmlns:local="clr-namespace:RoixApp.Wpf"
              xmlns:conv="clr-namespace:RoixApp.Wpf.Converters"
              xmlns:action="clr-namespace:RoixApp.Wpf.Actions"
-             xmlns:aprop="clr-namespace:RoixApp.Wpf.AttachedProperties"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -18,6 +17,7 @@
     
     <UserControl.Resources>
         <conv:RectToPointCollectionConverter x:Key="RectToPointCollectionConverter" />
+        <conv:PointToPointCollectionConverter x:Key="PointToPointCollectionConverter" />
 
         <Style x:Key="selectedPolygonStyle" TargetType="{x:Type Polygon}" >
             <Setter Property="IsHitTestVisible" Value="False" />
@@ -37,9 +37,11 @@
                 </TextBlock>
                 <TextBlock Foreground="Green" Text="{Binding CursorBorderPoint.Value.Point, Mode=OneWay, StringFormat='ViewPoint:  {0:f1}'}" />
                 <TextBlock Foreground="Green" Text="{Binding CursorPointToModel.Value, Mode=OneWay, StringFormat='ModelPoint:  {0}'}" />
-                <TextBlock Foreground="Crimson" Text="{Binding SelectedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+                <TextBlock Foreground="Orange" Text="{Binding SinglePoint.Value, Mode=OneWay, StringFormat='ViewPoint:  {0:f1}'}" />
+                <TextBlock Foreground="Orange" Text="{Binding SinglePointToModel.Value, Mode=OneWay, StringFormat='ModelPoint:  {0:f1}'}" />
+                <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangle.Value, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
                 <TextBlock Foreground="Crimson" Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0:f1}'}" />
-                <TextBlock Foreground="Blue" Text="{Binding ClickedFixedBorderRectangle.Value.Roi, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+                <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangle.Value, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
                 <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
             </StackPanel>
 
@@ -97,19 +99,14 @@
             <Grid Width="{Binding ActualWidth, ElementName=mainImage}"
                   Height="{Binding ActualHeight, ElementName=mainImage}" >
                 <Polygon Style="{StaticResource selectedPolygonStyle}"
-                         Points="{Binding SelectedBorderRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+                         Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
 
                 <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Blue"
-                         Points="{Binding ClickedFixedBorderRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
-            </Grid>
+                         Points="{Binding ClickedFixedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
 
-            <!--<Canvas Margin="10" Background="Transparent" IsHitTestVisible="False"
-                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Width="{Binding ActualWidth, ElementName=mainImage}"
-                    Height="{Binding ActualHeight, ElementName=mainImage}" >
-                <Ellipse aprop:AttachedCanvasPosition.LeftTop="{Binding SinglePoint.Value, Mode=OneWay}"
-                         Width="3" Height="3" Fill="Cyan" />
-            </Canvas>-->
+                <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Orange"
+                         Points="{Binding SinglePoint.Value, Mode=OneWay, Converter={StaticResource PointToPointCollectionConverter}}" />
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControl>

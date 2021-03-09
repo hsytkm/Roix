@@ -21,7 +21,7 @@ namespace Roix.WPF.Tests
             bv1.Border.Width.Is(width);
             bv1.Border.Height.Is(height);
 
-            var bv2 = new RoixBorderVector(x, y, width, height);
+            var bv2 = new RoixBorderVector(new(x, y), new(width, height));
             bv2.Vector.Is(bv1.Vector);
             bv2.Border.Is(bv1.Border);
 
@@ -33,7 +33,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, 0, -1, 2)]
         public void CtorïâêîÉ_ÉÅ(double x, double y, double width, double height)
         {
-            Assert.Throws<ArgumentException>(() => new RoixBorderVector(x, y, width, height));
+            Assert.Throws<ArgumentException>(() => new RoixBorderVector(new(x, y), new(width, height)));
             Assert.Throws<ArgumentException>(() => new RoixBorderVector(new RoixVector(0, 0), RoixSize.Empty));
         }
 
@@ -54,8 +54,8 @@ namespace Roix.WPF.Tests
         public void Equal()
         {
             double x = 1.1, y = 2.2, width = 3.3, height = 4.4;
-            var p1 = new RoixBorderVector(x, y, width, height);
-            var p2 = new RoixBorderVector(x, y, width, height);
+            var p1 = new RoixBorderVector(new(x, y), new(width, height));
+            var p2 = new RoixBorderVector(new(x, y), new(width, height));
 
             p1.Equals(p2).IsTrue();
             (p1 == p2).IsTrue();
@@ -93,7 +93,7 @@ namespace Roix.WPF.Tests
         [InlineData(0, -1, 10, 10, false)]
         public void IsInside(double x, double y, double width, double height, bool isInside)
         {
-            var vec = new RoixBorderVector(x, y, width, height);
+            var vec = new RoixBorderVector(new(x, y), new(width, height));
             vec.IsInsideBorder.Is(isInside);
             vec.IsOutsideBorder.Is(!isInside);
         }

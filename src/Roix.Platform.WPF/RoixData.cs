@@ -56,6 +56,7 @@ namespace Roix.Wpf
  *      - RoixDouble → RoixInt は explicit cast で Int側 に定義（小数点は切り捨て固定）
  *      - Size(Double/Int) には Validate が存在する（Exception.CannotBeNegativeValue）
  *      - Border（Sizeを含む）にも Validate が存在する（Exception.SizeIsNegative）
+ *      - Border なし版（RoixPoint / RoixSize など）は ToRoixBorder メソッドを持つ
  *
  *
  *  未

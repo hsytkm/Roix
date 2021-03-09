@@ -58,11 +58,11 @@ namespace Roix.WPF.Tests
         {
             double x = 1.1, y = 2.2;
             var rs1 = new RoixSize(x, y);
-            RoixIntSize ris1 = (RoixIntSize)rs1;
+            RoixIntSize ris1 = rs1.ToRoixInt();
             ris1.Width.Is((int)Math.Round(rs1.Width));
             ris1.Height.Is((int)Math.Round(rs1.Height));
 
-            Assert.Throws<ArgumentException>(() => (RoixIntSize)RoixSize.Empty);
+            Assert.Throws<ArgumentException>(() => RoixSize.Empty.ToRoixInt());
         }
 
         #endregion

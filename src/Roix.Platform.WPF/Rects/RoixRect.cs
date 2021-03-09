@@ -1,6 +1,5 @@
 ﻿using Roix.SourceGenerator;
 using System;
-using System.Linq;
 
 namespace Roix.Wpf
 {
@@ -70,16 +69,15 @@ namespace Roix.Wpf
         }
         #endregion
 
-        #region Properties
         public bool IsEmpty => this == Empty;
-        #endregion
 
         #region Methods
+        public RoixIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(Location.ToRoixInt(rounding), Size.ToRoixInt(rounding));
 
         public System.Windows.Media.PointCollection ToPointCollection()
         {
             if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
-            return new(new[] { TopLeft, TopRight, BottomRight, BottomLeft }.Select(static x => (System.Windows.Point)x));
+            return new(new System.Windows.Point[] { TopLeft, TopRight, BottomRight, BottomLeft });
         }
 
         //public static RoixRect Create(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
@@ -96,8 +94,11 @@ namespace Roix.Wpf
         //}
 
         /// <summary>指定 border の内部に収めた IntRect を返します</summary>
-        public RoixRect GetClippedBorderRect(in RoixSize border, bool isPointPriority = true)
-            => isPointPriority ? GetClippedBorderRectByPointPriority(border) : GetClippedBorderRectBySizePriority(border);
+        public RoixRect GetClippedRect(in RoixSize border, bool isPointPriority = true)
+            => isPointPriority ? GetClippedRectByPointPriority(border) : GetClippedRectBySizePriority(border);
+
+        /// <summary>Rect の最小サイズを指定値で制限します</summary>
+        public RoixRect ClippedSizeByMinimum(in RoixSize minSize) => new(Location, Size.ClippedByMinimum(minSize));
 
         #endregion
 

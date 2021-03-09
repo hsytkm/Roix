@@ -9,7 +9,7 @@ namespace Roix.Wpf
     }
 
     [Flags]
-    public enum PointPosition
+    public enum PointDirection
     {
         Same = 0x0000,
         Right = 0x0001,
@@ -36,37 +36,51 @@ namespace Roix.Wpf
             _ => throw new NotImplementedException(),
         };
 
-        public static PointPosition GetOppositePosition(this PointPosition pos) => pos switch
+        /// <summary>origin から見て point がどの方向にあるか判定(Windowの左上を原点として扱う)</summary>
+        internal static PointDirection GetPointDirection(in this RoixPoint point, in RoixPoint origin) => (point - origin) switch
         {
-            PointPosition.Same => PointPosition.Same,
-            PointPosition.Left => PointPosition.Right,
-            PointPosition.Right => PointPosition.Left,
-            PointPosition.Bottom => PointPosition.Top,
-            PointPosition.Top => PointPosition.Bottom,
-            PointPosition.TopLeft => PointPosition.BottomRight,
-            PointPosition.TopRight => PointPosition.BottomLeft,
-            PointPosition.BottomRight => PointPosition.TopLeft,
-            PointPosition.BottomLeft => PointPosition.TopRight,
+            (0, 0) => PointDirection.Same,
+            ( > 0, 0) => PointDirection.Right,
+            ( < 0, 0) => PointDirection.Left,
+            (0, < 0) => PointDirection.Top,
+            (0, > 0) => PointDirection.Bottom,
+            ( > 0, < 0) => PointDirection.TopRight,
+            ( < 0, < 0) => PointDirection.TopLeft,
+            ( < 0, > 0) => PointDirection.BottomLeft,
+            ( > 0, > 0) => PointDirection.BottomRight,
+            _ => throw new NotSupportedException(),
+        };
+
+        internal static PointDirection GetOppositeDirection(this PointDirection direction) => direction switch
+        {
+            PointDirection.Same => PointDirection.Same,
+            PointDirection.Left => PointDirection.Right,
+            PointDirection.Right => PointDirection.Left,
+            PointDirection.Bottom => PointDirection.Top,
+            PointDirection.Top => PointDirection.Bottom,
+            PointDirection.TopLeft => PointDirection.BottomRight,
+            PointDirection.TopRight => PointDirection.BottomLeft,
+            PointDirection.BottomRight => PointDirection.TopLeft,
+            PointDirection.BottomLeft => PointDirection.TopRight,
             _ => throw new NotImplementedException(),
         };
 
-        private static RoundingMode GetRoundingModeX(this PointPosition position)
+        private static RoundingMode GetRoundingModeX(this PointDirection direction)
         {
-            if (position.HasFlag(PointPosition.Left)) return RoundingMode.Floor;
-            if (position.HasFlag(PointPosition.Right)) return RoundingMode.Ceiling;
+            if (direction.HasFlag(PointDirection.Left)) return RoundingMode.Floor;
+            if (direction.HasFlag(PointDirection.Right)) return RoundingMode.Ceiling;
             throw new NotImplementedException();
         }
 
-        private static RoundingMode GetRoundingModeY(this PointPosition position)
+        private static RoundingMode GetRoundingModeY(this PointDirection direction)
         {
-            if (position.HasFlag(PointPosition.Top)) return RoundingMode.Floor;
-            if (position.HasFlag(PointPosition.Bottom)) return RoundingMode.Ceiling;
+            if (direction.HasFlag(PointDirection.Top)) return RoundingMode.Floor;
+            if (direction.HasFlag(PointDirection.Bottom)) return RoundingMode.Ceiling;
             throw new NotImplementedException();
         }
 
-        public static (RoundingMode X, RoundingMode Y) GetRoundingMode(this PointPosition position)
-            => (GetRoundingModeX(position), GetRoundingModeY(position));
-
+        public static (RoundingMode X, RoundingMode Y) GetRoundingMode(this PointDirection direction)
+            => (GetRoundingModeX(direction), GetRoundingModeY(direction));
 
     }
 }
