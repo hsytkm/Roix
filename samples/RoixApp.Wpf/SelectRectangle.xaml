@@ -45,12 +45,13 @@
                 <TextBlock Foreground="Blue" Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
             </StackPanel>
 
-            <CheckBox x:Name="zoomCheckBox" Content="x100 Zoom" IsChecked="True"
+            <CheckBox x:Name="zoomCheckBox" Content="x100 Zoom" IsChecked="False"
                       HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" />
         </Grid>
 
         <Grid>
-            <Image x:Name="mainImage" Source="{Binding MyImage, Mode=OneTime}" >
+            <Image x:Name="mainImage" Source="{Binding MyImage, Mode=OneTime}"
+                   MinWidth="1" MinHeight="1" >
                 <Image.Resources>
                     <Style x:Key="EntireImageStyle" TargetType="{x:Type Image}" >
                         <Setter Property="Width" Value="Auto" />
@@ -85,11 +86,11 @@
                     <i:EventTrigger EventName="MouseRightButtonDown" >
                         <action:CaptureMousePointAction MousePoint="{Binding MouseRightDownPoint.Value, Mode=OneWayToSource}" />
                     </i:EventTrigger>
-           
-                    <!-- Get size of Image control
+
+                    <!-- Get size of Image control -->
                     <i:EventTrigger EventName="Loaded" >
                         <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
-                    </i:EventTrigger> -->
+                    </i:EventTrigger>
                     <i:EventTrigger EventName="SizeChanged" >
                         <action:EventToSizeAction ControlSize="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
                     </i:EventTrigger>

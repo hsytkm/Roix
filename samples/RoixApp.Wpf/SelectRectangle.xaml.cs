@@ -22,7 +22,7 @@ namespace RoixApp.Wpf
 
     public class SelectRectangleViewModel : BindableBase
     {
-        public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
+        public static BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseLeftUpPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseMovePoint { get; }
@@ -50,7 +50,7 @@ namespace RoixApp.Wpf
             MouseRightDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
 
-            var imageSourceSize = MyImage.PixelSizeToRoixInt();
+            var imageSourceSize = MyImage.ToRoixIntSize();
 
             #region CursorPoint
             CursorBorderPoint = MouseMovePoint.ToReadOnlyReactivePropertySlim();
@@ -111,6 +111,8 @@ namespace RoixApp.Wpf
                 .Finally(() =>
                 {
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
+                    if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
+
                     SelectedRectangleToModel.Value = RoixBorderIntRect.Create(startPoint, latestPoint, imageSourceSize).Roi;
                 })
                 .Repeat()
@@ -132,7 +134,7 @@ namespace RoixApp.Wpf
                 {
                     var length = 100;
                     var rectBorderSize = new RoixIntSize(length).ToRoixBorder(imageSourceSize);
-                    var rectHalfSize = (rectBorderSize.Size / 2d);
+                    var rectHalfSize = rectBorderSize.Size / 2d;
 
                     var newCenterPoint = borderPointOnView.ConvertToRoixInt(imageSourceSize);
                     var newLeftTopPoint = newCenterPoint.Point - (RoixIntVector)rectHalfSize;

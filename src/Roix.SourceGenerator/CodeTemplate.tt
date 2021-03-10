@@ -24,7 +24,6 @@ namespace <#= Namespace #>
         public <#= Name #>(<#= GetTypeAndLowerNamesForArgs("{0} {1}") #>)
         {
             this._values = new(<#= GetLowerNames() #>);
-
   <# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #> 
             if (this.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
   <# } #>

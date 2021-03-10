@@ -31,7 +31,7 @@ namespace Roix.WPF.Tests
             };
             var fe = await STATask.Run(GetFrameworkElement);
 
-            var size1 = fe.ActualSizeToRoix();
+            var size1 = fe.ToRoixSize();
             size1.Width.Is(width);
             size1.Height.Is(height);
         }
@@ -42,8 +42,8 @@ namespace Roix.WPF.Tests
         public void PixelSizeToRoixIntSize(int width, int height)
         {
             var bitmap = CreateBitmapSource(width, height);
-            var size1 = bitmap.PixelSizeToRoixInt();
-            var size2 = bitmap.PixelSizeToRoix();
+            var size1 = bitmap.ToRoixIntSize();
+            var size2 = bitmap.ToRoixSize();
             size1.Width.Is(width);
             size1.Height.Is(height);
             size2.Is((RoixSize)size1);

@@ -42,7 +42,7 @@ namespace Roix.Wpf
         {
             if (rect.IsEmpty) return Empty;
             if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.X * scalar, rect.Y * scalar, rect.Width * scalar, rect.Height * scalar);
+            return new(rect.Location * scalar, rect.Size * scalar);
         }
 
         public static RoixRect operator /(in RoixRect rect, double scalar)
@@ -62,10 +62,8 @@ namespace Roix.Wpf
 
         public static RoixRect operator /(in RoixRect rect, in RoixRatioXY ratio)
         {
-            if (rect.IsEmpty) return Empty;
             if (ratio.IsIncludeZero) throw new DivideByZeroException();
-            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.Location / ratio, rect.Size / ratio);
+            return rect * (1d / ratio);
         }
         #endregion
 
@@ -73,12 +71,6 @@ namespace Roix.Wpf
 
         #region Methods
         public RoixIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(Location.ToRoixInt(rounding), Size.ToRoixInt(rounding));
-
-        public System.Windows.Media.PointCollection ToPointCollection()
-        {
-            if (IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
-            return new(new System.Windows.Point[] { TopLeft, TopRight, BottomRight, BottomLeft });
-        }
 
         //public static RoixRect Create(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
         //{

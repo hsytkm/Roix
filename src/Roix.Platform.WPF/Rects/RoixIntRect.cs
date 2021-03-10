@@ -15,6 +15,7 @@ namespace Roix.Wpf
 
         #region ctor
         public RoixIntRect(int x, int y, int width, int height) : this(new RoixIntPoint(x, y), new RoixIntSize(width, height)) { }
+        public RoixIntRect(double x, double y, double width, double height) : this(new RoixIntPoint(x, y), new RoixIntSize(width, height)) { }
 
         // ◆基本のctorにthisしたい
         public RoixIntRect(in RoixIntPoint point1, in RoixIntPoint point2)
@@ -32,35 +33,30 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        // RoixStructGeneratorOptions.ArithmeticOperator2
-        public static RoixIntRect operator *(in RoixIntRect value, double scalar)
+        public static RoixIntRect operator *(in RoixIntRect rect, double scalar)
         {
-            return new(value.Location * scalar, value.Size * scalar);
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(rect.Location * scalar, rect.Size * scalar);
         }
 
-        public static RoixIntRect operator /(in RoixIntRect value, double scalar)
+        public static RoixIntRect operator /(in RoixIntRect rect, double scalar)
         {
             if (scalar == 0) throw new DivideByZeroException();
-            return new(value.Location / scalar, value.Size / scalar);
+            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return rect * (1d / scalar);
         }
 
-        public static RoixIntRect operator *(in RoixIntRect value, in RoixRatioXY ratio)
+        public static RoixIntRect operator *(in RoixIntRect rect, in RoixRatioXY ratio)
         {
-            return new(value.Location * ratio.X, value.Size * ratio.Y);
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            return new(rect.Location * ratio, rect.Size * ratio);
         }
 
-        public static RoixIntRect operator /(in RoixIntRect value, in RoixRatioXY ratio)
+        public static RoixIntRect operator /(in RoixIntRect rect, in RoixRatioXY ratio)
         {
             if (ratio.IsIncludeZero) throw new DivideByZeroException();
-            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(value.Location / ratio.X, value.Size / ratio.Y);
+            return rect * (1d / ratio);
         }
-
-        //public static RoixRatioXY operator /(in RoixIntRect value1, in RoixIntRect value2)
-        //{
-        //    if (value2.IsIncludeZero) throw new DivideByZeroException();
-        //    return new(value1.Location / value2.Location, value1.Size / value2.Size);
-        //}
         #endregion
 
         #region Methods

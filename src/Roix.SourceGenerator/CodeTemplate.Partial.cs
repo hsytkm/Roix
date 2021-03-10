@@ -16,7 +16,6 @@ namespace Roix.SourceGenerator
 
         internal string Namespace { get; set; } = "";
         internal RoixStructGeneratorOptions Options { get; }
-        public string? ToStringFormat { get; set; }
 
         internal string Name { get; }
         internal StructDeclarationSyntax ParentSyntax { get; }
@@ -74,6 +73,16 @@ namespace Roix.SourceGenerator
             return option;
         }
 
+        internal string GetRoixSizeStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntSize" : "RoixSize";
+
+        internal string GetRoixPointStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntPoint" : "RoixPoint";
+
+        internal string GetRoixDefaultBuiltInType() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
+
+        internal string GetRoixNameWithoutInt() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
+
+        internal string GetRoixBorderName() => HasFlag(RoixStructGeneratorOptions.HasParent) ? Name.Replace("Roix", "RoixBorder") : Name;
+
         private string JoinItemsWithFormat(IEnumerable<string> items, string format = "")
         {
             if (string.IsNullOrWhiteSpace(format))
@@ -84,18 +93,18 @@ namespace Roix.SourceGenerator
 
         internal string GetNames(string format = "") => JoinItemsWithFormat(Properties.Select(p => p.Name), format);
 
-        internal string GetLowerNames(string format = "") => JoinItemsWithFormat(Properties.Select(p => p.Name.ToLower()), format);
+        internal string GetLowerNames(string format = "") => JoinItemsWithFormat(Properties.Select(p => p.Name.ToLowerOnlyFirst()), format);
 
-        internal string GetToString() => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}}}"));
+        internal string GetToString() => JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}}}");
 
         internal string GetToStringWithFormat()
-            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}.ToString(format, formatProvider)}}"));
+            => JoinItemsWithFormat(Properties.Select(p => p.Name), "{0} = {{{0}.ToString(format, formatProvider)}}");
 
         internal string GetOperate2Value(ArithmeticOperators ope, string name1, string name2)
-            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {name2}.{{0}}"));
+            => JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {name2}.{{0}}");
 
         internal string GetOperate1Value(ArithmeticOperators ope, string name1, string value2)
-            => string.Join(", ", JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {value2}"));
+            => JoinItemsWithFormat(Properties.Select(p => p.Name), $"{name1}.{{0}} {GetOperatorString(ope)} {value2}");
 
         private string GetInTypeIfNecessary(TypeSyntax typeSyntax)
         {
@@ -109,20 +118,10 @@ namespace Roix.SourceGenerator
         }
 
         internal string GetTypeAndLowerNames(string format)
-            => string.Join(", ", Properties.Select(p => string.Format(format, p.Type, p.Name.ToLower())));
+            => Properties.Select(p => string.Format(format, p.Type, p.Name.ToLowerOnlyFirst())).JoinWithCommas();
 
         internal string GetTypeAndLowerNamesForArgs(string format)
-            => string.Join(", ", Properties.Select(p => string.Format(format, GetInTypeIfNecessary(p.Type), p.Name.ToLower())));
-
-        internal string GetRoixSizeStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntSize" : "RoixSize";
-
-        internal string GetRoixPointStructName() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "RoixIntPoint" : "RoixPoint";
-
-        internal string GetRoixDefaultBuiltInType() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? "int" : "double";
-
-        internal string GetRoixNameWithoutInt() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
-
-        internal string GetRoixBorderName() => HasFlag(RoixStructGeneratorOptions.HasParent) ? Name.Replace("Roix", "RoixBorder") : Name;
+            => Properties.Select(p => string.Format(format, GetInTypeIfNecessary(p.Type), p.Name.ToLowerOnlyFirst())).JoinWithCommas();
 
         private string GetOperatorString(ArithmeticOperators ope) => ope switch
         {

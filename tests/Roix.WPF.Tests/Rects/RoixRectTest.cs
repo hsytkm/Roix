@@ -1,4 +1,5 @@
 using Roix.Wpf;
+using Roix.Wpf.Extensions;
 using System;
 using System.Linq;
 using Xunit;

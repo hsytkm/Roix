@@ -1,4 +1,5 @@
 ﻿using Roix.Wpf;
+using Roix.Wpf.Extensions;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -15,18 +16,13 @@ namespace RoixApp.Wpf.Converters
             {
                 double d => d,
                 int i => i,
-                _ => 1d,
+                _ => double.Epsilon
             };
             if (point.IsZero) return null;
 
             var length = GetLength(parameter);
-            return new PointCollection(new System.Windows.Point[]
-            {
-                point,
-                point + new RoixVector(length, 0),
-                point + new RoixVector(length, length),
-                point + new RoixVector(0, length),
-            });
+            var rect = new RoixRect(point, new RoixSize(length, length));
+            return rect.ToPointCollection();
         }
 
         public override RoixPoint ConvertBack(PointCollection? points, object parameter, CultureInfo culture)

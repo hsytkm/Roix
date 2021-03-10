@@ -24,7 +24,7 @@ namespace RoixApp.Wpf.Controls
             if (Content is IDisposable d) d.Dispose();
             Content = null;
 
-            base.OnSelected(e);
+            base.OnUnselected(e);
         }
     }
 }

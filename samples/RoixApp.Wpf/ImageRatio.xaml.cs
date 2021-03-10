@@ -24,9 +24,9 @@ namespace RoixApp.Wpf
 
     public class ImageRatioViewModel : BindableBase
     {
-        private readonly ImageRatioModel _model = new ImageRatioModel();
+        private readonly ImageRatioModel _model = new();
 
-        public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
+        public BitmapSource MyImage { get; } = SelectRectangleViewModel.MyImage;
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseLeftUpPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseMovePoint { get; }
@@ -54,9 +54,8 @@ namespace RoixApp.Wpf
         public ReactiveProperty<string> RectRatioHeight { get; }
         #endregion
 
-        public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
         public IReadOnlyReactiveProperty<RoixRect> PreviewRectangle { get; }
-        public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
+        public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
 
         public ImageRatioViewModel()
         {
@@ -64,8 +63,7 @@ namespace RoixApp.Wpf
             MouseLeftUpPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             MouseMovePoint = new ReactivePropertySlim<RoixBorderPoint>();
             ViewBorderSize = new ReactivePropertySlim<RoixSize>(mode: ReactivePropertyMode.DistinctUntilChanged);
-            SelectedRectangleToModel = new ReactivePropertySlim<RoixIntRect>();
-            var imageSourceSize = MyImage.PixelSizeToRoixInt();
+            var imageSourceSize = MyImage.ToRoixIntSize();
 
             // 画像座標系の枠(これを基準に管理する)
             var selectedRectangleOnImage = new ReactivePropertySlim<RoixBorderIntRect>();
@@ -111,9 +109,9 @@ namespace RoixApp.Wpf
                 .Finally(() =>
                 {
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
-                    if (startPoint == latestPoint) return;
+                    if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
-                    _model.RectRatio.Value = new RoixBorderRect(startPoint, latestPoint).ToRoixRatioXYWH().ClipByPercent();
+                    _model.RectRatio.Value = new RoixBorderRect(startPoint, latestPoint).GetClippedBorderRect().ToRoixRatioXYWH();
                 })
                 .Repeat()
                 .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(x.startPoint.Border).Roi)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using Roix.Wpf;
+using Roix.Wpf.Extensions;
 using System;
 using System.Windows;
 
@@ -23,7 +24,7 @@ namespace RoixApp.Wpf.Actions
             }
             else if (AssociatedObject is FrameworkElement fe)
             {
-                ControlSize = new(fe.ActualWidth, fe.ActualHeight);
+                ControlSize = fe.ToRoixSize();
             }
             else
             {

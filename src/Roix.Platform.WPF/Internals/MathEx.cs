@@ -25,10 +25,10 @@ namespace Roix.Wpf
     static class MathEx
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FloorToInt(this double value) => (int)Math.Floor(value);
+        internal static int FloorToInt(this double value) => (int)Math.Floor(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ToInt(this double value, RoundingMode mode) => mode switch
+        internal static int ToInt(this double value, RoundingMode mode) => mode switch
         {
             RoundingMode.Floor => (int)Math.Floor(value),
             RoundingMode.Round => (int)Math.Round(value),
@@ -65,22 +65,22 @@ namespace Roix.Wpf
             _ => throw new NotImplementedException(),
         };
 
-        private static RoundingMode GetRoundingModeX(this PointDirection direction)
+        private static RoundingMode GetRoundingModeHorizontal(this PointDirection direction)
         {
             if (direction.HasFlag(PointDirection.Left)) return RoundingMode.Floor;
             if (direction.HasFlag(PointDirection.Right)) return RoundingMode.Ceiling;
             throw new NotImplementedException();
         }
 
-        private static RoundingMode GetRoundingModeY(this PointDirection direction)
+        private static RoundingMode GetRoundingModeVertical(this PointDirection direction)
         {
             if (direction.HasFlag(PointDirection.Top)) return RoundingMode.Floor;
             if (direction.HasFlag(PointDirection.Bottom)) return RoundingMode.Ceiling;
             throw new NotImplementedException();
         }
 
-        public static (RoundingMode X, RoundingMode Y) GetRoundingMode(this PointDirection direction)
-            => (GetRoundingModeX(direction), GetRoundingModeY(direction));
+        internal static (RoundingMode X, RoundingMode Y) GetRoundingMode(this PointDirection direction)
+            => (GetRoundingModeHorizontal(direction), GetRoundingModeVertical(direction));
 
     }
 }

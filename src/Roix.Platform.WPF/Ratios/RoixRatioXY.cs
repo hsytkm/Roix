@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator]
+    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
     public readonly partial struct RoixRatioXY
     {
         readonly struct SourceValues
@@ -13,10 +13,30 @@ namespace Roix.Wpf
             public SourceValues(double x, double y) => (X, Y) = (x, y);
         }
 
+        #region ctor
         public RoixRatioXY(double d) : this(d, d) { }
+
+        private partial void Validate(in RoixRatioXY ratio)
+        {
+            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+        }
+        #endregion
 
         public bool IsIncludeZero => X == 0 || Y == 0;
         public bool IsIncludeNegative => X < 0 || Y < 0;
+
+        // double
+        public static RoixRatioXY operator /(in RoixRatioXY ratio, double scalar)
+        {
+            if (scalar == 0) throw new DivideByZeroException();
+            return new(ratio.X / scalar, ratio.Y / scalar);
+        }
+
+        public static RoixRatioXY operator /(double scalar, in RoixRatioXY ratio)
+        {
+            if (ratio.IsIncludeZero) throw new DivideByZeroException();
+            return new(scalar / ratio.X, scalar / ratio.Y);
+        }
 
         // No Borders
         public static RoixPoint operator *(in RoixRatioXY ratio, in RoixPoint point) => new(point.X * ratio.X, point.Y * ratio.Y);

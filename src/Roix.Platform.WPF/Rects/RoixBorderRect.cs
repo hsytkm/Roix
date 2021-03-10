@@ -41,8 +41,7 @@ namespace Roix.Wpf
         public RoixBorderIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
             => new(Roi.ToRoixInt(rounding), Border.ToRoixInt(rounding));
 
-        public RoixRatioXYWH ToRoixRatioXYWH()
-            => new(Roi.X / Border.Width, Roi.Y / Border.Height, Roi.Width / Border.Width, Roi.Height / Border.Height);
+        public RoixRatioXYWH ToRoixRatioXYWH() => new(Roi.Location / (RoixPoint)Border, Roi.Size / Border);
 
         // ◆これいるか？
         //public RoixIntRect ToRoixIntRect(bool isCheckBorder = true)
