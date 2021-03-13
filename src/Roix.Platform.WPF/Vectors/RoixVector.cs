@@ -32,7 +32,5 @@ namespace Roix.Wpf
         public static RoixVector operator -(in RoixVector vector) => Zero - vector;
         #endregion
 
-        public RoixIntVector ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(X.ToInt(rounding), Y.ToInt(rounding));
-
     }
 }

@@ -13,7 +13,7 @@ namespace Roix.Wpf
             public SourceValues(in RoixRect roi, in RoixSize border) => (Roi, Border) = (roi, border);
         }
 
-        private RoixRect Value => _values.Roi;
+        private RoixRect Value => Roi;
 
         #region ctor
         // ◆基本のctorにthisしたい
@@ -38,10 +38,7 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
-            => new(Roi.ToRoixInt(rounding), Border.ToRoixInt(rounding));
-
-        public RoixRatioXYWH ToRoixRatioXYWH() => new(Roi.Location / (RoixPoint)Border, Roi.Size / Border);
+        public RoixRatioXYWH ToRoixRatio() => new(Roi.Location / (RoixPoint)Border, Roi.Size / Border);
 
         // ◆これいるか？
         //public RoixIntRect ToRoixIntRect(bool isCheckBorder = true)
@@ -66,8 +63,11 @@ namespace Roix.Wpf
             return new(rect, Border);
         }
 
-        /// <summary>Rect の最小サイズを指定値で制限します</summary>
+        /// <summary>Roi の最小サイズを指定値で制限します</summary>
         public RoixBorderRect ClippedRoiSizeByMinimum(in RoixSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
+
+        /// <summary>Roi の最大サイズを指定値で制限します</summary>
+        public RoixBorderRect ClippedRoiSizeByMaximum(in RoixSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
 
         /// <summary>引数で指定した座標系(int)に変換する</summary>
         public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)

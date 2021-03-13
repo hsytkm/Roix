@@ -13,14 +13,16 @@ namespace Roix.Wpf
             public SourceValues(in RoixPoint point, in RoixSize border) => (Point, Border) = (point, border);
         }
 
-        private RoixPoint Value => _values.Point;
+        private RoixPoint Value => Point;
 
         #region operator
-        public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? new(borderPoint.Point + borderVector.Vector, borderPoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);
+        public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point - vector, borderPoint.Border);
+        public static RoixBorderVector operator -(in RoixBorderPoint borderPoint, in RoixPoint point) => new(borderPoint.Point - point, borderPoint.Border);
 
-        public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? new(borderPoint.Point - borderVector.Vector, borderPoint.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
-
-        public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? new(borderPoint1.Point - borderPoint2.Point, borderPoint1.Border) : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint + borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint - borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? borderPoint1 - borderPoint2.Point : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
         #endregion
 
         #region Properties
@@ -29,9 +31,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixBorderIntPoint ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
-            => new(Point.ToRoixInt(rounding), Border.ToRoixInt(rounding));
-
         // ◆これいるか？ ConvertToRoixInt の方が良くない？
         //public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
         //{
@@ -81,6 +80,8 @@ namespace Roix.Wpf
         //    var point = this.Point.AdjustRoixWithResolutionOfImage(this.Border, destIntSize, mode);
         //    return new(point, this.Border);
         //}
+
+        public RoixRatioXY ToRoixRatio() => Point / (RoixPoint)Border;
 
         #endregion
 

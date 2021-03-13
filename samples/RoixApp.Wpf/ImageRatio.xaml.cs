@@ -111,7 +111,7 @@ namespace RoixApp.Wpf
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
-                    _model.RectRatio.Value = new RoixBorderRect(startPoint, latestPoint).GetClippedBorderRect().ToRoixRatioXYWH();
+                    _model.RectRatio.Value = new RoixBorderRect(startPoint, latestPoint).GetClippedBorderRect().ToRoixRatio();
                 })
                 .Repeat()
                 .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(x.startPoint.Border).Roi)

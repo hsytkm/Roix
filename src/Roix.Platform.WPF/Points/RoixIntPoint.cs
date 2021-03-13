@@ -14,7 +14,7 @@ namespace Roix.Wpf
         }
 
         #region ctor
-        public RoixIntPoint(double x, double y) => _values = new(x.FloorToInt(), y.FloorToInt());
+        public RoixIntPoint(double x, double y) : this(x.FloorToInt(), y.FloorToInt()) { }
         #endregion
 
         #region implicit

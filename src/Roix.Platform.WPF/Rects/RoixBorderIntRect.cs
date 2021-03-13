@@ -13,9 +13,18 @@ namespace Roix.Wpf
             public SourceValues(in RoixIntRect roi, in RoixIntSize border) => (Roi, Border) = (roi, border);
         }
 
-        private RoixIntRect Value => _values.Roi;
+        private RoixIntRect Value => Roi;
 
         #region ctor
+        // ◆基本のctorにthisしたい
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntSize borderSize)
+        {
+            if (borderPoint.Border != borderSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            if (borderPoint.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
+
+            _values = new(new RoixIntRect(borderPoint.Point, borderSize.Size), borderPoint.Border);
+        }
+
         // ◆基本のctorにthisしたい
         public RoixBorderIntRect(in RoixBorderIntPoint borderPoint1, in RoixBorderIntPoint borderPoint2)
         {
@@ -24,6 +33,8 @@ namespace Roix.Wpf
 
             _values = new(new RoixIntRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border);
         }
+
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
         #endregion
 
         public static implicit operator RoixBorderRect(in RoixBorderIntRect borderRect) => new(borderRect.Roi, borderRect.Border);

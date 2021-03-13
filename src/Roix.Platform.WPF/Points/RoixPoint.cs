@@ -32,8 +32,6 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        public RoixIntPoint ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(X.ToInt(rounding), Y.ToInt(rounding));
-
         //public static RoixPoint CreateRoixPoint(in RoixIntPoint srcPoint, in RoixIntSize srcSize, in RoixSize destSize)
         //    => srcPoint * (destSize / srcSize);
 

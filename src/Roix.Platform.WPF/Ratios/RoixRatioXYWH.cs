@@ -22,13 +22,13 @@ namespace Roix.Wpf
         }
         #endregion
 
-        public double X => _values.PointRatio.X;
-        public double Y => _values.PointRatio.Y;
-        public double Width => _values.SizeRatio.X;
-        public double Height => _values.SizeRatio.Y;
+        public double X => PointRatio.X;
+        public double Y => PointRatio.Y;
+        public double Width => SizeRatio.X;
+        public double Height => SizeRatio.Y;
 
-        public bool IsIncludeZero => X == 0 || Y == 0 || Width == 0 || Height == 0;
-        public bool IsIncludeNegative => X < 0 || Y < 0 || Width < 0 || Height < 0;
+        public bool IsIncludeZero => PointRatio.IsIncludeZero || SizeRatio.IsIncludeZero;
+        public bool IsIncludeNegative => PointRatio.IsIncludeNegative || SizeRatio.IsIncludeNegative;
 
         // ◆これを使うより、変換前に Border で制限した方が良いので無効化
         //public RoixRatioXYWH ClipByPercent()

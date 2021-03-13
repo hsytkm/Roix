@@ -230,8 +230,26 @@ namespace Roix.SourceGenerator
         }
   ");
  } 
-            this.Write("\r\n");
  } 
+ if (!HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
+            this.Write("  ");
+ if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+            this.Write("        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
+            this.Write(" ToRoixInt(RoundingMode rounding = RoundingMode.Floor)\r\n        {\r\n            re" +
+                    "turn new(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetNames("{0}.ToInt(rounding)")));
+            this.Write(");\r\n        }\r\n  ");
+ } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
+            this.Write("        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
+            this.Write(" ToRoixInt(RoundingMode rounding = RoundingMode.Floor)\r\n        {\r\n            re" +
+                    "turn new(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetNames("{0}.ToRoixInt(rounding)")));
+            this.Write(");\r\n        }\r\n  ");
+ } 
+ } 
+            this.Write("\r\n");
  if (HasFlag(RoixStructGeneratorOptions.HasParent)) { 
             this.Write("        // RoixStructGeneratorOptions.HasParent\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixBorderName()));

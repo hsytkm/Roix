@@ -13,7 +13,7 @@ namespace Roix.Wpf
             public SourceValues(in RoixIntSize size, in RoixIntSize border) => (Size, Border) = (size, border);
         }
 
-        private RoixIntSize Value => _values.Size;
+        private RoixIntSize Value => Size;
 
         public static implicit operator RoixBorderSize(in RoixBorderIntSize borderSize) => new(borderSize.Size, borderSize.Border);
 

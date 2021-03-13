@@ -81,6 +81,13 @@ namespace Roix.SourceGenerator
 
         internal string GetRoixNameWithoutInt() => HasFlag(RoixStructGeneratorOptions.TypeInt) ? Name.Replace("Int", "") : Name;
 
+        internal string GetRoixNameWithInt()
+        {
+            if (HasFlag(RoixStructGeneratorOptions.WithBorder))
+                return Name.Replace("RoixBorder", "RoixBorderInt");
+            return Name.Replace("Roix", "RoixInt");
+        }
+
         internal string GetRoixBorderName() => HasFlag(RoixStructGeneratorOptions.HasParent) ? Name.Replace("Roix", "RoixBorder") : Name;
 
         private string JoinItemsWithFormat(IEnumerable<string> items, string format = "")

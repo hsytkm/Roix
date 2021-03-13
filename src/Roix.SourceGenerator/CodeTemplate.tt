@@ -139,8 +139,21 @@ namespace <#= Namespace #>
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
   <# } #>
-
 <# } #>
+<# if (!HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
+  <# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+        public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
+        {
+            return new(<#= GetNames("{0}.ToInt(rounding)") #>);
+        }
+  <# } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
+        public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
+        {
+            return new(<#= GetNames("{0}.ToRoixInt(rounding)") #>);
+        }
+  <# } #>
+<# } #>
+
 <# if (HasFlag(RoixStructGeneratorOptions.HasParent)) { #>
         // RoixStructGeneratorOptions.HasParent
         public <#= GetRoixBorderName() #> ToRoixBorder(in <#= GetRoixSizeStructName() #> size)

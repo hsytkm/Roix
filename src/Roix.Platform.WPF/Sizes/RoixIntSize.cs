@@ -35,7 +35,7 @@ namespace Roix.Wpf
         public static explicit operator RoixIntVector(in RoixIntSize size) => new(size.Width, size.Height);
         #endregion
 
-        public bool IsEmpty => false;   // Not implement in RoixIntSize
+        public bool IsEmpty => false;   // Not implemented in RoixIntSize
 
         ///// <summary>指定値でサイズを制限する</summary>
         //public RoixIntSize ClippedByMinimumSize(in RoixIntSize minSize)

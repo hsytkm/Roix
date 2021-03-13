@@ -70,8 +70,6 @@ namespace Roix.Wpf
         public bool IsEmpty => this == Empty;
 
         #region Methods
-        public RoixIntRect ToRoixInt(RoundingMode rounding = RoundingMode.Floor) => new(Location.ToRoixInt(rounding), Size.ToRoixInt(rounding));
-
         //public static RoixRect Create(in RoixIntRect srcRect, in RoixIntSize srcSize, in RoixSize destSize)
         //{
         //    if (srcSize.IsIncludeZero) throw new DivideByZeroException();
@@ -91,6 +89,9 @@ namespace Roix.Wpf
 
         /// <summary>Rect の最小サイズを指定値で制限します</summary>
         public RoixRect ClippedSizeByMinimum(in RoixSize minSize) => new(Location, Size.ClippedByMinimum(minSize));
+
+        /// <summary>Rect の最大サイズを指定値で制限します</summary>
+        public RoixRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
 
         #endregion
 

@@ -16,7 +16,6 @@ namespace Roix.SourceGenerator
         HasParent = 0x0010,
         // added automatically
 
-        Flag5 = 0x0010,
         Flag6 = 0x0020,
         Flag7 = 0x0040,
         Flag8 = 0x0080,

@@ -13,10 +13,9 @@ namespace Roix.Wpf
             public SourceValues(in RoixVector vector, in RoixSize border) => (Vector, Border) = (vector, border);
         }
 
-        private RoixVector Value => _values.Vector;
+        private RoixVector Value => Vector;
 
-        public RoixBorderIntVector ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
-            => new(Vector.ToRoixInt(rounding), Border.ToRoixInt(rounding));
+        public RoixRatioXY ToRoixRatio() => Vector / (RoixVector)Border;
 
     }
 }

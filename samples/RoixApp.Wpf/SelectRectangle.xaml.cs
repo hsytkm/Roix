@@ -137,9 +137,8 @@ namespace RoixApp.Wpf
                     var rectHalfSize = rectBorderSize.Size / 2d;
 
                     var newCenterPoint = borderPointOnView.ConvertToRoixInt(imageSourceSize);
-                    var newLeftTopPoint = newCenterPoint.Point - (RoixIntVector)rectHalfSize;
-                    var newBorderRect = new RoixIntRect(newLeftTopPoint, rectBorderSize.Size).ToRoixBorder(imageSourceSize);
-                    return newBorderRect.GetClippedBorderIntRect(isPointPriority: false);
+                    var newRect = new RoixBorderIntRect(newCenterPoint - (RoixIntVector)rectHalfSize, rectBorderSize);
+                    return newRect.GetClippedBorderIntRect(isPointPriority: false);
                 })
                 .ToReadOnlyReactivePropertySlim();
 
