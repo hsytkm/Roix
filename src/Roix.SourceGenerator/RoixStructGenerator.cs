@@ -43,6 +43,8 @@ namespace Roix.SourceGenerator
                             Namespace = typeSymbol.ContainingNamespace.ToDisplayString(),
                         };
 
+                        if (context.CancellationToken.IsCancellationRequested) return;
+
                         var text = template.TransformText();
                         context.AddSource(typeSymbol.GenerateHintName(), text);
                     }
@@ -95,7 +97,7 @@ namespace Roix.SourceGenerator
 
                 if (argSyntax is null) return RoixStructGeneratorOptions.None;
 
-                // e.g. UnitGenerateOptions.ImplicitOperator | UnitGenerateOptions.ParseMethod => ImplicitOperatior, ParseMethod
+                // e.g. Options.Flag0 | Options.Flag1 => Flag0 , Flag1
                 var parsed = Enum.Parse(typeof(RoixStructGeneratorOptions),
                     argSyntax.Expression.ToString().Replace(nameof(RoixStructGeneratorOptions) + ".", "").Replace("|", ","));
 

@@ -25,11 +25,6 @@ namespace Roix.Wpf
         public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? borderPoint1 - borderPoint2.Point : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
         #endregion
 
-        #region Properties
-        // ◆これいるか？
-        //public RoixPoint ClippedRoixPoint => new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height));
-        #endregion
-
         #region Methods
         // ◆これいるか？ ConvertToRoixInt の方が良くない？
         //public RoixIntPoint ToRoixIntPoint(bool isCheckBorder = true)
@@ -55,11 +50,11 @@ namespace Roix.Wpf
         //    return CreateRoixBorderRect(borderVector.Vector);
         //}
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
             => ConvertToRoixInt(destIntSize, mode, mode);
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
         {
             if (this.Border.IsEmpty || this.Border.IsZero)
@@ -72,6 +67,9 @@ namespace Roix.Wpf
             var point2 = point1.GetClippedIntPoint(destIntSize);
             return new(point2, destIntSize);
         }
+
+        /// <summary>Point を Border の内部に収めて返します</summary>
+        public RoixBorderPoint GetClippedBorderPoint() => new(new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height)), Border);
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
         //public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)

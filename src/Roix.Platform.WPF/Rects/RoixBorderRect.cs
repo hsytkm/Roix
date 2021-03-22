@@ -56,7 +56,7 @@ namespace Roix.Wpf
         //    return new(x, y, width, height);
         //}
 
-        /// <summary>Border の内部に収めた Rect を返す</summary>
+        /// <summary>Rect を Border の内部に収めて返します</summary>
         public RoixBorderRect GetClippedBorderRect(bool isPointPriority = true)
         {
             var rect = Roi.GetClippedRect(Border, isPointPriority);
@@ -69,11 +69,11 @@ namespace Roix.Wpf
         /// <summary>Roi の最大サイズを指定値で制限します</summary>
         public RoixBorderRect ClippedRoiSizeByMaximum(in RoixSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
             => ConvertToRoixInt(destIntSize, mode, mode);
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
         {
             if (this.Border.IsEmpty || this.Border.IsZero)

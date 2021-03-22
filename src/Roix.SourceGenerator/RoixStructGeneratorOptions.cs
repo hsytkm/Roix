@@ -16,18 +16,18 @@ namespace Roix.SourceGenerator
         HasParent = 0x0010,
         // added automatically
 
-        Flag6 = 0x0020,
-        Flag7 = 0x0040,
-        Flag8 = 0x0080,
+        //Flag6 = 0x0020,
+        //Flag7 = 0x0040,
+        //Flag8 = 0x0080,
 
         Validate = 0x0100,
         ArithmeticOperator1 = 0x0200,
         ArithmeticOperator2 = 0x0400,
 
-        Flag12 = 0x0800,
-        Flag13 = 0x1000,
-        Flag14 = 0x2000,
-        Flag15 = 0x4000,
-        Flag16 = 0x8000,
+        //Flag12 = 0x0800,
+        //Flag13 = 0x1000,
+        //Flag14 = 0x2000,
+        //Flag15 = 0x4000,
+        //Flag16 = 0x8000,
     }
 }

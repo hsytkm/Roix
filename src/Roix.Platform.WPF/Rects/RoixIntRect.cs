@@ -60,10 +60,10 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
-        /// <summary>Roiの最小サイズを指定値で制限する</summary>
+        /// <summary>Roiの最小サイズを指定値で制限します</summary>
         //public RoixIntRect ClippedByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimumSize(minSize));
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode modeX, RoundingMode modeY)
         {
             if (srcSize.IsIncludeZero) throw new DivideByZeroException();
@@ -72,11 +72,11 @@ namespace Roix.Wpf
             return new RoixIntRect(new RoixIntPoint(rect.X.ToInt(modeX), rect.Y.ToInt(modeY)), new RoixIntSize(rect.Width.ToInt(modeX), rect.Height.ToInt(modeY)));
         }
 
-        /// <summary>引数で指定した座標系(int)に変換する</summary>
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
         public static RoixIntRect Create(in RoixRect srcRect, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
             => Create(srcRect, srcSize, destSize, mode, mode);
 
-        /// <summary>指定 border の内部に収めた IntRect を返す</summary>
+        /// <summary>指定 border の内部に収めた IntRect を返します</summary>
         public RoixIntRect GetClippedIntRect(in RoixIntSize border, bool isPointPriority = true)
             => isPointPriority ? GetClippedRectByPointPriority(border) : GetClippedRectBySizePriority(border);
 

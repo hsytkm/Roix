@@ -55,8 +55,7 @@
                 </Style>
             </Panel.Resources>
             
-            <TextBlock Margin="5,10" Text="Ratio (%)" />
-            
+            <TextBlock Margin="5,10" Text="Left: Rect Ratio (%)" />
             <DockPanel>
                 <TextBlock Text="X" />
                 <TextBox Text="{Binding RectRatioX.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -77,6 +76,18 @@
                 <TextBox Text="{Binding RectRatioHeight.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Border/>
             </DockPanel>
+
+            <TextBlock Margin="5,30,5,10" Text="Right: Point Ratio (%)" />
+            <DockPanel>
+                <TextBlock Text="X" />
+                <TextBox Text="{Binding PointRatioX.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Border/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Y" />
+                <TextBox Text="{Binding PointRatioY.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Border/>
+            </DockPanel>
         </StackPanel>
 
         <Grid>
@@ -88,6 +99,9 @@
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseLeftButtonUp" >
                         <action:CaptureMousePointAction MousePoint="{Binding MouseLeftUpPoint.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseRightButtonDown" >
+                        <action:CaptureMousePointAction MousePoint="{Binding MouseRightDownPoint.Value, Mode=OneWayToSource}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseMove" >
                         <action:CaptureMousePointAction MousePoint="{Binding MouseMovePoint.Value, Mode=OneWayToSource}" />
@@ -110,6 +124,9 @@
 
                 <Polygon Style="{StaticResource selectedPolygonStyle}"
                          Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+
+                <Polygon Style="{StaticResource selectedPolygonStyle}" Stroke="Cyan"
+                         Points="{Binding SelectedPoint.Value, Mode=OneWay, Converter={StaticResource PointToPointCollectionConverter}}" />
             </Grid>
         </Grid>
     </DockPanel>

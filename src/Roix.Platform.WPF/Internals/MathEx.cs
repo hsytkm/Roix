@@ -36,7 +36,7 @@ namespace Roix.Wpf
             _ => throw new NotImplementedException(),
         };
 
-        /// <summary>origin から見て point がどの方向にあるか判定(Windowの左上を原点として扱う)</summary>
+        /// <summary>origin から見て point がどの方向にあるか判定します(Windowの左上を原点として扱います)</summary>
         internal static PointDirection GetPointDirection(in this RoixPoint point, in RoixPoint origin) => (point - origin) switch
         {
             (0, 0) => PointDirection.Same,
@@ -51,6 +51,7 @@ namespace Roix.Wpf
             _ => throw new NotSupportedException(),
         };
 
+        /// <summary>反対の方向を返します</summary>
         internal static PointDirection GetOppositeDirection(this PointDirection direction) => direction switch
         {
             PointDirection.Same => PointDirection.Same,
