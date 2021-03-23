@@ -12,6 +12,11 @@ namespace Roix.WPF.Tests
         [Fact]
         public void StructSize()
         {
+            Marshal.SizeOf<RoixLine>().Is(32);
+            Marshal.SizeOf<RoixBorderLine>().Is(48);
+            Marshal.SizeOf<RoixIntLine>().Is(16);
+            Marshal.SizeOf<RoixBorderIntLine>().Is(24);
+
             Marshal.SizeOf<System.Windows.Point>().Is(16);
             Marshal.SizeOf<RoixPoint>().Is(16);
             Marshal.SizeOf<RoixBorderPoint>().Is(32);
@@ -42,10 +47,10 @@ namespace Roix.WPF.Tests
 
         private readonly static IReadOnlyList<Type> _roixTypes = new[]
         {
-            typeof(RoixPoint), typeof(RoixRect), typeof(RoixSize), typeof(RoixVector),
-            typeof(RoixIntPoint), typeof(RoixIntRect), typeof(RoixIntSize), typeof(RoixIntVector),
-            typeof(RoixBorderPoint), typeof(RoixBorderRect), typeof(RoixBorderSize), typeof(RoixBorderVector),
-            typeof(RoixBorderIntPoint), typeof(RoixBorderIntRect), typeof(RoixBorderIntSize), typeof(RoixBorderIntVector),
+            typeof(RoixLine), typeof(RoixPoint), typeof(RoixRect), typeof(RoixSize), typeof(RoixVector),
+            typeof(RoixIntLine), typeof(RoixIntPoint), typeof(RoixIntRect), typeof(RoixIntSize), typeof(RoixIntVector),
+            typeof(RoixBorderLine), typeof(RoixBorderPoint), typeof(RoixBorderRect), typeof(RoixBorderSize), typeof(RoixBorderVector),
+            typeof(RoixBorderIntLine), typeof(RoixBorderIntPoint), typeof(RoixBorderIntRect), typeof(RoixBorderIntSize), typeof(RoixBorderIntVector),
             typeof(RoixRatioXY), typeof(RoixRatioXYWH),
         };
 

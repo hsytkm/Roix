@@ -5,7 +5,7 @@ namespace Roix.Wpf
 {
     // https://github.com/dotnet/wpf/blob/d49f8ddb889b5717437d03caa04d7c56819c16aa/src/Microsoft.DotNet.Wpf/src/WindowsBase/System/Windows/Rect.cs
 
-    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator2)]
     public readonly partial struct RoixRect
     {
         readonly struct SourceValues
@@ -35,36 +35,6 @@ namespace Roix.Wpf
         #region implicit
         public static implicit operator RoixRect(System.Windows.Rect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : Empty;
         public static implicit operator System.Windows.Rect(in RoixRect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : System.Windows.Rect.Empty;
-        #endregion
-
-        #region operator
-        public static RoixRect operator *(in RoixRect rect, double scalar)
-        {
-            if (rect.IsEmpty) return Empty;
-            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.Location * scalar, rect.Size * scalar);
-        }
-
-        public static RoixRect operator /(in RoixRect rect, double scalar)
-        {
-            if (rect.IsEmpty) return Empty;
-            if (scalar == 0) throw new DivideByZeroException();
-            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return rect * (1d / scalar);
-        }
-
-        public static RoixRect operator *(in RoixRect rect, in RoixRatioXY ratio)
-        {
-            if (rect.IsEmpty) return Empty;
-            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.Location * ratio, rect.Size * ratio);
-        }
-
-        public static RoixRect operator /(in RoixRect rect, in RoixRatioXY ratio)
-        {
-            if (ratio.IsIncludeZero) throw new DivideByZeroException();
-            return rect * (1d / ratio);
-        }
         #endregion
 
         public bool IsEmpty => this == Empty;

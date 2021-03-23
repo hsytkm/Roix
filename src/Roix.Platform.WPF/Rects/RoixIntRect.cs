@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.None)]
+    [RoixStructGenerator(RoixStructGeneratorOptions.ArithmeticOperator2)]
     public readonly partial struct RoixIntRect
     {
         readonly struct SourceValues
@@ -30,33 +30,6 @@ namespace Roix.Wpf
 
         #region implicit
         public static implicit operator RoixRect(in RoixIntRect rect) => new(rect.Location, rect.Size);
-        #endregion
-
-        #region operator
-        public static RoixIntRect operator *(in RoixIntRect rect, double scalar)
-        {
-            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.Location * scalar, rect.Size * scalar);
-        }
-
-        public static RoixIntRect operator /(in RoixIntRect rect, double scalar)
-        {
-            if (scalar == 0) throw new DivideByZeroException();
-            if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return rect * (1d / scalar);
-        }
-
-        public static RoixIntRect operator *(in RoixIntRect rect, in RoixRatioXY ratio)
-        {
-            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-            return new(rect.Location * ratio, rect.Size * ratio);
-        }
-
-        public static RoixIntRect operator /(in RoixIntRect rect, in RoixRatioXY ratio)
-        {
-            if (ratio.IsIncludeZero) throw new DivideByZeroException();
-            return rect * (1d / ratio);
-        }
         #endregion
 
         #region Methods

@@ -58,17 +58,23 @@ namespace Roix.SourceGenerator
             var isRect = structName.Contains("Rect");
             var isSize = structName.Contains("Size");
             var isVector = structName.Contains("Vector");
+            var isLine = structName.Contains("Line");
 
             var option = RoixStructGeneratorOptions.None;
             if (!isRoix) return option;
 
             if (isInt) option |= RoixStructGeneratorOptions.TypeInt;
             if (isBorder) option |= RoixStructGeneratorOptions.WithBorder;
+
             if (!isBorder)
             {
                 if (isPoint || isSize || isVector) option |= RoixStructGeneratorOptions.XYPair;
                 if (isRect) option |= RoixStructGeneratorOptions.Rect;
-                if (isPoint || isRect || isSize || isVector) option |= RoixStructGeneratorOptions.HasParent;
+                if (isLine) option |= RoixStructGeneratorOptions.TypeLine;
+                if ((isSize || isRect) && !isInt) option |= RoixStructGeneratorOptions.HasEmpty;
+
+                if (isPoint || isRect || isSize || isVector || isLine)
+                    option |= RoixStructGeneratorOptions.HasParent;
             }
             return option;
         }
@@ -139,14 +145,30 @@ namespace Roix.SourceGenerator
             _ => throw new NotImplementedException(),
         };
 
-        internal string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name, string ratio)
+        internal string GetOperatorRoixAndRatioXY(ArithmeticOperators ope, string name, string ratio)
         {
             static string GetRatioXYPropertyName(int index) => ((index & 1) == 0) ? "X" : "Y";
 
             var list = new List<string>();
             for (int i = 0; i < Properties.Count; ++i)
             {
-                list.Add(name + "." + Properties[i].Name + " " + GetOperatorString(ope) + " " + ratio + "." + GetRatioXYPropertyName(i));
+                var left = name + "." + Properties[i].Name;
+                var op = " " + GetOperatorString(ope) + " ";
+                var right = ratio + "." + GetRatioXYPropertyName(i);
+                list.Add(left + op + right);
+            }
+            return string.Join(", ", list);
+        }
+
+        internal string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name, string ratio)
+        {
+            var list = new List<string>();
+            for (int i = 0; i < Properties.Count; ++i)
+            {
+                var left = name + "." + Properties[i].Name;
+                var op = " " + GetOperatorString(ope) + " ";
+                var right = ratio;
+                list.Add(left + op + right);
             }
             return string.Join(", ", list);
         }

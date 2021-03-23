@@ -14,10 +14,10 @@ namespace Roix.SourceGenerator
         WithBorder = 0x0004,
         TypeInt = 0x0008,
         HasParent = 0x0010,
+        HasEmpty = 0x0020,
+        TypeLine = 0x0040,
         // added automatically
 
-        //Flag6 = 0x0020,
-        //Flag7 = 0x0040,
         //Flag8 = 0x0080,
 
         Validate = 0x0100,
