@@ -62,6 +62,9 @@ namespace Roix.Wpf
         ///// <summary>Rect の最大サイズを指定値で制限します</summary>
         //public RoixRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
 
+        /// <summary>引数で指定した RoundingMode で Int型に変換します</summary>
+        public RoixIntLine ToInt(RoundingMode modeX, RoundingMode modeY) => new(Point1.ToInt(modeX, modeY), Point2.ToInt(modeX, modeY));
+
         #endregion
 
     }

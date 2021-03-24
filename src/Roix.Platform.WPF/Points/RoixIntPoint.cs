@@ -40,7 +40,7 @@ namespace Roix.Wpf
             if (srcSize.IsIncludeZero) throw new DivideByZeroException();
 
             var point = srcPoint * (destSize / srcSize);
-            return new(point.X.ToInt(modeX), point.Y.ToInt(modeY));
+            return point.ToInt(modeX, modeY);
         }
 
         /// <summary>引数で指定したInt型の座標系に変換します</summary>
@@ -51,7 +51,6 @@ namespace Roix.Wpf
         public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)
         {
             if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-
             return new(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
         }
         #endregion

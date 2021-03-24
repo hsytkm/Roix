@@ -15,6 +15,15 @@ namespace Roix.Wpf
 
         private RoixLine Value => Line;
 
+        #region ctor
+        public RoixBorderLine(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2)
+            : this(new RoixLine(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border)
+        {
+            if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
+            if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
+        }
+        #endregion
+
         #region operator
         //public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);
         //public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point - vector, borderPoint.Border);

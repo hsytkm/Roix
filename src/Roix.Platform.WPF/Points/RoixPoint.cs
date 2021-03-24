@@ -42,6 +42,9 @@ namespace Roix.Wpf
         //    return CreateRoixPoint(destIntPoint, destIntSize, srcSize);
         //}
 
+        /// <summary>引数で指定した RoundingMode で Int型に変換します</summary>
+        public RoixIntPoint ToInt(RoundingMode modeX, RoundingMode modeY) => new(X.ToInt(modeX), Y.ToInt(modeY));
+
         #endregion
 
     }

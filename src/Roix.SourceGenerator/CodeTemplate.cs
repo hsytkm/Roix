@@ -237,7 +237,7 @@ namespace Roix.SourceGenerator
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
 
- ");
+");
  if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
             this.Write("        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithoutInt()));
@@ -250,7 +250,7 @@ namespace Roix.SourceGenerator
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
 
- ");
+");
  } 
             this.Write("\r\n");
  } 

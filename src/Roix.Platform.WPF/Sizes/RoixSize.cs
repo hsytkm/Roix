@@ -96,5 +96,8 @@ namespace Roix.Wpf
             return new(Math.Min(Width, maxSize.Width), Math.Min(Height, maxSize.Height));
         }
 
+        /// <summary>引数で指定した RoundingMode で Int型に変換します</summary>
+        public RoixIntSize ToInt(RoundingMode modeX, RoundingMode modeY) => new(Width.ToInt(modeX), Height.ToInt(modeY));
+
     }
 }

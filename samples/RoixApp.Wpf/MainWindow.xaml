@@ -11,10 +11,13 @@
         Height="550" Width="800" >
     
     <TabControl Margin="5">
+        <ctrl:LazyTabItem Header="Line"
+                          ContentType="{x:Type local:SelectLine}" />
+
         <ctrl:LazyTabItem Header="Ratio"
                           ContentType="{x:Type local:ImageRatio}" />
 
-        <ctrl:LazyTabItem Header="Mouse"
+        <ctrl:LazyTabItem Header="Rect"
                           ContentType="{x:Type local:SelectRectangle}" />
     </TabControl>
 </Window>

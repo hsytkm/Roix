@@ -149,7 +149,7 @@ namespace <#= Namespace #>
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
 
- <# if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
+<# if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
         public <#= GetRoixNameWithoutInt() #> ConvertToNewBorder(in RoixSize newBorder)
         {
             if (this.Border.IsEmpty || this.Border.IsZero) return this;
@@ -159,7 +159,7 @@ namespace <#= Namespace #>
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
 
- <# } #>
+<# } #>
 
 <# } #>
 <# if (!HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>

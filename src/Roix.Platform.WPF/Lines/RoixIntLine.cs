@@ -30,26 +30,25 @@ namespace Roix.Wpf
         #endregion
 
         #region Properties
-        ///// <summary>引数で指定したInt型の座標系に変換します</summary>
-        //public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode modeX, RoundingMode modeY)
-        //{
-        //    if (srcSize.IsIncludeZero) throw new DivideByZeroException();
+        /// <summary>引数で指定したInt型の座標系に変換します</summary>
+        public static RoixIntLine Create(in RoixLine srcLine, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode modeX, RoundingMode modeY)
+        {
+            if (srcSize.IsIncludeZero) throw new DivideByZeroException();
 
-        //    var point = srcPoint * (destSize / srcSize);
-        //    return new(point.X.ToInt(modeX), point.Y.ToInt(modeY));
-        //}
+            var line = srcLine * (destSize / srcSize);
+            return line.ToInt(modeX, modeY);
+        }
 
-        ///// <summary>引数で指定したInt型の座標系に変換します</summary>
-        //public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
-        //    => Create(srcPoint, srcSize, destSize, mode, mode);
+        /// <summary>引数で指定したInt型の座標系に変換します</summary>
+        public static RoixIntLine Create(in RoixLine srcLine, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
+            => Create(srcLine, srcSize, destSize, mode, mode);
 
-        ///// <summary>引数で指定した IntSize 内に収めた IntPoint を返します</summary>
-        //public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)
-        //{
-        //    if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-
-        //    return new(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
-        //}
+        /// <summary>引数で指定した IntSize 内に収めた IntPoint を返します</summary>
+        public RoixIntLine GetClippedIntLine(in RoixIntSize size)
+        {
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+            return new(Point1.GetClippedIntPoint(size), Point2.GetClippedIntPoint(size));
+        }
         #endregion
 
     }
