@@ -16,25 +16,22 @@ namespace Roix.Wpf
         private RoixRect Value => Roi;
 
         #region ctor
-        // ◆基本のctorにthisしたい
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderSize borderSize)
+            : this(new RoixRect(borderPoint.Point, borderSize.Size), borderPoint.Border)
         {
             if (borderPoint.Border != borderSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             if (borderPoint.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-
-            _values = new(new RoixRect(borderPoint.Point, borderSize.Size), borderPoint.Border);
         }
 
-        // ◆基本のctorにthisしたい
         public RoixBorderRect(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2)
+            : this(new RoixRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border)
         {
             if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-
-            _values = new(new RoixRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border);
         }
 
-        public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
+        public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector)
+            : this(borderPoint, borderPoint + borderVector) { }
         #endregion
 
         #region Methods

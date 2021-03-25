@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Extensions;
 using System;
 
 namespace Roix.Wpf
@@ -24,34 +23,6 @@ namespace Roix.Wpf
         #region operator
         public static RoixLine operator +(in RoixLine line, RoixVector vector) => new(line.Point1 + vector, line.Point2 + vector);
         public static RoixLine operator -(in RoixLine line, RoixVector vector) => new(line.Point1 + (-vector), line.Point2 + (-vector));
-
-        //public static RoixRect operator *(in RoixRect rect, double scalar)
-        //{
-        //    if (rect.IsEmpty) return Empty;
-        //    if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-        //    return new(rect.Location * scalar, rect.Size * scalar);
-        //}
-
-        //public static RoixRect operator /(in RoixRect rect, double scalar)
-        //{
-        //    if (rect.IsEmpty) return Empty;
-        //    if (scalar == 0) throw new DivideByZeroException();
-        //    if (scalar < 0) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-        //    return rect * (1d / scalar);
-        //}
-
-        //public static RoixRect operator *(in RoixRect rect, in RoixRatioXY ratio)
-        //{
-        //    if (rect.IsEmpty) return Empty;
-        //    if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-        //    return new(rect.Location * ratio, rect.Size * ratio);
-        //}
-
-        //public static RoixRect operator /(in RoixRect rect, in RoixRatioXY ratio)
-        //{
-        //    if (ratio.IsIncludeZero) throw new DivideByZeroException();
-        //    return rect * (1d / ratio);
-        //}
         #endregion
 
         #region Methods
@@ -65,9 +36,6 @@ namespace Roix.Wpf
 
         ///// <summary>Rect の最大サイズを指定値で制限します</summary>
         //public RoixRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
-
-        /// <summary>2点の距離を計算します</summary>
-        public double GetDistance() => Point1.GetDistance(Point2);
 
         #endregion
 

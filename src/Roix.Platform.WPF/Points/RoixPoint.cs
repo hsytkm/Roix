@@ -32,6 +32,14 @@ namespace Roix.Wpf
         #endregion
 
         #region Methods
+
+        /// <summary>引数で指定した Size 内に収めた Point を返します</summary>
+        public RoixPoint GetClippedPoint(in RoixSize size)
+        {
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+            return new(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
+        }
+
         //public static RoixPoint CreateRoixPoint(in RoixIntPoint srcPoint, in RoixIntSize srcSize, in RoixSize destSize)
         //    => srcPoint * (destSize / srcSize);
 

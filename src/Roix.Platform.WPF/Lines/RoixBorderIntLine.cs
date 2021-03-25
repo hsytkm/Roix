@@ -57,12 +57,11 @@ namespace Roix.Wpf
 
 
         /// <summary>RoixBorderLine(double) から RoixBorderIntLine を作成します</summary>
-        public static RoixBorderIntLine Create(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2, in RoixIntSize intSize)
+        public static RoixBorderIntLine Create(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2, in RoixIntSize intSize, RoundingMode rounding = RoundingMode.Floor)
         {
             // double座標系の Point を int座標系に丸める
-            var mode = RoundingMode.Floor;
-            var intPoint1 = borderPoint1.ConvertToRoixInt(intSize, mode, mode);
-            var intPoint2 = borderPoint2.ConvertToRoixInt(intSize, mode, mode);
+            var intPoint1 = borderPoint1.ConvertToRoixInt(intSize, rounding);
+            var intPoint2 = borderPoint2.ConvertToRoixInt(intSize, rounding);
             return new(intPoint1, intPoint2);
         }
 

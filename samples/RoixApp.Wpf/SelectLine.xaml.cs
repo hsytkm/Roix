@@ -84,7 +84,8 @@ namespace RoixApp.Wpf
                 });
 
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            new[] { RectRatioX1.ObserveHasErrors, RectRatioY1.ObserveHasErrors, RectRatioX2.ObserveHasErrors, RectRatioY2.ObserveHasErrors }
+            new[] { RectRatioX1, RectRatioY1, RectRatioX2, RectRatioY2 }
+                .Select(rp => rp.ObserveHasErrors)
                 .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
                 .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す
@@ -121,7 +122,8 @@ namespace RoixApp.Wpf
 
             // Modelの値に応じて描画 + Viewサイズ変更に応じてコントロールを伸縮
             _model.Line
-                .CombineLatest(ViewBorderSize, (line, newBorder) => new RoixBorderIntLine(line, imageSourceSize).ConvertToNewBorder(newBorder))
+                .CombineLatest(ViewBorderSize.Where(x => x.IsNotZero), (line, newBorder)
+                    => new RoixBorderIntLine(line, imageSourceSize).ConvertToNewBorder(newBorder))
                 .Subscribe(viewBorderLine =>
                 {
                     var halfPixelVector = GetViewHalfPixelVector(imageSourceSize, viewBorderLine.Border);

@@ -149,11 +149,11 @@ namespace Roix.SourceGenerator
         {
             static string GetRatioXYPropertyName(int index) => ((index & 1) == 0) ? "X" : "Y";
 
+            var op = " " + GetOperatorString(ope) + " ";
             var list = new List<string>();
             for (int i = 0; i < Properties.Count; ++i)
             {
                 var left = name + "." + Properties[i].Name;
-                var op = " " + GetOperatorString(ope) + " ";
                 var right = ratio + "." + GetRatioXYPropertyName(i);
                 list.Add(left + op + right);
             }
@@ -162,11 +162,11 @@ namespace Roix.SourceGenerator
 
         internal string GetOperatorRoixAndRatio(ArithmeticOperators ope, string name, string ratio)
         {
+            var op = " " + GetOperatorString(ope) + " ";
             var list = new List<string>();
             for (int i = 0; i < Properties.Count; ++i)
             {
                 var left = name + "." + Properties[i].Name;
-                var op = " " + GetOperatorString(ope) + " ";
                 var right = ratio;
                 list.Add(left + op + right);
             }

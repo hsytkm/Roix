@@ -51,7 +51,8 @@ namespace Roix.Wpf
         }
 
         // No Borders (int)
-        public static RoixBorderIntRect operator *(in RoixRatioXYWH ratio, in RoixIntSize size) => (ratio * (RoixSize)size).ToRoixInt(RoundingMode.Round);
+        public static RoixBorderIntRect operator *(in RoixRatioXYWH ratio, in RoixIntSize size)
+            => (ratio * (RoixSize)size).ToRoixInt(RoundingMode.Round);
 
     }
 }

@@ -16,22 +16,18 @@ namespace Roix.Wpf
         private RoixIntRect Value => Roi;
 
         #region ctor
-        // ◆基本のctorにthisしたい
         public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntSize borderSize)
+            : this(new RoixIntRect(borderPoint.Point, borderSize.Size), borderPoint.Border)
         {
             if (borderPoint.Border != borderSize.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             if (borderPoint.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-
-            _values = new(new RoixIntRect(borderPoint.Point, borderSize.Size), borderPoint.Border);
         }
 
-        // ◆基本のctorにthisしたい
         public RoixBorderIntRect(in RoixBorderIntPoint borderPoint1, in RoixBorderIntPoint borderPoint2)
+            : this(new RoixIntRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border)
         {
             if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-
-            _values = new(new RoixIntRect(borderPoint1.Point, borderPoint2.Point), borderPoint1.Border);
         }
 
         public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
@@ -55,8 +51,8 @@ namespace Roix.Wpf
         {
             static RoixBorderIntPoint ConvertToRoixInt(in RoixBorderPoint srcBorderPoint, in RoixIntSize destIntSize, PointDirection roundingDirection)
             {
-                var rounding = roundingDirection.GetRoundingMode();
-                return srcBorderPoint.ConvertToRoixInt(destIntSize, rounding.X, rounding.Y);
+                var (roundingX, roundingY) = roundingDirection.GetRoundingMode();
+                return srcBorderPoint.ConvertToRoixInt(destIntSize, roundingX, roundingY);
             }
 
             // point1 に対して point2 がどの方向にあるか判定(真横/真上は差し替える)

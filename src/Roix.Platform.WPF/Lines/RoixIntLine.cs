@@ -1,5 +1,4 @@
 ﻿using Roix.SourceGenerator;
-using Roix.Wpf.Extensions;
 using System;
 
 namespace Roix.Wpf
@@ -50,12 +49,6 @@ namespace Roix.Wpf
             if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
             return new(Point1.GetClippedIntPoint(size), Point2.GetClippedIntPoint(size));
         }
-        #endregion
-
-        #region Methods
-        /// <summary>2点の距離を計算します</summary>
-        public double GetDistance() => ((RoixPoint)Point1).GetDistance(Point2);
-
         #endregion
 
     }

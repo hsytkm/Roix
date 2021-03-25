@@ -69,7 +69,7 @@ namespace Roix.Wpf
         }
 
         /// <summary>Point を Border の内部に収めて返します</summary>
-        public RoixBorderPoint GetClippedBorderPoint() => new(new(Math.Clamp(Point.X, 0, Border.Width), Math.Clamp(Point.Y, 0, Border.Height)), Border);
+        public RoixBorderPoint GetClippedBorderPoint() => new(Point.GetClippedPoint(Border), Border);
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
         //public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)

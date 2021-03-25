@@ -27,5 +27,8 @@ namespace Roix.Wpf
         public static RoixBorderIntVector operator -(in RoixBorderIntPoint borderPoint1, in RoixBorderIntPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? borderPoint1 - borderPoint2.Point : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
         #endregion
 
+        /// <summary>Point を Border の内部に収めて返します</summary>
+        public RoixBorderIntPoint GetClippedBorderIntPoint() => new(Point.GetClippedIntPoint(Border), Border);
+
     }
 }

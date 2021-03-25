@@ -91,16 +91,17 @@ namespace RoixApp.Wpf
 
             // Modelからの値をViewに反映
             _model.RectRatio
-                .Subscribe(rect =>
+                .Subscribe(ratio =>
                 {
-                    RectRatioX.Value = (rect.X * 100d).ToString("f2");
-                    RectRatioY.Value = (rect.Y * 100d).ToString("f2");
-                    RectRatioWidth.Value = (rect.Width * 100d).ToString("f2");
-                    RectRatioHeight.Value = (rect.Height * 100d).ToString("f2");
+                    RectRatioX.Value = (ratio.X * 100d).ToString("f2");
+                    RectRatioY.Value = (ratio.Y * 100d).ToString("f2");
+                    RectRatioWidth.Value = (ratio.Width * 100d).ToString("f2");
+                    RectRatioHeight.Value = (ratio.Height * 100d).ToString("f2");
                 });
 
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            new[] { RectRatioX.ObserveHasErrors, RectRatioY.ObserveHasErrors, RectRatioWidth.ObserveHasErrors, RectRatioHeight.ObserveHasErrors }
+            new[] { RectRatioX, RectRatioY, RectRatioWidth, RectRatioHeight }
+                .Select(rp => rp.ObserveHasErrors)
                 .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
                 .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す
@@ -150,7 +151,8 @@ namespace RoixApp.Wpf
                 });
 
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            new[] { PointRatioX.ObserveHasErrors, PointRatioY.ObserveHasErrors }
+            new[] { PointRatioX, PointRatioY }
+                .Select(rp => rp.ObserveHasErrors)
                 .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
                 .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す

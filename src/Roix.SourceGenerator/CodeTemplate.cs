@@ -222,9 +222,10 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
             this.Write(" border) => !IsInside(border);\r\n");
  } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
-            this.Write("        public bool IsIncludeZero => Point1.IsIncludeZero || Point2.IsIncludeZero" +
-                    ";\r\n        public bool IsIncludeNegative => Point1.IsIncludeNegative || Point2.I" +
-                    "sIncludeNegative;\r\n        public bool IsInside(in ");
+            this.Write(@"        // RoixStructGeneratorOptions.TypeLine
+        public bool IsIncludeZero => Point1.IsIncludeZero || Point2.IsIncludeZero;
+        public bool IsIncludeNegative => Point1.IsIncludeNegative || Point2.IsIncludeNegative;
+        public bool IsInside(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
             this.Write(" border) => Point1.IsInside(border) || Point2.IsInside(border);\r\n        public b" +
                     "ool IsOutside(in ");
@@ -422,6 +423,18 @@ namespace Roix.SourceGenerator
   } 
  } 
  /* ↑ArithmeticOperator2↑ */ 
+            this.Write("\r\n");
+ if (Name.Contains("Point") && !Name.Contains("Border")) { 
+            this.Write("        /// <summary>2点の距離を計算します</summary>\r\n        public double GetDistance(in " +
+                    "");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" point)\r\n        {\r\n            var x = (double)this.X - point.X;\r\n            va" +
+                    "r y = (double)this.Y - point.Y;\r\n            return Math.Sqrt(x * x + y * y);\r\n " +
+                    "       }\r\n");
+ } else if (Name.Contains("Line") && !Name.Contains("Border")) { 
+            this.Write("        /// <summary>2点の距離を計算します</summary>\r\n        public double GetDistance() =" +
+                    "> Point1.GetDistance(Point2);\r\n");
+ } 
             this.Write("\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
