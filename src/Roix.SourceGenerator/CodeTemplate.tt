@@ -25,12 +25,12 @@ namespace <#= Namespace #>
         public <#= Name #>(<#= GetTypeAndLowerNamesForArgs("{0} {1}") #>)
         {
             this._values = new(<#= GetLowerNames() #>);
-<# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #> 
+<#  if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #> 
             if (this.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
-<# } #>
-<# if (HasFlag(RoixStructGeneratorOptions.Validate)) { #> 
+<#  } #>
+<#  if (HasFlag(RoixStructGeneratorOptions.Validate)) { #> 
             this.Validate(this);
-<# } #>
+<#  } #>
         }
 
 <# } #>
@@ -39,6 +39,7 @@ namespace <#= Namespace #>
         private partial void Validate(in <#= Name #> value);
 
 <# } #>
+
         public void Deconstruct(<#= GetTypeAndLowerNames("out {0} {1}") #>) => (<#= GetLowerNames() #>) = (<#= GetNames() #>);
 
         public bool Equals(<#= Name #> other) => this == other;
@@ -54,6 +55,10 @@ namespace <#= Namespace #>
         public bool IsZero => this == Zero;
         public bool IsNotZero => !this.IsZero;
 
+<# if (Name.Contains("Size") && !Name.Contains("Border")) { #>
+        private <#= GetRoixDefaultBuiltInType() #> X => Width;
+        private <#= GetRoixDefaultBuiltInType() #> Y => Height;
+<# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
         // RoixStructGeneratorOptions.Rect
         public <#= GetRoixDefaultBuiltInType() #> X => Location.X;
@@ -116,10 +121,12 @@ namespace <#= Namespace #>
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { #>
         // RoixStructGeneratorOptions.TypeLine
-        public <#= GetRoixDefaultBuiltInType() #> X1 => this.Point1.X;
-        public <#= GetRoixDefaultBuiltInType() #> Y1 => this.Point1.Y;
-        public <#= GetRoixDefaultBuiltInType() #> X2 => this.Point2.X;
-        public <#= GetRoixDefaultBuiltInType() #> Y2 => this.Point2.Y;
+        public <#= GetRoixDefaultBuiltInType() #> X1 => Point1.X;
+        public <#= GetRoixDefaultBuiltInType() #> Y1 => Point1.Y;
+        public <#= GetRoixDefaultBuiltInType() #> X2 => Point2.X;
+        public <#= GetRoixDefaultBuiltInType() #> Y2 => Point2.Y;
+        public <#= GetRoixDefaultBuiltInType() #> LengthX => Math.Abs(Point2.X - Point1.X);
+        public <#= GetRoixDefaultBuiltInType() #> LengthY => Math.Abs(Point2.Y - Point1.Y);
 
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
@@ -148,8 +155,7 @@ namespace <#= Namespace #>
 
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
-
-<# if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
+<#  if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
         public <#= GetRoixNameWithoutInt() #> ConvertToNewBorder(in RoixSize newBorder)
         {
             if (this.Border.IsEmpty || this.Border.IsZero) return this;
@@ -158,26 +164,31 @@ namespace <#= Namespace #>
 
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
-
-<# } #>
+<#  } #>
 
 <# } #>
 <# if (!HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
-<# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
-<# /* ↓TypeInt && XYPair↓ */ #>
+<#  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+<#  /* ↓is not TypeInt && XYPair↓ */ #>
+        public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode roundingX, RoundingMode roundingY)
+        {
+            return new(X.ToInt(roundingX), Y.ToInt(roundingY));
+        }
         public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
         {
-            return new(<#= GetNames("{0}.ToInt(rounding)") #>);
+            return ToRoixInt(rounding, rounding);
         }
-
-<# } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
-<# /* ↓TypeInt && (is not XYPair)↓ */ #>
+<#  } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
+<#  /* ↓is not TypeInt && (is not XYPair)↓ */ #>
+        public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode roundingX, RoundingMode roundingY)
+        {
+            return new(<#= GetNames("{0}.ToRoixInt(roundingX, roundingY)") #>);
+        }
         public <#= GetRoixNameWithInt() #> ToRoixInt(RoundingMode rounding = RoundingMode.Floor)
         {
-            return new(<#= GetNames("{0}.ToRoixInt(rounding)") #>);
+            return ToRoixInt(rounding, rounding);
         }
-
-<# } #>
+<#  } #>
 <# } #>
 
 <# if (HasFlag(RoixStructGeneratorOptions.HasParent)) { #>
@@ -199,88 +210,90 @@ namespace <#= Namespace #>
         // RoixStructGeneratorOptions.ArithmeticOperator1
         public static <#= Name #> operator +(in <#= Name #> value1, in <#= Name #> value2)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value1.IsEmpty || value2.IsEmpty) return Empty;
-<# } #>
+<#  } #>
             return new(<#= GetOperate2Value(ArithmeticOperators.Add, "value1", "value2") #>);
         }
 
         public static <#= Name #> operator -(in <#= Name #> value1, in <#= Name #> value2)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value1.IsEmpty || value2.IsEmpty) return Empty;
-<# } #>
+<#  } #>
             return new(<#= GetOperate2Value(ArithmeticOperators.Subtract, "value1", "value2") #>);
         }
 <# } #>
 <# /* ↑ArithmeticOperator1↑ */ #>
+
 <# /* ↓ArithmeticOperator2↓ */ #>
 <# if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator2)) { #>
         // RoixStructGeneratorOptions.ArithmeticOperator2
         public static <#= Name #> operator *(in <#= Name #> value, double scalar)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#  } #>
             return new(<#= GetOperate1Value(ArithmeticOperators.Multiply, "value", "scalar") #>);
         }
 
         public static <#= Name #> operator /(in <#= Name #> value, double scalar)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#  } #>
             if (scalar == 0) throw new DivideByZeroException();
             return value * (1d / scalar);
         }
 
-<# /* ↓ArithmeticOperator2 && XYPair↓ */ #>
-<# if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+<#  /* ↓ArithmeticOperator2 && XYPair↓ */ #>
+<#  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
         public static <#= Name #> operator *(in <#= Name #> value, in RoixRatioXY ratio)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#   } #>
             return new(<#= GetOperatorRoixAndRatioXY(ArithmeticOperators.Multiply, "value", "ratio") #>);
         }
 
         public static <#= Name #> operator /(in <#= Name #> value, in RoixRatioXY ratio)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#   } #>
             if (ratio.IsIncludeZero) throw new DivideByZeroException();
             return new(<#= GetOperatorRoixAndRatioXY(ArithmeticOperators.Divide, "value", "ratio") #>);
         }
 
         public static RoixRatioXY operator /(in <#= Name #> value1, in <#= Name #> value2)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#   } #>
             if (value2.IsIncludeZero) throw new DivideByZeroException();
             return new(<#= GetOperate2Value(ArithmeticOperators.Divide, "value1", "value2") #>);
         }
-<# } else { #>
-<# /* ↓ArithmeticOperator2 && (is not XYPair)↓ */ #>
+<#  /* ↓ArithmeticOperator2 && (is not XYPair)↓ */ #>
+<#  } else { #>
         public static <#= Name #> operator *(in <#= Name #> value, in RoixRatioXY ratio)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#   } #>
             return new(<#= GetOperatorRoixAndRatio(ArithmeticOperators.Multiply, "value", "ratio") #>);
         }
 
         public static <#= Name #> operator /(in <#= Name #> value, in RoixRatioXY ratio)
         {
-<# if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { #>
             if (value.IsEmpty) return Empty;
-<# } #>
+<#   } #>
             if (ratio.IsIncludeZero) throw new DivideByZeroException();
             return new(<#= GetOperatorRoixAndRatio(ArithmeticOperators.Divide, "value", "ratio") #>);
         }
+<#  } #>
 <# } #>
 <# /* ↑ArithmeticOperator2↑ */ #>
-<# } #>
+
     }
 }

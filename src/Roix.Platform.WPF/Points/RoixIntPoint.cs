@@ -40,7 +40,7 @@ namespace Roix.Wpf
             if (srcSize.IsIncludeZero) throw new DivideByZeroException();
 
             var point = srcPoint * (destSize / srcSize);
-            return point.ToInt(modeX, modeY);
+            return point.ToRoixInt(modeX, modeY);
         }
 
         /// <summary>引数で指定したInt型の座標系に変換します</summary>

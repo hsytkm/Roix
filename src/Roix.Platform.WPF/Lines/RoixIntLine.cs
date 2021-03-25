@@ -1,4 +1,5 @@
 ﻿using Roix.SourceGenerator;
+using Roix.Wpf.Extensions;
 using System;
 
 namespace Roix.Wpf
@@ -24,9 +25,9 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        //public static RoixIntPoint operator +(in RoixIntPoint point, in RoixIntVector vector) => new(point.X + vector.X, point.Y + vector.Y);
-        //public static RoixIntVector operator -(in RoixIntPoint point1, in RoixIntPoint point2) => new(point1.X - point2.X, point1.Y - point2.Y);
-        //public static RoixIntPoint operator -(in RoixIntPoint point, in RoixIntVector vector) => new(point.X - vector.X, point.Y - vector.Y);
+        public static RoixIntLine operator +(in RoixIntLine line, RoixIntVector vector) => new(line.Point1 + vector, line.Point2 + vector);
+        public static RoixIntLine operator -(in RoixIntLine line, RoixIntVector vector) => new(line.Point1 + (-vector), line.Point2 + (-vector));
+
         #endregion
 
         #region Properties
@@ -36,7 +37,7 @@ namespace Roix.Wpf
             if (srcSize.IsIncludeZero) throw new DivideByZeroException();
 
             var line = srcLine * (destSize / srcSize);
-            return line.ToInt(modeX, modeY);
+            return line.ToRoixInt(modeX, modeY);
         }
 
         /// <summary>引数で指定したInt型の座標系に変換します</summary>
@@ -49,6 +50,12 @@ namespace Roix.Wpf
             if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
             return new(Point1.GetClippedIntPoint(size), Point2.GetClippedIntPoint(size));
         }
+        #endregion
+
+        #region Methods
+        /// <summary>2点の距離を計算します</summary>
+        public double GetDistance() => ((RoixPoint)Point1).GetDistance(Point2);
+
         #endregion
 
     }

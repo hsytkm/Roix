@@ -99,14 +99,11 @@ namespace RoixApp.Wpf
                     RectRatioHeight.Value = (rect.Height * 100d).ToString("f2");
                 });
 
-            // 入力値の検証
-            var inputRectValuesHasNoError = new[] { RectRatioX.ObserveHasErrors, RectRatioY.ObserveHasErrors, RectRatioWidth.ObserveHasErrors, RectRatioHeight.ObserveHasErrors }
-                .CombineLatestValuesAreAllFalse()
-                .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.None);
-
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            var combinedRectRatio = inputRectValuesHasNoError
+            new[] { RectRatioX.ObserveHasErrors, RectRatioY.ObserveHasErrors, RectRatioWidth.ObserveHasErrors, RectRatioHeight.ObserveHasErrors }
+                .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
+                .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す
                 .Subscribe(_ =>
                 {
                     var x = double.Parse(RectRatioX.Value, CultureInfo.InvariantCulture) / 100d;
@@ -152,14 +149,11 @@ namespace RoixApp.Wpf
                     PointRatioY.Value = (rect.Y * 100d).ToString("f2");
                 });
 
-            // 入力値の検証
-            var inputPointValuesHasNoError = new[] { PointRatioX.ObserveHasErrors, PointRatioY.ObserveHasErrors }
-                .CombineLatestValuesAreAllFalse()
-                .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.None);
-
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            var combinedPointRatio = inputPointValuesHasNoError
+            new[] { PointRatioX.ObserveHasErrors, PointRatioY.ObserveHasErrors }
+                .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
+                .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す
                 .Subscribe(_ =>
                 {
                     var x = double.Parse(PointRatioX.Value, CultureInfo.InvariantCulture) / 100d;

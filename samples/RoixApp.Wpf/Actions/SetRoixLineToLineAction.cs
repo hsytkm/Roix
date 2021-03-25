@@ -10,7 +10,7 @@ namespace RoixApp.Wpf.Actions
     {
         protected override void Invoke(object parameter)
         {
-            if (this.Target is not Line line) return;
+            if (Target is not Line line) return;
             if (parameter is not DependencyPropertyChangedEventArgs e) return;
 
             RoixLine value = e.NewValue switch
@@ -23,8 +23,8 @@ namespace RoixApp.Wpf.Actions
             };
 
             line.X1 = value.X1;
-            line.X2 = value.X2;
             line.Y1 = value.Y1;
+            line.X2 = value.X2;
             line.Y2 = value.Y2;
         }
     }

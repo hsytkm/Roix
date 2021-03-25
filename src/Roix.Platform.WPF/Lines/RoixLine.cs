@@ -1,4 +1,5 @@
 ﻿using Roix.SourceGenerator;
+using Roix.Wpf.Extensions;
 using System;
 
 namespace Roix.Wpf
@@ -21,6 +22,9 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
+        public static RoixLine operator +(in RoixLine line, RoixVector vector) => new(line.Point1 + vector, line.Point2 + vector);
+        public static RoixLine operator -(in RoixLine line, RoixVector vector) => new(line.Point1 + (-vector), line.Point2 + (-vector));
+
         //public static RoixRect operator *(in RoixRect rect, double scalar)
         //{
         //    if (rect.IsEmpty) return Empty;
@@ -62,8 +66,8 @@ namespace Roix.Wpf
         ///// <summary>Rect の最大サイズを指定値で制限します</summary>
         //public RoixRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
 
-        /// <summary>引数で指定した RoundingMode で Int型に変換します</summary>
-        public RoixIntLine ToInt(RoundingMode modeX, RoundingMode modeY) => new(Point1.ToInt(modeX, modeY), Point2.ToInt(modeX, modeY));
+        /// <summary>2点の距離を計算します</summary>
+        public double GetDistance() => Point1.GetDistance(Point2);
 
         #endregion
 

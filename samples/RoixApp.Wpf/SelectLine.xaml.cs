@@ -83,14 +83,11 @@ namespace RoixApp.Wpf
                     RectRatioY2.Value = line.Y2.ToString();
                 });
 
-            // 入力値の検証
-            var inputRectValuesHasNoError = new[] { RectRatioX1.ObserveHasErrors, RectRatioY1.ObserveHasErrors, RectRatioX2.ObserveHasErrors, RectRatioY2.ObserveHasErrors }
-                .CombineLatestValuesAreAllFalse()
-                .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.None);
-
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
-            var combinedRectRatio = inputRectValuesHasNoError
+            new[] { RectRatioX1.ObserveHasErrors, RectRatioY1.ObserveHasErrors, RectRatioX2.ObserveHasErrors, RectRatioY2.ObserveHasErrors }
+                .CombineLatestValuesAreAllFalse()
                 .Where(noError => noError)
+                .Throttle(TimeSpan.FromMilliseconds(10))    // マウス操作時に複数回変更が発生するので落ち着いたら流す
                 .Subscribe(_ =>
                 {
                     var x1 = int.Parse(RectRatioX1.Value, CultureInfo.InvariantCulture);
@@ -114,14 +111,30 @@ namespace RoixApp.Wpf
                     _model.Line.Value = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize).Line;
                 })
                 .Repeat()
-                .Select(x => SelectedLine.Value = RoixBorderIntLine.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(x.startPoint.Border))
-                .ToReadOnlyReactivePropertySlim();
+                .Subscribe(x =>
+                {
+                    var borderSize = x.startPoint.Border;
+                    var halfPixelVector = GetViewHalfPixelVector(imageSourceSize, borderSize);
+                    var viewLine = RoixBorderIntLine.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(borderSize);
+                    SelectedLine.Value = new(viewLine.Line + halfPixelVector, viewLine.Border);
+                });
 
-            // Modelの値に応じて描画＋Viewサイズ変更に応じてコントロールを伸縮
+            // Modelの値に応じて描画 + Viewサイズ変更に応じてコントロールを伸縮
             _model.Line
                 .CombineLatest(ViewBorderSize, (line, newBorder) => new RoixBorderIntLine(line, imageSourceSize).ConvertToNewBorder(newBorder))
-                .Subscribe(borderLine => SelectedLine.Value = borderLine);
+                .Subscribe(viewBorderLine =>
+                {
+                    var halfPixelVector = GetViewHalfPixelVector(imageSourceSize, viewBorderLine.Border);
+                    SelectedLine.Value = new(viewBorderLine.Line + halfPixelVector, viewBorderLine.Border);
+                });
 
+            // View上の1画素の半分の移動量（左上角から中心までの移動量）
+            static RoixVector GetViewHalfPixelVector(in RoixIntSize imageSize, in RoixSize viewSize)
+            {
+                var onePixelOnImage = new RoixBorderIntSize(new RoixIntSize(1, 1), imageSize);
+                var onePixelOnView = onePixelOnImage.ConvertToNewBorder(viewSize).Size;
+                return (RoixVector)(onePixelOnView / 2d);
+            }
         }
     }
 

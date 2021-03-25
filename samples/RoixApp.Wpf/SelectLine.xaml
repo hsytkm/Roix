@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
              xmlns:local="clr-namespace:RoixApp.Wpf"
              xmlns:conv="clr-namespace:RoixApp.Wpf.Converters"
@@ -83,13 +84,39 @@
 
             <Grid Width="{Binding ActualWidth, ElementName=mainImage}"
                   Height="{Binding ActualHeight, ElementName=mainImage}" >
-                <Line Stroke="Lime" StrokeThickness="2" IsHitTestVisible="False" >
+                <Panel.Resources>
+                    <Style TargetType="{x:Type Line}" >
+                        <Setter Property="Stroke" Value="Lime" />
+                        <Setter Property="StrokeThickness" Value="2" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                    </Style>
+                    <sys:Double x:Key="ArrowAngle1">35</sys:Double>
+                    <sys:Double x:Key="ArrowAngle2">-35</sys:Double>
+                </Panel.Resources>
+                <Line>
                     <i:Interaction.Triggers>
                         <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
                             <action:SetRoixLineToLineAction />
                         </i:PropertyChangedTrigger>
                     </i:Interaction.Triggers>
                 </Line>
+                
+                <!-- Arrows -->
+                <Line>
+                    <i:Interaction.Triggers>
+                        <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
+                            <action:SetArrowLineAction ArrowAngleMin="{StaticResource ArrowAngle1}" />
+                        </i:PropertyChangedTrigger>
+                    </i:Interaction.Triggers>
+                </Line>
+                <Line>
+                    <i:Interaction.Triggers>
+                        <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
+                            <action:SetArrowLineAction ArrowAngleMin="{StaticResource ArrowAngle2}" />
+                        </i:PropertyChangedTrigger>
+                    </i:Interaction.Triggers>
+                </Line>
+
             </Grid>
         </Grid>
     </DockPanel>

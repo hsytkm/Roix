@@ -25,13 +25,8 @@ namespace Roix.Wpf
         #endregion
 
         #region operator
-        //public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);
-        //public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point - vector, borderPoint.Border);
-        //public static RoixBorderVector operator -(in RoixBorderPoint borderPoint, in RoixPoint point) => new(borderPoint.Point - point, borderPoint.Border);
-
-        //public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint + borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
-        //public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint - borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
-        //public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? borderPoint1 - borderPoint2.Point : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderLine operator +(in RoixBorderLine borderLine, in RoixVector vector) => new(borderLine.Line + vector, borderLine.Border);
+        public static RoixBorderLine operator -(in RoixBorderLine borderLine, in RoixVector vector) => new(borderLine.Line + (-vector), borderLine.Border);
         #endregion
 
         #region Methods

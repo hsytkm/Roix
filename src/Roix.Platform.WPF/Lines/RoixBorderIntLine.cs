@@ -27,13 +27,8 @@ namespace Roix.Wpf
         public static implicit operator RoixBorderLine(in RoixBorderIntLine borderLine) => new(borderLine.Line, borderLine.Border);
 
         #region operator
-        //public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);
-        //public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point - vector, borderPoint.Border);
-        //public static RoixBorderVector operator -(in RoixBorderPoint borderPoint, in RoixPoint point) => new(borderPoint.Point - point, borderPoint.Border);
-
-        //public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint + borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
-        //public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector) => (borderPoint.Border == borderVector.Border) ? borderPoint - borderVector.Vector : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
-        //public static RoixBorderVector operator -(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2) => (borderPoint1.Border == borderPoint2.Border) ? borderPoint1 - borderPoint2.Point : throw new NotImplementedException(ExceptionMessages.BorderSizeIsDifferent);
+        public static RoixBorderIntLine operator +(in RoixBorderIntLine borderLine, in RoixIntVector vector) => new(borderLine.Line + vector, borderLine.Border);
+        public static RoixBorderIntLine operator -(in RoixBorderIntLine borderLine, in RoixIntVector vector) => new(borderLine.Line + (-vector), borderLine.Border);
         #endregion
 
         #region Methods
@@ -61,30 +56,14 @@ namespace Roix.Wpf
         //public RoixRatioXY ToRoixRatio() => Line / Border;
 
 
-        /// <summary>RoixBorderPoint(double) から RoixBorderIntRect を作成します</summary>
+        /// <summary>RoixBorderLine(double) から RoixBorderIntLine を作成します</summary>
         public static RoixBorderIntLine Create(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2, in RoixIntSize intSize)
         {
-            static RoixBorderIntPoint ConvertToRoixInt(in RoixBorderPoint srcBorderPoint, in RoixIntSize destIntSize, PointDirection roundingDirection)
-            {
-                var rounding = roundingDirection.GetRoundingMode();
-                return srcBorderPoint.ConvertToRoixInt(destIntSize, rounding.X, rounding.Y);
-            }
-
-            // point1 に対して point2 がどの方向にあるか判定(真横/真上は差し替える)
-            var point2Direction = borderPoint2.Point.GetPointDirection(origin: borderPoint1.Point);
-            if (point2Direction is PointDirection.Same) return RoixBorderIntLine.Zero;
-            point2Direction = point2Direction switch
-            {
-                PointDirection.Top or PointDirection.Left => PointDirection.TopLeft,
-                PointDirection.Bottom or PointDirection.Right => PointDirection.BottomRight,
-                _ => point2Direction,
-            };
-            var point1Direction = point2Direction.GetOppositeDirection();
-
             // double座標系の Point を int座標系に丸める
-            var intPoint1 = ConvertToRoixInt(borderPoint1, intSize, point1Direction);
-            var intPoint2 = ConvertToRoixInt(borderPoint2, intSize, point2Direction);
-            return new RoixBorderIntLine(intPoint1, intPoint2);
+            var mode = RoundingMode.Floor;
+            var intPoint1 = borderPoint1.ConvertToRoixInt(intSize, mode, mode);
+            var intPoint2 = borderPoint2.ConvertToRoixInt(intSize, mode, mode);
+            return new(intPoint1, intPoint2);
         }
 
         #endregion

@@ -13,9 +13,6 @@ namespace Roix.Wpf
             public SourceValues(int width, int height) => (Width, Height) = (width, height);
         }
 
-        private double X => Width;
-        private double Y => Height;
-
         #region ctor
         public RoixIntSize(int length) : this(length, length) { }
         public RoixIntSize(double x, double y) : this(x.FloorToInt(), y.FloorToInt()) { }

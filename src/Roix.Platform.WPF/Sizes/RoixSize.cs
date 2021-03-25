@@ -16,9 +16,6 @@ namespace Roix.Wpf
 
         public static RoixSize Empty { get; } = new(double.NegativeInfinity);
 
-        private double X => Width;
-        private double Y => Height;
-
         #region ctor
         private RoixSize(double value) => _values = new(value, value);  // forEmpty(skip Validate)
 
@@ -95,9 +92,6 @@ namespace Roix.Wpf
             if (maxSize.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
             return new(Math.Min(Width, maxSize.Width), Math.Min(Height, maxSize.Height));
         }
-
-        /// <summary>引数で指定した RoundingMode で Int型に変換します</summary>
-        public RoixIntSize ToInt(RoundingMode modeX, RoundingMode modeY) => new(Width.ToInt(modeX), Height.ToInt(modeY));
 
     }
 }

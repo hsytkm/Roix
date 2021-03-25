@@ -54,13 +54,13 @@ namespace Roix.SourceGenerator
             this.Write(")\r\n        {\r\n            this._values = new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetLowerNames()));
             this.Write(");\r\n");
- if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
+  if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
             this.Write(" \r\n            if (this.Border.IsIncludeNegative) throw new ArgumentException(Exc" +
                     "eptionMessages.SizeIsNegative);\r\n");
- } 
- if (HasFlag(RoixStructGeneratorOptions.Validate)) { 
+  } 
+  if (HasFlag(RoixStructGeneratorOptions.Validate)) { 
             this.Write(" \r\n            this.Validate(this);\r\n");
- } 
+  } 
             this.Write("        }\r\n\r\n");
  } 
  if (HasFlag(RoixStructGeneratorOptions.Validate)) { 
@@ -69,7 +69,7 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value);\r\n\r\n");
  } 
-            this.Write("        public void Deconstruct(");
+            this.Write("\r\n        public void Deconstruct(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetTypeAndLowerNames("out {0} {1}")));
             this.Write(") => (");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetLowerNames()));
@@ -108,6 +108,13 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" Zero { get; } = default;\r\n        public bool IsZero => this == Zero;\r\n        p" +
                     "ublic bool IsNotZero => !this.IsZero;\r\n\r\n");
+ if (Name.Contains("Size") && !Name.Contains("Border")) { 
+            this.Write("        private ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" X => Width;\r\n        private ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" Y => Height;\r\n");
+ } 
  if (HasFlag(RoixStructGeneratorOptions.Rect)) { 
             this.Write("        // RoixStructGeneratorOptions.Rect\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
@@ -193,13 +200,17 @@ namespace Roix.SourceGenerator
  if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
             this.Write("        // RoixStructGeneratorOptions.TypeLine\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
-            this.Write(" X1 => this.Point1.X;\r\n        public ");
+            this.Write(" X1 => Point1.X;\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
-            this.Write(" Y1 => this.Point1.Y;\r\n        public ");
+            this.Write(" Y1 => Point1.Y;\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
-            this.Write(" X2 => this.Point2.X;\r\n        public ");
+            this.Write(" X2 => Point2.X;\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
-            this.Write(" Y2 => this.Point2.Y;\r\n\r\n");
+            this.Write(" Y2 => Point2.Y;\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" LengthX => Math.Abs(Point2.X - Point1.X);\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" LengthY => Math.Abs(Point2.Y - Point1.Y);\r\n\r\n");
  } 
  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
             this.Write("        // RoixStructGeneratorOptions.XYPair\r\n        public bool IsIncludeZero =" +
@@ -236,9 +247,8 @@ namespace Roix.SourceGenerator
 
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
-
 ");
- if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
+  if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
             this.Write("        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithoutInt()));
             this.Write(@" ConvertToNewBorder(in RoixSize newBorder)
@@ -249,29 +259,33 @@ namespace Roix.SourceGenerator
 
             return new(this.Value * (newBorder / this.Border), newBorder);
         }
-
 ");
- } 
+  } 
             this.Write("\r\n");
  } 
  if (!HasFlag(RoixStructGeneratorOptions.TypeInt)) { 
- if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
- /* ↓TypeInt && XYPair↓ */ 
+  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+  /* ↓is not TypeInt && XYPair↓ */ 
             this.Write("        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
-            this.Write(" ToRoixInt(RoundingMode rounding = RoundingMode.Floor)\r\n        {\r\n            re" +
-                    "turn new(");
-            this.Write(this.ToStringHelper.ToStringWithCulture(GetNames("{0}.ToInt(rounding)")));
-            this.Write(");\r\n        }\r\n\r\n");
- } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
- /* ↓TypeInt && (is not XYPair)↓ */ 
-            this.Write("        public ");
+            this.Write(" ToRoixInt(RoundingMode roundingX, RoundingMode roundingY)\r\n        {\r\n          " +
+                    "  return new(X.ToInt(roundingX), Y.ToInt(roundingY));\r\n        }\r\n        public" +
+                    " ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
             this.Write(" ToRoixInt(RoundingMode rounding = RoundingMode.Floor)\r\n        {\r\n            re" +
-                    "turn new(");
-            this.Write(this.ToStringHelper.ToStringWithCulture(GetNames("{0}.ToRoixInt(rounding)")));
-            this.Write(");\r\n        }\r\n\r\n");
- } 
+                    "turn ToRoixInt(rounding, rounding);\r\n        }\r\n");
+  } else if (HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine) || HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
+  /* ↓is not TypeInt && (is not XYPair)↓ */ 
+            this.Write("        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
+            this.Write(" ToRoixInt(RoundingMode roundingX, RoundingMode roundingY)\r\n        {\r\n          " +
+                    "  return new(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetNames("{0}.ToRoixInt(roundingX, roundingY)")));
+            this.Write(");\r\n        }\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixNameWithInt()));
+            this.Write(" ToRoixInt(RoundingMode rounding = RoundingMode.Floor)\r\n        {\r\n            re" +
+                    "turn ToRoixInt(rounding, rounding);\r\n        }\r\n");
+  } 
  } 
             this.Write("\r\n");
  if (HasFlag(RoixStructGeneratorOptions.HasParent)) { 
@@ -302,9 +316,9 @@ namespace Roix.SourceGenerator
             this.Write(" value1, in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value2)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value1.IsEmpty || value2.IsEmpty) return Empty;\r\n");
- } 
+  } 
             this.Write("            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate2Value(ArithmeticOperators.Add, "value1", "value2")));
             this.Write(");\r\n        }\r\n\r\n        public static ");
@@ -314,14 +328,15 @@ namespace Roix.SourceGenerator
             this.Write(" value1, in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value2)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value1.IsEmpty || value2.IsEmpty) return Empty;\r\n");
- } 
+  } 
             this.Write("            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate2Value(ArithmeticOperators.Subtract, "value1", "value2")));
             this.Write(");\r\n        }\r\n");
  } 
  /* ↑ArithmeticOperator1↑ */ 
+            this.Write("\r\n");
  /* ↓ArithmeticOperator2↓ */ 
  if (HasFlag(RoixStructGeneratorOptions.ArithmeticOperator2)) { 
             this.Write("        // RoixStructGeneratorOptions.ArithmeticOperator2\r\n        public static " +
@@ -330,9 +345,9 @@ namespace Roix.SourceGenerator
             this.Write(" operator *(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, double scalar)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+  } 
             this.Write("            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate1Value(ArithmeticOperators.Multiply, "value", "scalar")));
             this.Write(");\r\n        }\r\n\r\n        public static ");
@@ -340,21 +355,21 @@ namespace Roix.SourceGenerator
             this.Write(" operator /(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, double scalar)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+  if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+  } 
             this.Write("            if (scalar == 0) throw new DivideByZeroException();\r\n            retu" +
                     "rn value * (1d / scalar);\r\n        }\r\n\r\n");
- /* ↓ArithmeticOperator2 && XYPair↓ */ 
- if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+  /* ↓ArithmeticOperator2 && XYPair↓ */ 
+  if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
             this.Write("        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" operator *(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, in RoixRatioXY ratio)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+   } 
             this.Write("            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperatorRoixAndRatioXY(ArithmeticOperators.Multiply, "value", "ratio")));
             this.Write(");\r\n        }\r\n\r\n        public static ");
@@ -362,9 +377,9 @@ namespace Roix.SourceGenerator
             this.Write(" operator /(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, in RoixRatioXY ratio)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+   } 
             this.Write("            if (ratio.IsIncludeZero) throw new DivideByZeroException();\r\n        " +
                     "    return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperatorRoixAndRatioXY(ArithmeticOperators.Divide, "value", "ratio")));
@@ -373,23 +388,23 @@ namespace Roix.SourceGenerator
             this.Write(" value1, in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value2)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+   } 
             this.Write("            if (value2.IsIncludeZero) throw new DivideByZeroException();\r\n       " +
                     "     return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperate2Value(ArithmeticOperators.Divide, "value1", "value2")));
             this.Write(");\r\n        }\r\n");
- } else { 
- /* ↓ArithmeticOperator2 && (is not XYPair)↓ */ 
+  /* ↓ArithmeticOperator2 && (is not XYPair)↓ */ 
+  } else { 
             this.Write("        public static ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" operator *(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, in RoixRatioXY ratio)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+   } 
             this.Write("            return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperatorRoixAndRatio(ArithmeticOperators.Multiply, "value", "ratio")));
             this.Write(");\r\n        }\r\n\r\n        public static ");
@@ -397,17 +412,17 @@ namespace Roix.SourceGenerator
             this.Write(" operator /(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" value, in RoixRatioXY ratio)\r\n        {\r\n");
- if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
+   if (HasFlag(RoixStructGeneratorOptions.HasEmpty)) { 
             this.Write("            if (value.IsEmpty) return Empty;\r\n");
- } 
+   } 
             this.Write("            if (ratio.IsIncludeZero) throw new DivideByZeroException();\r\n        " +
                     "    return new(");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetOperatorRoixAndRatio(ArithmeticOperators.Divide, "value", "ratio")));
             this.Write(");\r\n        }\r\n");
+  } 
  } 
  /* ↑ArithmeticOperator2↑ */ 
- } 
-            this.Write("    }\r\n}\r\n");
+            this.Write("\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

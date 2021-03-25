@@ -42,7 +42,7 @@ namespace Roix.Wpf
             if (srcSize.IsIncludeZero) throw new DivideByZeroException();
 
             var rect = srcRect * (destSize / srcSize);
-            return new(rect.Location.ToInt(modeX, modeY), rect.Size.ToInt(modeX, modeY));
+            return new(rect.Location.ToRoixInt(modeX, modeY), rect.Size.ToRoixInt(modeX, modeY));
         }
 
         /// <summary>引数で指定した座標系(int)に変換します</summary>
