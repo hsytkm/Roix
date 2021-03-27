@@ -4,6 +4,7 @@ using Reactive.Bindings.Extensions;
 using Roix.Wpf;
 using Roix.Wpf.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
@@ -25,9 +26,7 @@ namespace RoixApp.Wpf
     public class SelectLineViewModel : BindableBase
     {
         private readonly SelectLineModel _model = new();
-
-        //public BitmapSource MyImage { get; } = SelectRectangleViewModel.MyImage;
-        public static BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image16x16.jpg"));
+        public BitmapSource MyImage => _model.MyImage;
 
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseLeftUpPoint { get; }
@@ -58,6 +57,8 @@ namespace RoixApp.Wpf
 
         public IReactiveProperty<RoixBorderLine> SelectedLine { get; }
 
+        public IReadOnlyReactiveProperty<string> PointsOnLine { get; }
+
         public SelectLineViewModel()
         {
             MouseLeftDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
@@ -75,12 +76,12 @@ namespace RoixApp.Wpf
 
             // Modelからの値をViewに反映
             _model.Line
-                .Subscribe(line =>
+                .Subscribe(borderLine =>
                 {
-                    RectRatioX1.Value = line.X1.ToString();
-                    RectRatioY1.Value = line.Y1.ToString();
-                    RectRatioX2.Value = line.X2.ToString();
-                    RectRatioY2.Value = line.Y2.ToString();
+                    RectRatioX1.Value = borderLine.Line.X1.ToString();
+                    RectRatioY1.Value = borderLine.Line.Y1.ToString();
+                    RectRatioX2.Value = borderLine.Line.X2.ToString();
+                    RectRatioY2.Value = borderLine.Line.Y2.ToString();
                 });
 
             // 入力値から枠を作成（個々の入力値は検証してるけど、相関検証は未）
@@ -95,7 +96,7 @@ namespace RoixApp.Wpf
                     var y1 = int.Parse(RectRatioY1.Value, CultureInfo.InvariantCulture);
                     var x2 = int.Parse(RectRatioX2.Value, CultureInfo.InvariantCulture);
                     var y2 = int.Parse(RectRatioY2.Value, CultureInfo.InvariantCulture);
-                    _model.Line.Value = new RoixIntLine(x1, y1, x2, y2);
+                    _model.Line.Value = new RoixBorderIntLine(new RoixIntLine(x1, y1, x2, y2), imageSourceSize);
                 });
             #endregion
 
@@ -109,7 +110,7 @@ namespace RoixApp.Wpf
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
-                    _model.Line.Value = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize).Line;
+                    _model.Line.Value = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize);
                 })
                 .Repeat()
                 .Subscribe(x =>
@@ -122,28 +123,45 @@ namespace RoixApp.Wpf
 
             // Modelの値に応じて描画 + Viewサイズ変更に応じてコントロールを伸縮
             _model.Line
-                .CombineLatest(ViewBorderSize.Where(x => x.IsNotZero), (line, newBorder)
-                    => new RoixBorderIntLine(line, imageSourceSize).ConvertToNewBorder(newBorder))
+                .CombineLatest(ViewBorderSize.Where(x => x.IsNotZero), (borderLine, newBorder)
+                    => borderLine.ConvertToNewBorder(newBorder))
                 .Subscribe(viewBorderLine =>
                 {
                     var halfPixelVector = GetViewHalfPixelVector(imageSourceSize, viewBorderLine.Border);
                     SelectedLine.Value = new(viewBorderLine.Line + halfPixelVector, viewBorderLine.Border);
                 });
 
-            // View上の1画素の半分の移動量（左上角から中心までの移動量）
-            static RoixVector GetViewHalfPixelVector(in RoixIntSize imageSize, in RoixSize viewSize)
-            {
-                var onePixelOnImage = new RoixBorderIntSize(new RoixIntSize(1, 1), imageSize);
-                var onePixelOnView = onePixelOnImage.ConvertToNewBorder(viewSize).Size;
-                return (RoixVector)(onePixelOnView / 2d);
-            }
+            // Line上のPointsを全表示
+            PointsOnLine = _model.PointsOnLine
+                .Where(x => x is not null)
+                .Select(points => string.Join(Environment.NewLine, points.Select((p, i) => $"{i + 1}: ({p.X}, {p.Y})")) ?? "")
+                .ToReadOnlyReactivePropertySlim<string>();
+
+        }
+
+        // View上の1画素の半分の移動量（左上角から中心までの移動量）
+        private static RoixVector GetViewHalfPixelVector(in RoixIntSize imageSize, in RoixSize viewSize)
+        {
+            var onePixelOnImage = new RoixBorderIntSize(new RoixIntSize(1, 1), imageSize);
+            var onePixelOnView = onePixelOnImage.ConvertToNewBorder(viewSize).Size;
+            return (RoixVector)(onePixelOnView / 2d);
         }
     }
 
     class SelectLineModel : BindableBase
     {
-        public IReactiveProperty<RoixIntLine> Line { get; } = new ReactivePropertySlim<RoixIntLine>();
+        public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image16x16.jpg"));
+        public IReactiveProperty<RoixBorderIntLine> Line { get; } = new ReactivePropertySlim<RoixBorderIntLine>();
+        public IReadOnlyReactiveProperty<IReadOnlyList<RoixIntPoint>> PointsOnLine { get; }
 
-        //public SelectLineModel() => Line.Subscribe(x => Debug.WriteLine(x.ToString()));
+        public SelectLineModel()
+        {
+            var imageSourceSize = MyImage.ToRoixIntSize();
+
+            PointsOnLine = Line
+                .Where(borderLine => borderLine.Border == imageSourceSize)
+                .Select(borderLine => borderLine.GetClippedBorderIntLine().Line.GetIntPointsOnLine().ToArray())
+                .ToReadOnlyReactiveProperty<IReadOnlyList<RoixIntPoint>>();
+        }
     }
 }

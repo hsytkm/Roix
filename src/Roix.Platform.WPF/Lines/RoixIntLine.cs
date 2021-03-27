@@ -1,5 +1,6 @@
 ﻿using Roix.SourceGenerator;
 using System;
+using System.Collections.Generic;
 
 namespace Roix.Wpf
 {
@@ -48,6 +49,32 @@ namespace Roix.Wpf
         {
             if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
             return new(Point1.GetClippedIntPoint(size), Point2.GetClippedIntPoint(size));
+        }
+
+        /// <summary>Line 上の IntPoint を返します</summary>
+        public IEnumerable<RoixIntPoint> GetIntPointsOnLine()
+        {
+            var diffX = X2 - X1;
+            var diffY = Y2 - Y1;
+            var distance = GetDistance();
+            var pixelCount = (int)Math.Ceiling(distance);
+            var pointBuffer = new RoixIntPoint(int.MinValue, int.MinValue);
+
+            for (var i = 0; i <= pixelCount; ++i)
+            {
+                var x = X1 + (int)Math.Round(diffX * i / distance);
+                if (IsOutsideX(x)) continue;
+
+                var y = Y1 + (int)Math.Round(diffY * i / distance);
+                if (IsOutsideY(y)) continue;
+
+                var point = new RoixIntPoint(x, y);
+                if (pointBuffer != point)
+                {
+                    yield return point;
+                    pointBuffer = point;
+                }
+            }
         }
         #endregion
 

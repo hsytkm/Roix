@@ -125,6 +125,10 @@ namespace <#= Namespace #>
         public <#= GetRoixDefaultBuiltInType() #> Y1 => Point1.Y;
         public <#= GetRoixDefaultBuiltInType() #> X2 => Point2.X;
         public <#= GetRoixDefaultBuiltInType() #> Y2 => Point2.Y;
+        public <#= GetRoixDefaultBuiltInType() #> XMin => Math.Min(Point1.X, Point2.X);
+        public <#= GetRoixDefaultBuiltInType() #> XMax => Math.Max(Point1.X, Point2.X);
+        public <#= GetRoixDefaultBuiltInType() #> YMin => Math.Min(Point1.Y, Point2.Y);
+        public <#= GetRoixDefaultBuiltInType() #> YMax => Math.Max(Point1.Y, Point2.Y);
         public <#= GetRoixDefaultBuiltInType() #> LengthX => Math.Abs(Point2.X - Point1.X);
         public <#= GetRoixDefaultBuiltInType() #> LengthY => Math.Abs(Point2.Y - Point1.Y);
 
@@ -141,6 +145,10 @@ namespace <#= Namespace #>
         public bool IsIncludeNegative => Point1.IsIncludeNegative || Point2.IsIncludeNegative;
         public bool IsInside(in <#= GetRoixSizeStructName() #> border) => Point1.IsInside(border) || Point2.IsInside(border);
         public bool IsOutside(in <#= GetRoixSizeStructName() #> border) => !IsInside(border);
+        public bool IsInsideX(<#= GetRoixDefaultBuiltInType() #> x) => (XMin <= x && x <= XMax);
+        public bool IsInsideY(<#= GetRoixDefaultBuiltInType() #> y) => (YMin <= y && y <= YMax);
+        public bool IsOutsideX(<#= GetRoixDefaultBuiltInType() #> x) => !IsInsideX(x);
+        public bool IsOutsideY(<#= GetRoixDefaultBuiltInType() #> y) => !IsInsideY(y);
 <# } #>
 
 <# if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>

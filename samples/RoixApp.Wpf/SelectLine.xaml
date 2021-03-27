@@ -29,12 +29,12 @@
                 <Style TargetType="{x:Type TextBox}" >
                     <Setter Property="Width" Value="60" />
                     <Setter Property="TextAlignment" Value="Right" />
-                    <Setter Property="MaxLength" Value="6" />
+                    <Setter Property="MaxLength" Value="4" />
                     <Setter Property="DockPanel.Dock" Value="Right" />
                 </Style>
             </Panel.Resources>
             
-            <TextBlock Margin="5,10" Text="Left: Line Pixel" />
+            <TextBlock Margin="5" Text="Line points pixel" />
             <DockPanel>
                 <TextBlock Text="X1" />
                 <TextBox Text="{Binding RectRatioX1.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -55,6 +55,9 @@
                 <TextBox Text="{Binding RectRatioY2.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Border/>
             </DockPanel>
+
+            <TextBlock Margin="5,15,0,0" Text="Points on Line" />
+            <TextBlock Margin="15,5" Text="{Binding PointsOnLine.Value, Mode=OneWay}" />
         </StackPanel>
 
         <Grid>
@@ -116,7 +119,6 @@
                         </i:PropertyChangedTrigger>
                     </i:Interaction.Triggers>
                 </Line>
-
             </Grid>
         </Grid>
     </DockPanel>

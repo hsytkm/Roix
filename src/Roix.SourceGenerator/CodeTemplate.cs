@@ -208,6 +208,14 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
             this.Write(" Y2 => Point2.Y;\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" XMin => Math.Min(Point1.X, Point2.X);\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" XMax => Math.Max(Point1.X, Point2.X);\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" YMin => Math.Min(Point1.Y, Point2.Y);\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" YMax => Math.Max(Point1.Y, Point2.Y);\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
             this.Write(" LengthX => Math.Abs(Point2.X - Point1.X);\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
             this.Write(" LengthY => Math.Abs(Point2.Y - Point1.Y);\r\n\r\n");
@@ -230,7 +238,15 @@ namespace Roix.SourceGenerator
             this.Write(" border) => Point1.IsInside(border) || Point2.IsInside(border);\r\n        public b" +
                     "ool IsOutside(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
-            this.Write(" border) => !IsInside(border);\r\n");
+            this.Write(" border) => !IsInside(border);\r\n        public bool IsInsideX(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" x) => (XMin <= x && x <= XMax);\r\n        public bool IsInsideY(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" y) => (YMin <= y && y <= YMax);\r\n        public bool IsOutsideX(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" x) => !IsInsideX(x);\r\n        public bool IsOutsideY(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" y) => !IsInsideY(y);\r\n");
  } 
             this.Write("\r\n");
  if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
