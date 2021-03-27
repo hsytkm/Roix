@@ -37,13 +37,6 @@ namespace Roix.Wpf
         ///// <summary>Rect の最大サイズを指定値で制限します</summary>
         //public RoixRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
 
-        /// <summary>引数で指定した Size 内に収めた Line を返します</summary>
-        public RoixLine GetClippedLine(in RoixSize size)
-        {
-            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-            return new(Point1.GetClippedPoint(size), Point2.GetClippedPoint(size));
-        }
-
         #endregion
 
     }

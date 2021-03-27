@@ -47,12 +47,6 @@ namespace Roix.Wpf
         public static RoixIntPoint Create(in RoixPoint srcPoint, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
             => Create(srcPoint, srcSize, destSize, mode, mode);
 
-        /// <summary>引数で指定した IntSize 内に収めた IntPoint を返します</summary>
-        public RoixIntPoint GetClippedIntPoint(in RoixIntSize size)
-        {
-            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-            return new(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
-        }
         #endregion
 
     }

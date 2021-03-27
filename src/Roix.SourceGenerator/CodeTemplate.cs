@@ -233,6 +233,8 @@ namespace Roix.SourceGenerator
             this.Write(@"        // RoixStructGeneratorOptions.TypeLine
         public bool IsIncludeZero => Point1.IsIncludeZero || Point2.IsIncludeZero;
         public bool IsIncludeNegative => Point1.IsIncludeNegative || Point2.IsIncludeNegative;
+        public bool IsSamePoints => Point1 == Point2;
+
         public bool IsInside(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
             this.Write(" border) => Point1.IsInside(border) || Point2.IsInside(border);\r\n        public b" +
@@ -450,6 +452,39 @@ namespace Roix.SourceGenerator
  } else if (Name.Contains("Line") && !Name.Contains("Border")) { 
             this.Write("        /// <summary>2点の距離を計算します</summary>\r\n        public double GetDistance() =" +
                     "> Point1.GetDistance(Point2);\r\n");
+ } 
+            this.Write("\r\n");
+ if (!HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
+  if (HasFlag(RoixStructGeneratorOptions.XYPair) || HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
+            this.Write("        /// <summary>引数で指定した Size 内に収めます</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ClipToSize(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" size)\r\n        {\r\n            if (size.IsIncludeZero) throw new ArgumentExceptio" +
+                    "n(ExceptionMessages.SizeIsZero);\r\n");
+   if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+            this.Write("            return new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));\r\n");
+   } else if (HasFlag(RoixStructGeneratorOptions.Rect)) { 
+            this.Write("            return new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Location.ClipToSize(size), Size.ClipToSize(size));\r\n");
+   } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
+            this.Write("            return new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Point1.ClipToSize(size), Point2.ClipToSize(size));\r\n");
+   } 
+            this.Write("        }\r\n");
+  } 
+ } else { 
+  if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Rect")|| Name.Contains("Line")) { 
+            this.Write("        /// <summary>Border 内に収めます</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ClipToBorder() => new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Value.ClipToSize(Border), Border);\r\n");
+  } 
  } 
             this.Write("\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();

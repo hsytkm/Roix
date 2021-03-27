@@ -44,13 +44,6 @@ namespace Roix.Wpf
         public static RoixIntLine Create(in RoixLine srcLine, in RoixSize srcSize, in RoixIntSize destSize, RoundingMode mode)
             => Create(srcLine, srcSize, destSize, mode, mode);
 
-        /// <summary>引数で指定した IntSize 内に収めた IntPoint を返します</summary>
-        public RoixIntLine GetClippedIntLine(in RoixIntSize size)
-        {
-            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-            return new(Point1.GetClippedIntPoint(size), Point2.GetClippedIntPoint(size));
-        }
-
         /// <summary>Line 上の IntPoint を返します</summary>
         public IEnumerable<RoixIntPoint> GetIntPointsOnLine()
         {

@@ -110,7 +110,10 @@ namespace RoixApp.Wpf
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
-                    _model.Line.Value = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize);
+                    var borderLine = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize);
+                    if (borderLine.Line.IsSamePoints) return;
+
+                    _model.Line.Value = borderLine;
                 })
                 .Repeat()
                 .Subscribe(x =>
@@ -160,7 +163,7 @@ namespace RoixApp.Wpf
 
             PointsOnLine = Line
                 .Where(borderLine => borderLine.Border == imageSourceSize)
-                .Select(borderLine => borderLine.GetClippedBorderIntLine().Line.GetIntPointsOnLine().ToArray())
+                .Select(borderLine => borderLine.ClipToBorder().Line.GetIntPointsOnLine().ToArray())
                 .ToReadOnlyReactiveProperty<IReadOnlyList<RoixIntPoint>>();
         }
     }

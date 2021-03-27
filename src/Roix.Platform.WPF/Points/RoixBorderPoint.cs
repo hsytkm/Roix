@@ -64,12 +64,9 @@ namespace Roix.Wpf
             }
 
             var point1 = RoixIntPoint.Create(this.Point, this.Border, destIntSize, roundingX, roundingY);
-            var point2 = point1.GetClippedIntPoint(destIntSize);
+            var point2 = point1.ClipToSize(destIntSize);
             return new(point2, destIntSize);
         }
-
-        /// <summary>Point を Border の内部に収めて返します</summary>
-        public RoixBorderPoint GetClippedBorderPoint() => new(Point.GetClippedPoint(Border), Border);
 
         /// <summary>引数で指定した座標系(int)の分解能に調整する</summary>
         //public RoixBorderPoint AdjustRoixWithResolutionOfImage(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)

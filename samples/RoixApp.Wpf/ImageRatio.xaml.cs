@@ -167,7 +167,7 @@ namespace RoixApp.Wpf
             #region Point
             MouseRightDownPoint
                 .Where(point => point.IsNotZero)
-                .Subscribe(borderPoint => _model.PointRatio.Value = borderPoint.GetClippedBorderPoint().ToRoixRatio());
+                .Subscribe(borderPoint => _model.PointRatio.Value = borderPoint.ClipToBorder().ToRoixRatio());
 
             SelectedPoint = _model.PointRatio
                 .CombineLatest(ViewBorderSize, (ratio, viewSize) => ratio * (RoixPoint)viewSize)

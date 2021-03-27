@@ -48,9 +48,6 @@ namespace Roix.Wpf
         //    return new(point2, destIntSize);
         //}
 
-        /// <summary>Line を Border の内部に収めて返します</summary>
-        public RoixBorderLine GetClippedBorderLine() => new(Line.GetClippedLine(Border), Border);
-
         //public RoixRatioXY ToRoixRatio() => Line / Border;
 
         #endregion

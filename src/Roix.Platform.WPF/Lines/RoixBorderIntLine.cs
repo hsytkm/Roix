@@ -65,9 +65,6 @@ namespace Roix.Wpf
             return new(intPoint1, intPoint2);
         }
 
-        /// <summary>Line を Border の内部に収めて返します</summary>
-        public RoixBorderIntLine GetClippedBorderIntLine() => new(Line.GetClippedIntLine(Border), Border);
-
         #endregion
 
     }

@@ -16,6 +16,10 @@
         <local:SelectLineViewModel />
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <conv:ArrowLineConverter x:Key="ArrowLineConverter" />
+    </UserControl.Resources>
+    
     <DockPanel ClipToBounds="True" Margin="10,5" Background="Gray" >
         <StackPanel DockPanel.Dock="Left" Margin="5" >
             <Panel.Resources>
@@ -87,38 +91,10 @@
 
             <Grid Width="{Binding ActualWidth, ElementName=mainImage}"
                   Height="{Binding ActualHeight, ElementName=mainImage}" >
-                <Panel.Resources>
-                    <Style TargetType="{x:Type Line}" >
-                        <Setter Property="Stroke" Value="Lime" />
-                        <Setter Property="StrokeThickness" Value="2" />
-                        <Setter Property="IsHitTestVisible" Value="False" />
-                    </Style>
-                    <sys:Double x:Key="ArrowAngle1">35</sys:Double>
-                    <sys:Double x:Key="ArrowAngle2">-35</sys:Double>
-                </Panel.Resources>
-                <Line>
-                    <i:Interaction.Triggers>
-                        <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
-                            <action:SetRoixLineToLineAction />
-                        </i:PropertyChangedTrigger>
-                    </i:Interaction.Triggers>
-                </Line>
-                
-                <!-- Arrows -->
-                <Line>
-                    <i:Interaction.Triggers>
-                        <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
-                            <action:SetArrowLineAction ArrowAngleMin="{StaticResource ArrowAngle1}" />
-                        </i:PropertyChangedTrigger>
-                    </i:Interaction.Triggers>
-                </Line>
-                <Line>
-                    <i:Interaction.Triggers>
-                        <i:PropertyChangedTrigger Binding="{Binding SelectedLine.Value, Mode=OneWay}">
-                            <action:SetArrowLineAction ArrowAngleMin="{StaticResource ArrowAngle2}" />
-                        </i:PropertyChangedTrigger>
-                    </i:Interaction.Triggers>
-                </Line>
+                <!-- 自作矢印 -->
+                <Path Stroke="Lime" StrokeThickness="2" IsHitTestVisible="False"
+                      Fill="{Binding Stroke, RelativeSource={RelativeSource Self}}"
+                      Data="{Binding SelectedLine.Value.Line, Mode=OneWay, Converter={StaticResource ArrowLineConverter}}" />
             </Grid>
         </Grid>
     </DockPanel>
