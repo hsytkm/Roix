@@ -37,6 +37,16 @@ namespace Roix.Wpf
         public static implicit operator System.Windows.Rect(in RoixRect rect) => !rect.IsEmpty ? new(rect.X, rect.Y, rect.Width, rect.Height) : System.Windows.Rect.Empty;
         #endregion
 
+        #region operator
+        // ◆Generatorに押し込みたい
+        public static RoixRect operator +(in RoixRect rect, in RoixVector vector)
+        {
+            if (rect.IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
+            return new(rect.Location + vector, rect.Size);
+        }
+        public static RoixRect operator -(in RoixRect rect, in RoixVector vector) => rect + (-vector);
+        #endregion
+
         public bool IsEmpty => this == Empty;
 
         #region Methods

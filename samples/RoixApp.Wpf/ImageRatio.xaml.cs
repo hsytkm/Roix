@@ -26,7 +26,7 @@ namespace RoixApp.Wpf
     {
         private readonly ImageRatioModel _model = new();
 
-        public BitmapSource MyImage { get; } = SelectRectangleViewModel.MyImage;
+        public BitmapSource MyImage { get; } = App.Current.SourceImages.Image1;
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseLeftUpPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseRightDownPoint { get; }

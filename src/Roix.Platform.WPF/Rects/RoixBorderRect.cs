@@ -34,6 +34,15 @@ namespace Roix.Wpf
             : this(borderPoint, borderPoint + borderVector) { }
         #endregion
 
+        #region operator
+        // ◆Generatorに押し込みたい
+        public static RoixBorderRect operator +(in RoixBorderRect borderRect, in RoixVector vector)
+        {
+            if (borderRect.Roi.IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
+            return new(borderRect.Roi + vector, borderRect.Border);
+        }
+        #endregion
+
         #region Methods
         public RoixRatioXYWH ToRoixRatio() => new(Roi.Location / (RoixPoint)Border, Roi.Size / Border);
 

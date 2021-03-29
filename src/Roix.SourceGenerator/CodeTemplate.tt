@@ -321,23 +321,36 @@ namespace <#= Namespace #>
 
 <# if (!HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
 <#  if (HasFlag(RoixStructGeneratorOptions.XYPair) || HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine)) { #>
+<#   if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
         /// <summary>引数で指定した Size 内に収めます</summary>
         public <#= Name #> ClipToSize(in <#= GetRoixSizeStructName() #> size)
         {
             if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
-<#   if (HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
             return new <#= Name #>(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));
-<#   } else if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
-            return new <#= Name #>(Location.ClipToSize(size), Size.ClipToSize(size));
-<#   } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { #>
-            return new <#= Name #>(Point1.ClipToSize(size), Point2.ClipToSize(size));
-<#   } #>
         }
+<#   } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { #>
+        /// <summary>引数で指定した Size 内に収めます</summary>
+        public <#= Name #> ClipToSize(in <#= GetRoixSizeStructName() #> size)
+        {
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+            return new <#= Name #>(Point1.ClipToSize(size), Point2.ClipToSize(size));
+        }
+<#   } else if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
+        /// <summary>引数で指定した Size 内に収めます</summary>
+        public <#= Name #> ClipToSize(in <#= GetRoixSizeStructName() #> size, bool isPointPriority = false)
+        {
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+            return isPointPriority ? GetClippedRectByPointPriority(size) : GetClippedRectBySizePriority(size);
+        }
+<#   } #>
 <#  } #>
 <# } else { #>
-<#  if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Rect")|| Name.Contains("Line")) { #>
+<#  if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Line")) { #>
         /// <summary>Border 内に収めます</summary>
         public <#= Name #> ClipToBorder() => new <#= Name #>(Value.ClipToSize(Border), Border);
+<#  } else if (Name.Contains("Rect")) { #>
+        /// <summary>Border 内に収めます</summary>
+        public <#= Name #> ClipToBorder(bool isPointPriority = false) => new <#= Name #>(Value.ClipToSize(Border, isPointPriority), Border);
 <#  } #>
 <# } #>
 

@@ -22,7 +22,7 @@ namespace RoixApp.Wpf
 
     public class SelectRectangleViewModel : BindableBase
     {
-        public static BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image1.jpg"));
+        public static BitmapSource MyImage { get; } = App.Current.SourceImages.Image1;
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseLeftUpPoint { get; }
         public IReactiveProperty<RoixBorderPoint> MouseMovePoint { get; }

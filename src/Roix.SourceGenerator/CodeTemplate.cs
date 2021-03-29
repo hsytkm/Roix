@@ -456,34 +456,51 @@ namespace Roix.SourceGenerator
             this.Write("\r\n");
  if (!HasFlag(RoixStructGeneratorOptions.WithBorder)) { 
   if (HasFlag(RoixStructGeneratorOptions.XYPair) || HasFlag(RoixStructGeneratorOptions.Rect) || HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
+   if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
             this.Write("        /// <summary>引数で指定した Size 内に収めます</summary>\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" ClipToSize(in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
             this.Write(" size)\r\n        {\r\n            if (size.IsIncludeZero) throw new ArgumentExceptio" +
-                    "n(ExceptionMessages.SizeIsZero);\r\n");
-   if (HasFlag(RoixStructGeneratorOptions.XYPair)) { 
-            this.Write("            return new ");
+                    "n(ExceptionMessages.SizeIsZero);\r\n            return new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
-            this.Write("(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));\r\n");
-   } else if (HasFlag(RoixStructGeneratorOptions.Rect)) { 
-            this.Write("            return new ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
-            this.Write("(Location.ClipToSize(size), Size.ClipToSize(size));\r\n");
+            this.Write("(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));\r\n        }" +
+                    "\r\n");
    } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
-            this.Write("            return new ");
+            this.Write("        /// <summary>引数で指定した Size 内に収めます</summary>\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
-            this.Write("(Point1.ClipToSize(size), Point2.ClipToSize(size));\r\n");
+            this.Write(" ClipToSize(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" size)\r\n        {\r\n            if (size.IsIncludeZero) throw new ArgumentExceptio" +
+                    "n(ExceptionMessages.SizeIsZero);\r\n            return new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Point1.ClipToSize(size), Point2.ClipToSize(size));\r\n        }\r\n");
+   } else if (HasFlag(RoixStructGeneratorOptions.Rect)) { 
+            this.Write("        /// <summary>引数で指定した Size 内に収めます</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ClipToSize(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(@" size, bool isPointPriority = false)
+        {
+            if (size.IsIncludeZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
+            return isPointPriority ? GetClippedRectByPointPriority(size) : GetClippedRectBySizePriority(size);
+        }
+");
    } 
-            this.Write("        }\r\n");
   } 
  } else { 
-  if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Rect")|| Name.Contains("Line")) { 
+  if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Line")) { 
             this.Write("        /// <summary>Border 内に収めます</summary>\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" ClipToBorder() => new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write("(Value.ClipToSize(Border), Border);\r\n");
+  } else if (Name.Contains("Rect")) { 
+            this.Write("        /// <summary>Border 内に収めます</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ClipToBorder(bool isPointPriority = false) => new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Value.ClipToSize(Border, isPointPriority), Border);\r\n");
   } 
  } 
             this.Write("\r\n    }\r\n}\r\n");

@@ -153,7 +153,7 @@ namespace RoixApp.Wpf
 
     class SelectLineModel : BindableBase
     {
-        public BitmapSource MyImage { get; } = BitmapFrame.Create(new Uri("pack://application:,,,/RoixApp.Wpf;component/Assets/Image16x16.jpg"));
+        public BitmapSource MyImage { get; } = App.Current.SourceImages.Image16x16;
         public IReactiveProperty<RoixBorderIntLine> Line { get; } = new ReactivePropertySlim<RoixBorderIntLine>();
         public IReadOnlyReactiveProperty<IReadOnlyList<RoixIntPoint>> PointsOnLine { get; }
 

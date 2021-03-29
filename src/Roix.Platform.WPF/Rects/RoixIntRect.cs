@@ -32,6 +32,12 @@ namespace Roix.Wpf
         public static implicit operator RoixRect(in RoixIntRect rect) => new(rect.Location, rect.Size);
         #endregion
 
+        #region operator
+        // ◆Generatorに押し込みたい
+        public static RoixIntRect operator +(in RoixIntRect rect, in RoixIntVector vector) => new(rect.Location + vector, rect.Size);
+        public static RoixIntRect operator -(in RoixIntRect rect, in RoixIntVector vector) => rect + (-vector);
+        #endregion
+
         #region Methods
         /// <summary>Roiの最小サイズを指定値で制限します</summary>
         //public RoixIntRect ClippedByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimumSize(minSize));
