@@ -1,4 +1,4 @@
-﻿using RoixApp.Wpf.Model;
+﻿using RoixApp.Wpf.Models;
 using System;
 using System.Windows;
 

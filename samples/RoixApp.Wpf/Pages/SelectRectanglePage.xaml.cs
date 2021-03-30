@@ -12,9 +12,9 @@ using System.Windows.Media.Imaging;
 
 namespace RoixApp.Wpf
 {
-    public partial class SelectRectangle : UserControl
+    public partial class SelectRectanglePage : UserControl
     {
-        public SelectRectangle()
+        public SelectRectanglePage()
         {
             InitializeComponent();
         }

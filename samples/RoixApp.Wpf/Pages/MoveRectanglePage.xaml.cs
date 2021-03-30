@@ -13,9 +13,9 @@ using System.Windows.Media.Imaging;
 
 namespace RoixApp.Wpf
 {
-    public partial class MoveRectangle : UserControl
+    public partial class MoveRectanglePage : UserControl
     {
-        public MoveRectangle()
+        public MoveRectanglePage()
         {
             InitializeComponent();
         }

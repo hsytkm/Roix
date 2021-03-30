@@ -14,9 +14,9 @@ using System.Windows.Media.Imaging;
 
 namespace RoixApp.Wpf
 {
-    public partial class ImageRatio : UserControl
+    public partial class ImageRatioPage : UserControl
     {
-        public ImageRatio()
+        public ImageRatioPage()
         {
             InitializeComponent();
         }

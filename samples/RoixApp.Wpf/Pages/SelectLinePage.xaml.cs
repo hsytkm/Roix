@@ -15,9 +15,9 @@ using System.Windows.Media.Imaging;
 
 namespace RoixApp.Wpf
 {
-    public partial class SelectLine : UserControl
+    public partial class SelectLinePage : UserControl
     {
-        public SelectLine()
+        public SelectLinePage()
         {
             InitializeComponent();
         }

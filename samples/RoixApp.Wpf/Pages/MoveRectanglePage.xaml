@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="RoixApp.Wpf.MoveRectanglePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:local="clr-namespace:RoixApp.Wpf"
+             xmlns:conv="clr-namespace:RoixApp.Wpf.Converters"
+             xmlns:action="clr-namespace:RoixApp.Wpf.Actions"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <local:MoveRectangleViewModel />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <conv:RectToPointCollectionConverter x:Key="RectToPointCollectionConverter" />
+
+        <Style x:Key="selectedPolygonStyle" TargetType="{x:Type Polygon}" >
+            <Setter Property="Fill" Value="Crimson" />
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ClipToBounds="True" Margin="10,5" Background="Gray" >
+        <Image x:Name="mainImage" Source="{Binding MyImage, Mode=OneTime}"
+               RenderOptions.BitmapScalingMode="NearestNeighbor" >
+            <i:Interaction.Triggers>
+                <!-- Get size of Image control -->
+                <i:EventTrigger EventName="Loaded" >
+                    <action:CaptureRoixSizeAction Size="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="SizeChanged" >
+                    <action:CaptureRoixSizeAction Size="{Binding ViewBorderSize.Value, Mode=OneWayToSource}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Image>
+
+        <Grid Width="{Binding ActualWidth, ElementName=mainImage}"
+              Height="{Binding ActualHeight, ElementName=mainImage}" >
+            <Thumb>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragStarted" >
+                        <action:CaptureRoixPointAction Point="{Binding DragStartedPoint.Value, Mode=OneWayToSource}" />
+                        <action:CursorScrollAllAction />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted" >
+                        <action:CaptureRoixVectorAction Vector="{Binding DragCompletedVector.Value, Mode=OneWayToSource}" />
+                        <action:CursorArrowAction />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta" >
+                        <action:CaptureRoixVectorAction Vector="{Binding DraggingVector.Value, Mode=OneWayToSource}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Polygon Style="{StaticResource selectedPolygonStyle}"
+                                 Points="{Binding SelectedRectangle.Value.Roi, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}" />
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -12,15 +12,15 @@
     
     <TabControl Margin="5">
         <ctrl:LazyTabItem Header="Move"
-                          ContentType="{x:Type local:MoveRectangle}" />
+                          ContentType="{x:Type local:MoveRectanglePage}" />
         
         <ctrl:LazyTabItem Header="Line"
-                          ContentType="{x:Type local:SelectLine}" />
+                          ContentType="{x:Type local:SelectLinePage}" />
 
         <ctrl:LazyTabItem Header="Ratio"
-                          ContentType="{x:Type local:ImageRatio}" />
+                          ContentType="{x:Type local:ImageRatioPage}" />
 
         <ctrl:LazyTabItem Header="Select"
-                          ContentType="{x:Type local:SelectRectangle}" />
+                          ContentType="{x:Type local:SelectRectanglePage}" />
     </TabControl>
 </Window>

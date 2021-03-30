@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
 
-namespace RoixApp.Wpf.Model
+namespace RoixApp.Wpf.Models
 {
     class SourceImages
     {
