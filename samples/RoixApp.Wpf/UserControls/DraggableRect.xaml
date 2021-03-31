@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="RoixApp.Wpf.DraggableRect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RoixApp.Wpf"
+             xmlns:conv="clr-namespace:RoixApp.Wpf.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <conv:RectToPointCollectionConverter x:Key="RectToPointCollectionConverter" />
+        <conv:PointToPointCollectionConverter x:Key="PointToPointCollectionConverter" />
+
+        <Style x:Key="rectPolygonStyle" TargetType="{x:Type Polygon}" >
+            <Setter Property="Fill" Value="Crimson" />
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+
+        <sys:Double x:Key="PointLength">10</sys:Double>
+        <Style x:Key="cornerPolygonStyle" TargetType="{x:Type Polygon}" >
+            <Setter Property="Margin" Value="-5,-5,0,0" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="Gray" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Thumb DragStarted="Thumb_DragStarted" DragDelta="RectThumb_DragDelta" >
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Polygon Style="{StaticResource rectPolygonStyle}"
+                             Points="{Binding BorderRect.Roi, Mode=OneWay,
+                                              Converter={StaticResource RectToPointCollectionConverter},
+                                              RelativeSource={RelativeSource AncestorType={x:Type local:DraggableRect}}}" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+
+        <Thumb x:Name="cornerThumb0" local:AttachedCornerPosition.CornerPos="TopLeft" >
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Polygon Fill="Red"
+                             Style="{StaticResource cornerPolygonStyle}"
+                             Points="{Binding BorderRect.Roi.TopLeft, Mode=OneWay,
+                                              Converter={StaticResource PointToPointCollectionConverter},
+                                              ConverterParameter={StaticResource PointLength},
+                                              RelativeSource={RelativeSource AncestorType={x:Type local:DraggableRect}}}" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+        <Thumb x:Name="cornerThumb1" local:AttachedCornerPosition.CornerPos="TopRight" >
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Polygon Fill="Green"
+                             Style="{StaticResource cornerPolygonStyle}"
+                             Points="{Binding BorderRect.Roi.TopRight, Mode=OneWay,
+                                              Converter={StaticResource PointToPointCollectionConverter},
+                                              ConverterParameter={StaticResource PointLength},
+                                              RelativeSource={RelativeSource AncestorType={x:Type local:DraggableRect}}}" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+        <Thumb x:Name="cornerThumb2" local:AttachedCornerPosition.CornerPos="BottomRight" >
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Polygon Fill="Yellow"
+                             Style="{StaticResource cornerPolygonStyle}"
+                             Points="{Binding BorderRect.Roi.BottomRight, Mode=OneWay,
+                                              Converter={StaticResource PointToPointCollectionConverter},
+                                              ConverterParameter={StaticResource PointLength},
+                                              RelativeSource={RelativeSource AncestorType={x:Type local:DraggableRect}}}" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+        <Thumb x:Name="cornerThumb3" local:AttachedCornerPosition.CornerPos="BottomLeft" >
+            <Thumb.Template>
+                <ControlTemplate>
+                    <Polygon Fill="Blue"
+                             Style="{StaticResource cornerPolygonStyle}"
+                             Points="{Binding BorderRect.Roi.BottomLeft, Mode=OneWay,
+                                              Converter={StaticResource PointToPointCollectionConverter},
+                                              ConverterParameter={StaticResource PointLength},
+                                              RelativeSource={RelativeSource AncestorType={x:Type local:DraggableRect}}}" />
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+    </Grid>
+</UserControl>

@@ -11,6 +11,9 @@
         Height="550" Width="800" >
     
     <TabControl Margin="5">
+        <ctrl:LazyTabItem Header="Resize"
+                          ContentType="{x:Type local:ResizeRectanglePage}" />
+        
         <ctrl:LazyTabItem Header="Move"
                           ContentType="{x:Type local:MoveRectanglePage}" />
         

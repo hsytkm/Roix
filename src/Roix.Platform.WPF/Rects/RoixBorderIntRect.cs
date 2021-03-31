@@ -72,6 +72,12 @@ namespace Roix.Wpf
             return new RoixBorderIntRect(intPoint1, intPoint2);
         }
 
+        /// <summary>Rect の最小サイズを指定値で制限します</summary>
+        public RoixBorderIntRect ClippedSizeByMinimum(in RoixIntSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
+
+        /// <summary>Rect の最大サイズを指定値で制限します</summary>
+        public RoixBorderIntRect ClippedSizeByMaximum(in RoixIntSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
+
         #endregion
 
     }
