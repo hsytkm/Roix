@@ -134,7 +134,7 @@ namespace RoixApp.Wpf
 
             // View座標系の選択枠(length=0 だと View の Polygon が変に長くなるので minLength で Clip する)
             SelectedRectangle = _model.RectRatio
-                .CombineLatest(ViewBorderSize, (rect, viewSize) => (rect * viewSize).ClippedRoiSizeByMinimum(new RoixSize(1, 1)).Roi)
+                .CombineLatest(ViewBorderSize, (rect, viewSize) => (rect * viewSize).ClipByMinimumSize(new RoixSize(1, 1)).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 

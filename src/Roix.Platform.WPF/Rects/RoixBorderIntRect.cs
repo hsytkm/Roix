@@ -49,10 +49,10 @@ namespace Roix.Wpf
         /// <summary>RoixBorderPoint(double) から RoixBorderIntRect を作成します</summary>
         public static RoixBorderIntRect Create(in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2, in RoixIntSize intSize)
         {
-            static RoixBorderIntPoint ConvertToRoixInt(in RoixBorderPoint srcBorderPoint, in RoixIntSize destIntSize, PointDirection roundingDirection)
+            static RoixBorderIntPoint ConvertToNewBorderInt(in RoixBorderPoint srcBorderPoint, in RoixIntSize destIntSize, PointDirection roundingDirection)
             {
                 var (roundingX, roundingY) = roundingDirection.GetRoundingMode();
-                return srcBorderPoint.ConvertToRoixInt(destIntSize, roundingX, roundingY);
+                return srcBorderPoint.ConvertToNewBorderInt(destIntSize, roundingX, roundingY);
             }
 
             // point1 に対して point2 がどの方向にあるか判定(真横/真上は差し替える)
@@ -67,16 +67,16 @@ namespace Roix.Wpf
             var point1Direction = point2Direction.GetOppositeDirection();
 
             // double座標系の Point を int座標系に丸める
-            var intPoint1 = ConvertToRoixInt(borderPoint1, intSize, point1Direction);
-            var intPoint2 = ConvertToRoixInt(borderPoint2, intSize, point2Direction);
+            var intPoint1 = ConvertToNewBorderInt(borderPoint1, intSize, point1Direction);
+            var intPoint2 = ConvertToNewBorderInt(borderPoint2, intSize, point2Direction);
             return new RoixBorderIntRect(intPoint1, intPoint2);
         }
 
         /// <summary>Rect の最小サイズを指定値で制限します</summary>
-        public RoixBorderIntRect ClippedSizeByMinimum(in RoixIntSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
+        public RoixBorderIntRect ClipByMinimumSize(in RoixIntSize minSize) => new(Roi.ClipByMinimumSize(minSize), Border);
 
         /// <summary>Rect の最大サイズを指定値で制限します</summary>
-        public RoixBorderIntRect ClippedSizeByMaximum(in RoixIntSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
+        public RoixBorderIntRect ClipByMaximumSize(in RoixIntSize maxSize) => new(Roi.ClipByMaximumSize(maxSize), Border);
 
         #endregion
 

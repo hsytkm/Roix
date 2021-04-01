@@ -18,10 +18,10 @@ namespace Roix.Wpf
         public static implicit operator RoixBorderSize(in RoixBorderIntSize borderSize) => new(borderSize.Size, borderSize.Border);
 
         /// <summary>Size の最小サイズを指定値で制限します</summary>
-        public RoixBorderIntSize ClippedByMinimum(in RoixIntSize minSize) => new(Size.ClippedByMinimum(minSize), Border);
+        public RoixBorderIntSize ClipByMinimum(in RoixIntSize minSize) => new(Size.ClipByMinimum(minSize), Border);
 
         /// <summary>Size の最大サイズを指定値で制限します</summary>
-        public RoixBorderIntSize ClippedByMaximum(in RoixIntSize maxSize) => new(Size.ClippedByMaximum(maxSize), Border);
+        public RoixBorderIntSize ClipByMaximum(in RoixIntSize maxSize) => new(Size.ClipByMaximum(maxSize), Border);
 
     }
 }

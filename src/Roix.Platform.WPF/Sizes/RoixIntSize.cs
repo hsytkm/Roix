@@ -35,7 +35,7 @@ namespace Roix.Wpf
         public bool IsEmpty => false;   // Not implemented in RoixIntSize
 
         /// <summary>Size の最小サイズを指定値で制限します</summary>
-        public RoixIntSize ClippedByMinimum(in RoixIntSize minSize)
+        public RoixIntSize ClipByMinimum(in RoixIntSize minSize)
         {
             if (this.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             if (minSize.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
@@ -44,7 +44,7 @@ namespace Roix.Wpf
         }
 
         /// <summary>Size の最大サイズを指定値で制限します</summary>
-        public RoixIntSize ClippedByMaximum(in RoixIntSize maxSize)
+        public RoixIntSize ClipByMaximum(in RoixIntSize maxSize)
         {
             if (this.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             if (maxSize.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);

@@ -69,18 +69,12 @@ namespace Roix.Wpf
             return new(rect, Border);
         }
 
-        /// <summary>Roi の最小サイズを指定値で制限します</summary>
-        public RoixBorderRect ClippedRoiSizeByMinimum(in RoixSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
-
-        /// <summary>Roi の最大サイズを指定値で制限します</summary>
-        public RoixBorderRect ClippedRoiSizeByMaximum(in RoixSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
+        public RoixBorderIntRect ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+            => ConvertToNewBorderInt(destIntSize, mode, mode);
 
         /// <summary>引数で指定した座標系(int)に変換します</summary>
-        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-            => ConvertToRoixInt(destIntSize, mode, mode);
-
-        /// <summary>引数で指定した座標系(int)に変換します</summary>
-        public RoixBorderIntRect ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
+        public RoixBorderIntRect ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
         {
             if (this.Border.IsEmpty || this.Border.IsZero)
             {
@@ -102,10 +96,10 @@ namespace Roix.Wpf
         //}
 
         /// <summary>Rect の最小サイズを指定値で制限します</summary>
-        public RoixBorderRect ClippedSizeByMinimum(in RoixSize minSize) => new(Roi.ClippedSizeByMinimum(minSize), Border);
+        public RoixBorderRect ClipByMinimumSize(in RoixSize minSize) => new(Roi.ClipByMinimumSize(minSize), Border);
 
         /// <summary>Rect の最大サイズを指定値で制限します</summary>
-        public RoixBorderRect ClippedSizeByMaximum(in RoixSize maxSize) => new(Roi.ClippedSizeByMaximum(maxSize), Border);
+        public RoixBorderRect ClipByMaximumSize(in RoixSize maxSize) => new(Roi.ClipByMaximumSize(maxSize), Border);
 
         #endregion
 

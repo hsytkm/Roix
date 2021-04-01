@@ -57,7 +57,7 @@ namespace RoixApp.Wpf
 
             CursorPointToModel = CursorBorderPoint
                 .Where(borderPoint => borderPoint.IsNotZero)
-                .Select(borderPoint => borderPoint.ConvertToRoixInt(imageSourceSize).Point)
+                .Select(borderPoint => borderPoint.ConvertToNewBorderInt(imageSourceSize).Point)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -84,7 +84,7 @@ namespace RoixApp.Wpf
 
             // 画像座標系の点(これを基準に管理する)
             var selectedPointOnImage = mouseDoubleClickPoint
-                .Select(borderPoint => borderPoint.ConvertToRoixInt(imageSourceSize))
+                .Select(borderPoint => borderPoint.ConvertToNewBorderInt(imageSourceSize))
                 .ToReadOnlyReactivePropertySlim();
 
             SinglePoint = selectedPointOnImage
@@ -122,7 +122,7 @@ namespace RoixApp.Wpf
             // View座標系の選択枠(length=0 だと View の Polygon が変に長くなるので minLength で Clip する)
             SelectedRectangle = selectedRectangleOnImage
                 .CombineLatest(ViewBorderSize, (rect, border)
-                    => rect.ConvertToNewBorder(border).ClippedRoiSizeByMinimum(new RoixSize(1, 1)).Roi)
+                    => rect.ConvertToNewBorder(border).ClipByMinimumSize(new RoixSize(1, 1)).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 
@@ -136,7 +136,7 @@ namespace RoixApp.Wpf
                     var rectBorderSize = new RoixIntSize(length).ToRoixBorder(imageSourceSize);
                     var rectHalfSize = rectBorderSize.Size / 2d;
 
-                    var newCenterPoint = borderPointOnView.ConvertToRoixInt(imageSourceSize);
+                    var newCenterPoint = borderPointOnView.ConvertToNewBorderInt(imageSourceSize);
                     var newRect = new RoixBorderIntRect(newCenterPoint - (RoixIntVector)rectHalfSize, rectBorderSize);
                     return newRect.GetClippedBorderIntRect(isPointPriority: false);
                 })

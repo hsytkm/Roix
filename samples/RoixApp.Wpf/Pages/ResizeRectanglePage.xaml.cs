@@ -39,7 +39,7 @@ namespace RoixApp.Wpf
 
             // Model通知
             SelectedRectangle
-                .Subscribe(rect => _model.Rect.Value = rect.ConvertToRoixInt(ImageSourceSize.Value, RoundingMode.Round));
+                .Subscribe(rect => _model.Rect.Value = rect.ConvertToNewBorderInt(ImageSourceSize.Value, RoundingMode.Round));
 
             // Viewサイズ変化に追従
             _model.Rect

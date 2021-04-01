@@ -51,11 +51,11 @@ namespace Roix.Wpf
         //}
 
         /// <summary>引数で指定した座標系(int)に変換します</summary>
-        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
-            => ConvertToRoixInt(destIntSize, mode, mode);
+        public RoixBorderIntPoint ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+            => ConvertToNewBorderInt(destIntSize, mode, mode);
 
         /// <summary>引数で指定した座標系(int)に変換します</summary>
-        public RoixBorderIntPoint ConvertToRoixInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
+        public RoixBorderIntPoint ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
         {
             if (this.Border.IsEmpty || this.Border.IsZero)
             {

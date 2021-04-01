@@ -18,10 +18,10 @@ namespace Roix.Wpf
         public RoixRatioXY ToRoixRatio() => Size / Border;
 
         /// <summary>Size の最小サイズを指定値で制限します</summary>
-        public RoixBorderSize ClippedByMinimum(in RoixSize minSize) => new(Size.ClippedByMinimum(minSize), Border);
+        public RoixBorderSize ClipByMinimum(in RoixSize minSize) => new(Size.ClipByMinimum(minSize), Border);
 
         /// <summary>Size の最大サイズを指定値で制限します</summary>
-        public RoixBorderSize ClippedByMaximum(in RoixSize maxSize) => new(Size.ClippedByMaximum(maxSize), Border);
+        public RoixBorderSize ClipByMaximum(in RoixSize maxSize) => new(Size.ClipByMaximum(maxSize), Border);
 
     }
 }

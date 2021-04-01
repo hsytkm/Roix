@@ -27,7 +27,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <Thumb DragStarted="Thumb_DragStarted" DragDelta="RectThumb_DragDelta" >
+        <Thumb x:Name="rectThumb" >
             <Thumb.Template>
                 <ControlTemplate>
                     <Polygon Style="{StaticResource rectPolygonStyle}"

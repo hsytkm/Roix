@@ -19,6 +19,7 @@
         
         <Grid ClipToBounds="True" Margin="10,5" Background="Gray" >
             <Image x:Name="mainImage" Source="{Binding MyImage, Mode=OneTime}"
+                   MinHeight="100" MinWidth="100"
                    RenderOptions.BitmapScalingMode="NearestNeighbor" >
                 <i:Interaction.Triggers>
                     <!-- Get size of Image control -->

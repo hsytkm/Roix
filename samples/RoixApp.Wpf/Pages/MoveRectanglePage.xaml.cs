@@ -76,7 +76,7 @@ namespace RoixApp.Wpf
                 var draggedViewRect = (baseRect + vector).ClipToBorder();
 
                 // Modelの座標系に変換
-                return draggedViewRect.ConvertToRoixInt(imageSize, RoundingMode.Round);
+                return draggedViewRect.ConvertToNewBorderInt(imageSize, RoundingMode.Round);
             }
         }
     }

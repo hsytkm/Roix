@@ -60,10 +60,10 @@ namespace Roix.Wpf
             => isPointPriority ? GetClippedRectByPointPriority(border) : GetClippedRectBySizePriority(border);
 
         /// <summary>Rect の最小サイズを指定値で制限します</summary>
-        public RoixIntRect ClippedSizeByMinimum(in RoixIntSize minSize) => new(Location, Size.ClippedByMinimum(minSize));
+        public RoixIntRect ClipByMinimumSize(in RoixIntSize minSize) => new(Location, Size.ClipByMinimum(minSize));
 
         /// <summary>Rect の最大サイズを指定値で制限します</summary>
-        public RoixIntRect ClippedSizeByMaximum(in RoixIntSize maxSize) => new(Location, Size.ClippedByMaximum(maxSize));
+        public RoixIntRect ClipByMaximumSize(in RoixIntSize maxSize) => new(Location, Size.ClipByMaximum(maxSize));
 
         #endregion
 
