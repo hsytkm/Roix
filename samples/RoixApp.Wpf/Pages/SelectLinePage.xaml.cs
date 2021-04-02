@@ -111,6 +111,7 @@ namespace RoixApp.Wpf
                     if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
                     var borderLine = RoixBorderIntLine.Create(startPoint, latestPoint, imageSourceSize);
+                    borderLine = borderLine.ClipToSize(borderLine.Border - 1);
                     if (borderLine.Line.IsSamePoints) return;
 
                     _model.Line.Value = borderLine;
@@ -120,7 +121,9 @@ namespace RoixApp.Wpf
                 {
                     var borderSize = x.startPoint.Border;
                     var halfPixelVector = GetViewHalfPixelVector(imageSourceSize, borderSize);
-                    var viewLine = RoixBorderIntLine.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(borderSize);
+                    var imageLine = RoixBorderIntLine.Create(x.startPoint, x.latestPoint, imageSourceSize);
+                    imageLine = imageLine.ClipToSize(imageLine.Border - 1);
+                    var viewLine = imageLine.ConvertToNewBorder(borderSize);
                     SelectedLine.Value = new(viewLine.Line + halfPixelVector, viewLine.Border);
                 });
 
@@ -154,12 +157,14 @@ namespace RoixApp.Wpf
     class SelectLineModel : BindableBase
     {
         public BitmapSource MyImage { get; } = App.Current.SourceImages.Image16x16;
-        public IReactiveProperty<RoixBorderIntLine> Line { get; } = new ReactivePropertySlim<RoixBorderIntLine>();
+        public IReactiveProperty<RoixBorderIntLine> Line { get; }
         public IReadOnlyReactiveProperty<IReadOnlyList<RoixIntPoint>> PointsOnLine { get; }
 
         public SelectLineModel()
         {
             var imageSourceSize = MyImage.ToRoixIntSize();
+
+            Line = new ReactivePropertySlim<RoixBorderIntLine>(initialValue: RoixIntLine.Zero.ToRoixBorder(imageSourceSize));
 
             PointsOnLine = Line
                 .Where(borderLine => borderLine.Border == imageSourceSize)

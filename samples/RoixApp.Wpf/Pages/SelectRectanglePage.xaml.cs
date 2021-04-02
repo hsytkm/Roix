@@ -80,11 +80,15 @@ namespace RoixApp.Wpf
                     return true;
                 })
                 .Select(x => x.Value)
-                .ToReadOnlyReactivePropertySlim();
+                .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.None);
 
             // 画像座標系の点(これを基準に管理する)
             var selectedPointOnImage = mouseDoubleClickPoint
-                .Select(borderPoint => borderPoint.ConvertToNewBorderInt(imageSourceSize))
+                .Select(borderPoint =>
+                {
+                    var borderInt = borderPoint.ConvertToNewBorderInt(imageSourceSize);
+                    return borderInt.ClipToSize(borderInt.Border - 1);
+                })
                 .ToReadOnlyReactivePropertySlim();
 
             SinglePoint = selectedPointOnImage

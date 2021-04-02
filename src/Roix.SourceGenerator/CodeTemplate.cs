@@ -464,8 +464,7 @@ namespace Roix.SourceGenerator
             this.Write(" size)\r\n        {\r\n            if (size.IsIncludeZero) throw new ArgumentExceptio" +
                     "n(ExceptionMessages.SizeIsZero);\r\n            return new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
-            this.Write("(Math.Clamp(X, 0, size.Width - 1), Math.Clamp(Y, 0, size.Height - 1));\r\n        }" +
-                    "\r\n");
+            this.Write("(Math.Clamp(X, 0, size.Width), Math.Clamp(Y, 0, size.Height));\r\n        }\r\n");
    } else if (HasFlag(RoixStructGeneratorOptions.TypeLine)) { 
             this.Write("        /// <summary>引数で指定した Size 内に収めます</summary>\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
@@ -491,6 +490,13 @@ namespace Roix.SourceGenerator
  } else { 
   if (Name.Contains("Point") || Name.Contains("Size") || Name.Contains("Vector") || Name.Contains("Line")) { 
             this.Write("        /// <summary>Border 内に収めます</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" ClipToSize(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixSizeStructName()));
+            this.Write(" size) => new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write("(Value.ClipToSize(size), Border);\r\n\r\n        /// <summary>Border 内に収めます</summary>" +
+                    "\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             this.Write(" ClipToBorder() => new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
