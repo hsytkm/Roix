@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.0.3.0</Version>
+    <Version>0.0.4.0</Version>
     <Authors>myoga</Authors>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,6 +18,8 @@
     <Copyright>Copyright (c) 2021 myoga</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <AssemblyVersion>0.0.4.0</AssemblyVersion>
+    <FileVersion>0.0.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
