@@ -22,6 +22,9 @@ namespace Roix.Wpf
             if (borderPoint1.Border != borderPoint2.Border) throw new ArgumentException(ExceptionMessages.BorderSizeIsDifferent);
             if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
         }
+
+        public RoixBorderIntLine(in RoixBorderIntPoint borderPoint, in RoixIntPoint point)
+            : this(new RoixIntLine(borderPoint.Point, point), borderPoint.Border) { }
         #endregion
 
         public static implicit operator RoixBorderLine(in RoixBorderIntLine borderLine) => new(borderLine.Line, borderLine.Border);

@@ -12,15 +12,15 @@ using System.Windows.Media.Imaging;
 
 namespace RoixApp.Wpf
 {
-    public partial class SelectRectanglePage : UserControl
+    public partial class SelectLimitedRectPage : UserControl
     {
-        public SelectRectanglePage()
+        public SelectLimitedRectPage()
         {
             InitializeComponent();
         }
     }
 
-    public class SelectRectangleViewModel : BindableBase
+    public class SelectLimitedRectViewModel : BindableBase
     {
         public static BitmapSource MyImage { get; } = App.Current.SourceImages.Image1;
         public IReactiveProperty<RoixBorderPoint> MouseLeftDownPoint { get; }
@@ -28,10 +28,11 @@ namespace RoixApp.Wpf
         public IReactiveProperty<RoixBorderPoint> MouseMovePoint { get; }
         public IReactiveProperty<RoixSize> ViewBorderSize { get; }
 
+        public IReadOnlyReactiveProperty<RoixRect> PreviewRectangle { get; }
         public IReadOnlyReactiveProperty<RoixRect> SelectedRectangle { get; }
         public IReactiveProperty<RoixIntRect> SelectedRectangleToModel { get; }
 
-        public SelectRectangleViewModel()
+        public SelectLimitedRectViewModel()
         {
             MouseLeftDownPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
             MouseLeftUpPoint = new ReactivePropertySlim<RoixBorderPoint>(mode: ReactivePropertyMode.None);
@@ -52,18 +53,36 @@ namespace RoixApp.Wpf
                     var (startPoint, latestPoint) = (MouseLeftDownPoint.Value, MouseLeftUpPoint.Value);
                     if (startPoint == default || latestPoint == default || startPoint == latestPoint) return;
 
-                    SelectedRectangleToModel.Value = RoixBorderIntRect.Create(startPoint, latestPoint, imageSourceSize).Roi;
+                    SelectedRectangleToModel.Value = CreateBorderIntRect(startPoint, latestPoint, imageSourceSize).Roi;
                 })
                 .Repeat()
                 .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize))
                 .ToReadOnlyReactivePropertySlim();
 
             // View座標系の選択枠
-            SelectedRectangle = selectedRectangleOnImage
+            PreviewRectangle = selectedRectangleOnImage
                 .CombineLatest(ViewBorderSize, (rect, border) => rect.ConvertToNewBorder(border).Roi)
                 .ToReadOnlyReactivePropertySlim();
 
+            // View座標系の選択枠
+            SelectedRectangle = SelectedRectangleToModel
+                .CombineLatest(ViewBorderSize, (rect, border) => new RoixBorderRect(rect, imageSourceSize).ConvertToNewBorder(border).Roi)
+                .ToReadOnlyReactivePropertySlim();
+        }
+
+        // 2点から作成する四角形を 最大/最小サイズ で制限する
+        private static RoixBorderIntRect CreateBorderIntRect(in RoixBorderPoint startBorderPoint, in RoixBorderPoint endBorderPoint, in RoixIntSize sourceImageSize)
+        {
+            (var widthMin, var heightMin) = (100, 50);
+            (var widthMax, var heightMax) = (400, 200);
+
+            var startBorderIntPoint = startBorderPoint.ConvertToNewBorderInt(sourceImageSize);
+            var endPoint = endBorderPoint.ConvertToNewBorderInt(sourceImageSize).Point;
+
+            // 終了点を開始点を原点に Vector 換算してから、水平/垂直の長さで制限する
+            var clippedEndVector = (endPoint - startBorderIntPoint.Point).LimitNear(widthMin, heightMin).LimitFar(widthMax, heightMax);
+
+            return new RoixBorderIntRect(startBorderIntPoint, clippedEndVector).ClipToBorder();
         }
     }
-
 }

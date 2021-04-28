@@ -8,7 +8,15 @@ namespace Roix.Wpf.Extensions
         public static System.Windows.Media.PointCollection ToPointCollection(in this RoixRect rect)
         {
             if (rect.IsEmpty) throw new ArgumentException(ExceptionMessages.RectIsEmpty);
-            return new(new Point[] { rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft });
+
+            if (rect.Size.IsIncludeZero)
+            {
+                return ToPointCollectionInternal(rect.ClipByMinimumSize(new Size(1, 1)));
+            }
+            return ToPointCollectionInternal(rect);
+
+            static System.Windows.Media.PointCollection ToPointCollectionInternal(in RoixRect rect)
+                => new(new Point[] { rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft });
         }
 
     }

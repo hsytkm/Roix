@@ -30,7 +30,17 @@ namespace Roix.Wpf
             if (borderPoint1.Border.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.SizeIsNegative);
         }
 
-        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntVector borderVector) : this(borderPoint, borderPoint + borderVector) { }
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixBorderIntVector borderVector)
+            : this(borderPoint, borderPoint + borderVector) { }
+
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixIntSize size)
+            : this(new RoixIntRect(borderPoint.Point, size), borderPoint.Border) { }
+
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixIntPoint point)
+            : this(new RoixIntRect(borderPoint.Point, point), borderPoint.Border) { }
+
+        public RoixBorderIntRect(in RoixBorderIntPoint borderPoint, in RoixIntVector vector)
+            : this(new RoixIntRect(borderPoint.Point, borderPoint.Point + vector), borderPoint.Border) { }
         #endregion
 
         public static implicit operator RoixBorderRect(in RoixBorderIntRect borderRect) => new(borderRect.Roi, borderRect.Border);

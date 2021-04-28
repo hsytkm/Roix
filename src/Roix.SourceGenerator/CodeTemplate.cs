@@ -509,6 +509,32 @@ namespace Roix.SourceGenerator
             this.Write("(Value.ClipToSize(Border, isPointPriority), Border);\r\n");
   } 
  } 
+            this.Write("\r\n");
+ if (!HasFlag(RoixStructGeneratorOptions.WithBorder) && HasFlag(RoixStructGeneratorOptions.XYPair)) { 
+            this.Write("        /// <summary>指定した長さを満たすように制限して返します</summary>\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" LimitNear(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" widthMin, ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(@" heightMin)
+        {
+            var x = (X >= 0) ? Math.Max(X, widthMin) : -Math.Max(-X, widthMin);
+            var y = (Y >= 0) ? Math.Max(Y, heightMin) : -Math.Max(-Y, heightMin);
+            return new(x, y);
+        }
+
+        /// <summary>指定した長さを超えないように制限して返します</summary>
+        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" LimitFar(");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" widthMax, ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
+            this.Write(" heightMax)\r\n        {\r\n            var x = (X >= 0) ? Math.Min(X, widthMax) : -M" +
+                    "ath.Min(-X, widthMax);\r\n            var y = (Y >= 0) ? Math.Min(Y, heightMax) : " +
+                    "-Math.Min(-Y, heightMax);\r\n            return new(x, y);\r\n        }\r\n");
+ } 
             this.Write("\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }

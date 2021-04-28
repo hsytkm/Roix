@@ -26,6 +26,8 @@ namespace Roix.SourceGenerator
 
         public void Execute(GeneratorExecutionContext context)
         {
+            if (context.Compilation is not CSharpCompilation) return;
+
             var attrCode = new RoixStructGeneratorAttributeTemplate().TransformText();
             context.AddSource(_attributeName + ".cs", attrCode);
 

@@ -103,6 +103,7 @@ namespace RoixApp.Wpf
             // 画像座標系の選択枠(これを基準に管理する) マウス操作中に枠を更新 + 操作完了時に枠位置を通知する
             MouseMovePoint
                 .Select(latestPoint => (startPoint: MouseLeftDownPoint.Value, latestPoint))
+                .Where(x => x.startPoint != x.latestPoint)
                 .SkipUntil(MouseLeftDownPoint.ToUnit())
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>

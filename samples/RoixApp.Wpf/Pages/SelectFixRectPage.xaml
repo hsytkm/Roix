@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="RoixApp.Wpf.SelectRectanglePage"
+    x:Class="RoixApp.Wpf.SelectFixRectPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:action="clr-namespace:RoixApp.Wpf.Actions"
@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <UserControl.DataContext>
-        <local:SelectRectangleViewModel />
+        <local:SelectFixRectViewModel />
     </UserControl.DataContext>
 
     <DockPanel
@@ -28,11 +28,11 @@
                     <Run Text="{Binding MyImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}" />
                 </TextBlock>
                 <TextBlock
-                    Foreground="Crimson"
-                    Text="{Binding SelectedRectangle.Value, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
+                    Foreground="Blue"
+                    Text="{Binding ClickedFixedRectangle.Value, Mode=OneWay, StringFormat='ViewRect:  {0:f1}'}" />
                 <TextBlock
-                    Foreground="Crimson"
-                    Text="{Binding SelectedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0:f1}'}" />
+                    Foreground="Blue"
+                    Text="{Binding ClickedFixedRectangleToModel.Value, Mode=OneWay, StringFormat='ModelRect:  {0}'}" />
             </StackPanel>
 
             <CheckBox
@@ -108,7 +108,8 @@
                 Width="{Binding ActualWidth, ElementName=mainImage}"
                 Height="{Binding ActualHeight, ElementName=mainImage}">
                 <Polygon
-                    Points="{Binding SelectedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}"
+                    Points="{Binding ClickedFixedRectangle.Value, Mode=OneWay, Converter={StaticResource RectToPointCollectionConverter}}"
+                    Stroke="Blue"
                     Style="{StaticResource selectedPolygonStyle}" />
             </Grid>
         </Grid>

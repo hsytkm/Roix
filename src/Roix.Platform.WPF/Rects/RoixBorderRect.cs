@@ -32,6 +32,15 @@ namespace Roix.Wpf
 
         public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixBorderVector borderVector)
             : this(borderPoint, borderPoint + borderVector) { }
+
+        public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixSize size)
+            : this(new RoixRect(borderPoint.Point, size), borderPoint.Border) { }
+
+        public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixPoint point)
+            : this(new RoixRect(borderPoint.Point, point), borderPoint.Border) { }
+
+        public RoixBorderRect(in RoixBorderPoint borderPoint, in RoixVector vector)
+            : this(new RoixRect(borderPoint.Point, borderPoint.Point + vector), borderPoint.Border) { }
         #endregion
 
         #region operator

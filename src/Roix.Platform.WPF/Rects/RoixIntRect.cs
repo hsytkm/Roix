@@ -26,6 +26,9 @@ namespace Roix.Wpf
             var height = Math.Max(1, Math.Max(point1.Y, point2.Y) - y);
             _values = new SourceValues(new(x, y), new(width, height));    // exception will occur if the size is zero.
         }
+
+        public void Deconstruct(out int x, out int y, out int width, out int height)
+            => (x, y, width, height) = (Location.X, Location.Y, Size.Width, Size.Height);
         #endregion
 
         #region implicit

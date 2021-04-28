@@ -30,6 +30,8 @@ namespace Roix.Wpf
         }
         public RoixRect(in RoixPoint point, in RoixVector vector) : this(point, point + vector) { }
 
+        public void Deconstruct(out double x, out double y, out double width, out double height)
+            => (x, y, width, height) = (Location.X, Location.Y, Size.Width, Size.Height);
         #endregion
 
         #region implicit

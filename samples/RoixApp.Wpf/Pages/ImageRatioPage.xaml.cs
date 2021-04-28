@@ -119,6 +119,7 @@ namespace RoixApp.Wpf
             // 画像座標系の選択枠(これを基準に管理する) マウス操作中に枠を更新 + 操作完了時に枠位置を通知する
             PreviewRectangle = MouseMovePoint
                 .Select(latestPoint => (startPoint: MouseLeftDownPoint.Value, latestPoint))
+                .Where(x => x.startPoint != x.latestPoint)
                 .SkipUntil(MouseLeftDownPoint.ToUnit())
                 .TakeUntil(MouseLeftUpPoint.ToUnit())
                 .Finally(() =>
@@ -132,9 +133,9 @@ namespace RoixApp.Wpf
                 .Select(x => RoixBorderIntRect.Create(x.startPoint, x.latestPoint, imageSourceSize).ConvertToNewBorder(x.startPoint.Border).Roi)
                 .ToReadOnlyReactivePropertySlim();
 
-            // View座標系の選択枠(length=0 だと View の Polygon が変に長くなるので minLength で Clip する)
+            // View座標系の選択枠
             SelectedRectangle = _model.RectRatio
-                .CombineLatest(ViewBorderSize, (rect, viewSize) => (rect * viewSize).ClipByMinimumSize(new RoixSize(1, 1)).Roi)
+                .CombineLatest(ViewBorderSize, (rect, viewSize) => (rect * viewSize).Roi)
                 .ToReadOnlyReactivePropertySlim();
             #endregion
 

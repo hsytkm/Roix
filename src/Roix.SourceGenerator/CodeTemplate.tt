@@ -357,5 +357,23 @@ namespace <#= Namespace #>
 <#  } #>
 <# } #>
 
+<# if (!HasFlag(RoixStructGeneratorOptions.WithBorder) && HasFlag(RoixStructGeneratorOptions.XYPair)) { #>
+        /// <summary>指定した長さを満たすように制限して返します</summary>
+        public <#= Name #> LimitNear(<#= GetRoixDefaultBuiltInType() #> widthMin, <#= GetRoixDefaultBuiltInType() #> heightMin)
+        {
+            var x = (X >= 0) ? Math.Max(X, widthMin) : -Math.Max(-X, widthMin);
+            var y = (Y >= 0) ? Math.Max(Y, heightMin) : -Math.Max(-Y, heightMin);
+            return new(x, y);
+        }
+
+        /// <summary>指定した長さを超えないように制限して返します</summary>
+        public <#= Name #> LimitFar(<#= GetRoixDefaultBuiltInType() #> widthMax, <#= GetRoixDefaultBuiltInType() #> heightMax)
+        {
+            var x = (X >= 0) ? Math.Min(X, widthMax) : -Math.Min(-X, widthMax);
+            var y = (Y >= 0) ? Math.Min(Y, heightMax) : -Math.Min(-Y, heightMax);
+            return new(x, y);
+        }
+<# } #>
+
     }
 }

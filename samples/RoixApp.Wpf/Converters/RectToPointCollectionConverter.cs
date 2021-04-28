@@ -11,7 +11,7 @@ namespace RoixApp.Wpf.Converters
     class RectToPointCollectionConverter : GenericValueConverter<RoixRect, PointCollection?>
     {
         public override PointCollection? Convert(RoixRect rect, object parameter, CultureInfo culture)
-            => (!rect.IsZero && !rect.IsEmpty) ? rect.ToPointCollection() : null;
+            => rect.ToPointCollection();
 
         public override RoixRect ConvertBack(PointCollection? points, object parameter, CultureInfo culture)
             => default;
