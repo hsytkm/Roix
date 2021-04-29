@@ -87,9 +87,6 @@
                     <i:EventTrigger EventName="MouseLeftButtonDown">
                         <action:CaptureMousePointAction MousePoint="{Binding MouseLeftDownPoint.Value, Mode=OneWayToSource}" />
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                        <action:CaptureMousePointAction MousePoint="{Binding MouseLeftUpPoint.Value, Mode=OneWayToSource}" />
-                    </i:EventTrigger>
                     <i:EventTrigger EventName="MouseMove">
                         <action:CaptureMousePointAction MousePoint="{Binding MouseMovePoint.Value, Mode=OneWayToSource}" />
                     </i:EventTrigger>

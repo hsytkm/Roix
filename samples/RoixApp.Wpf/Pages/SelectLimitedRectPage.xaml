@@ -41,6 +41,7 @@
                 x:Name="mainImage"
                 MinWidth="1"
                 MinHeight="1"
+                RenderOptions.BitmapScalingMode="NearestNeighbor"
                 Source="{Binding MyImage, Mode=OneTime}">
 
                 <i:Interaction.Triggers>

@@ -82,6 +82,35 @@ namespace Roix.Wpf
             return new RoixBorderIntRect(intPoint1, intPoint2);
         }
 
+        /// <summary>RoixBorderPoint(double) から RoixBorderIntRect を作成し、指定サイズで制限します</summary>
+        public static RoixBorderIntRect Create(
+            in RoixBorderPoint borderPoint1, in RoixBorderPoint borderPoint2, in RoixIntSize destBorderSize,
+            in RoixIntSize sizeMin = default, in RoixIntSize sizeMax = default)
+        {
+            if (sizeMin.IsZero && sizeMax.IsZero) return Create(borderPoint1, borderPoint2, destBorderSize);
+
+            // Point1 を原点に Vector化して、長さで制限する
+            var clippedPoint2Vector = (borderPoint2.Point - borderPoint1.Point);
+
+            if (sizeMin.Width > 0 && sizeMin.Height > 0)
+            {
+                // サイズはデクリする（start/end で同じ画素が選択された場合、startは左上点 で endは右下点 として扱って1画素を選択する制御のため）
+                var srcSizeMin = new RoixBorderSize(sizeMin - new RoixIntSize(1, 1), destBorderSize).ConvertToNewBorder(borderPoint1.Border).Size;
+                clippedPoint2Vector = clippedPoint2Vector.LimitNear(srcSizeMin.Width, srcSizeMin.Height);
+            }
+
+            if (sizeMax.Width > 0 && sizeMax.Height > 0)
+            {
+                // サイズはデクリする（start/end で同じ画素が選択された場合、startは左上点 で endは右下点 として扱って1画素を選択する制御のため）
+                var srcSizeMax = new RoixBorderSize(sizeMax - new RoixIntSize(1, 1), destBorderSize).ConvertToNewBorder(borderPoint1.Border).Size;
+                clippedPoint2Vector = clippedPoint2Vector.LimitFar(srcSizeMax.Width, srcSizeMax.Height);
+            }
+
+            // Point2 を元の座標系に戻す（Point1 の原点を止める）
+            var clippedPoint2Point = borderPoint1 + clippedPoint2Vector;
+            return Create(borderPoint1, clippedPoint2Point, destBorderSize).ClipToBorder();
+        }
+
         /// <summary>Rect の最小サイズを指定値で制限します</summary>
         public RoixBorderIntRect ClipByMinimumSize(in RoixIntSize minSize) => new(Roi.ClipByMinimumSize(minSize), Border);
 

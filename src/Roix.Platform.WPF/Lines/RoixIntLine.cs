@@ -18,6 +18,9 @@ namespace Roix.Wpf
         public RoixIntLine(int x1, int y1, int x2, int y2) : this(new RoixIntPoint(x1, y1), new RoixIntPoint(x2, y2)) { }
 
         public RoixIntLine(in RoixIntPoint point, in RoixIntVector vector) : this(point, point + vector) { }
+
+        public void Deconstruct(out int x1, out int y1, out int x2, out int y2)
+            => (x1, y1, x2, y2) = (Point1.X, Point1.Y, Point2.X, Point2.Y);
         #endregion
 
         #region implicit
