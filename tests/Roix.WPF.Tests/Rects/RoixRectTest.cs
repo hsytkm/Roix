@@ -185,10 +185,9 @@ namespace Roix.WPF.Tests
         }
 
         [Theory]
-        [InlineData(0, 0, 0, 0)]
         [InlineData(1, 2, 3, 4)]
         [InlineData(-1, -2, 3, 4)]
-        public void ToPointCollection(double p1x, double p1y, double p2x, double p2y)
+        public void ToPointCollectionOk(double p1x, double p1y, double p2x, double p2y)
         {
             var point1 = new RoixPoint(p1x, p1y);
             var point2 = new RoixPoint(p2x, p2y);
@@ -197,6 +196,19 @@ namespace Roix.WPF.Tests
 
             var pc = rect.ToPointCollection();
             pc.Select(p => (RoixPoint)p).Is(src);
+        }
+
+        [Fact]
+        public void ToPointCollectionZero()
+        {
+            var rect = new RoixRect(0, 0, 0, 0);
+            var src = new[] { rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft };
+
+            var answerRect = new RoixRect(0, 0, 1, 1);  // Size 0 -> 1
+            var answer = new[] { answerRect.TopLeft, answerRect.TopRight, answerRect.BottomRight, answerRect.BottomLeft };
+
+            var pc = rect.ToPointCollection();
+            pc.Select(p => (RoixPoint)p).Is(answer);
         }
         #endregion
 

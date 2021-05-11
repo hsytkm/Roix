@@ -8,9 +8,9 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.0.5</Version>
+    <Version>0.0.6</Version>
     <Authors>myoga</Authors>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/hsytkm/Roix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hsytkm/Roix</RepositoryUrl>
