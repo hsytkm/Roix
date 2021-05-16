@@ -58,6 +58,7 @@ namespace <#= Namespace #>
 <# if (Name.Contains("Size") && !Name.Contains("Border")) { #>
         private <#= GetRoixDefaultBuiltInType() #> X => Width;
         private <#= GetRoixDefaultBuiltInType() #> Y => Height;
+        public <#= Name #> Reverse() => new(Height, Width);
 <# } #>
 <# if (HasFlag(RoixStructGeneratorOptions.Rect)) { #>
         // RoixStructGeneratorOptions.Rect

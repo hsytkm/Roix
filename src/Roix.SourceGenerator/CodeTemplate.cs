@@ -113,7 +113,9 @@ namespace Roix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
             this.Write(" X => Width;\r\n        private ");
             this.Write(this.ToStringHelper.ToStringWithCulture(GetRoixDefaultBuiltInType()));
-            this.Write(" Y => Height;\r\n");
+            this.Write(" Y => Height;\r\n        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(" Reverse() => new(Height, Width);\r\n");
  } 
  if (HasFlag(RoixStructGeneratorOptions.Rect)) { 
             this.Write("        // RoixStructGeneratorOptions.Rect\r\n        public ");
