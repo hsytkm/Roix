@@ -13,7 +13,7 @@ namespace Roix.Wpf
             public SourceValues(in RoixPoint point, in RoixSize border) => (Point, Border) = (point, border);
         }
 
-        private RoixPoint Value => Point;
+        internal RoixPoint Value => Point;
 
         #region operator
         public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);

@@ -13,7 +13,7 @@ namespace Roix.Wpf
             public SourceValues(in RoixVector vector, in RoixSize border) => (Vector, Border) = (vector, border);
         }
 
-        private RoixVector Value => Vector;
+        internal RoixVector Value => Vector;
 
         public RoixRatioXY ToRoixRatio() => Vector / (RoixVector)Border;
 

@@ -16,9 +16,9 @@ namespace Roix.Wpf
         #region ctor
         public RoixRatioXYWH(double x, double y, double width, double height) : this(new(x, y), new(width, height)) { }
 
-        private partial void Validate(in RoixRatioXYWH ratio)
+        private partial void Validate(in RoixRatioXYWH value)
         {
-            if (ratio.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
+            if (value.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
         }
         #endregion
 
