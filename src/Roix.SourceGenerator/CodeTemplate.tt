@@ -174,12 +174,8 @@ namespace <#= Namespace #>
             if (newBorder.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
 
-<#  if (HasFlag(RoixStructGeneratorOptions.WithBorder)) { #>
             var value = (<#= GetRoixNameWithoutInt() #>)this;
             return new(value.Value * (newBorder / this.Border), newBorder);
-<#   } else { #>
-            return new(this.Value * (newBorder / this.Border), newBorder);
-<#   } #>
         }
 <#  } #>
 

@@ -19,5 +19,8 @@ namespace Roix.Wpf.Extensions
                 => new(new Point[] { rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft });
         }
 
+        public static Int32Rect ToInt32Rect(in this RoixIntRect rect)
+            => new(rect.X, rect.Y, rect.Width, rect.Height);
+
     }
 }

@@ -53,6 +53,23 @@ namespace Roix.Wpf
 
         //public RoixRatioXY ToRoixRatio() => Line / Border;
 
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
+        public RoixBorderIntLine ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode mode = RoundingMode.Floor)
+            => ConvertToNewBorderInt(destIntSize, mode, mode);
+
+        /// <summary>引数で指定した座標系(int)に変換します</summary>
+        public RoixBorderIntLine ConvertToNewBorderInt(in RoixIntSize destIntSize, RoundingMode roundingX, RoundingMode roundingY)
+        {
+            if (this.Border.IsEmpty || this.Border.IsZero)
+            {
+                if (roundingX != roundingY) throw new NotImplementedException();
+                return new(this.Line.ToRoixInt(roundingX), RoixIntSize.Zero);
+            }
+
+            var line1 = RoixIntLine.Create(this.Line, this.Border, destIntSize, roundingX, roundingY);
+            var line2 = line1.ClipToSize(destIntSize);
+            return new(line2, destIntSize);
+        }
         #endregion
 
     }
