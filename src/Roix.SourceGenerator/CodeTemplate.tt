@@ -165,7 +165,14 @@ namespace <#= Namespace #>
             if (newBorder.IsEmpty) throw new ArgumentException(ExceptionMessages.SizeIsEmpty);
             if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
 
+<#  if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
+            var oldValue = (<#= GetRoixNameWithoutInt() #>)this;
+            var x1 = oldValue.Value * ((RoixSize)newBorder / oldValue.Border);
+            var x2 = new <#= GetRoixNameWithoutInt() #>(x1, (RoixSize)newBorder);
+            return new(((<#= Name #>)x2).Value, newBorder);
+<#  } else { #>
             return new(this.Value * (newBorder / this.Border), newBorder);
+<#  } #>
         }
 <#  if (HasFlag(RoixStructGeneratorOptions.TypeInt)) { #>
         public <#= GetRoixNameWithoutInt() #> ConvertToNewBorder(in RoixSize newBorder)
@@ -175,7 +182,7 @@ namespace <#= Namespace #>
             if (newBorder.IsZero) throw new ArgumentException(ExceptionMessages.SizeIsZero);
 
             var value = (<#= GetRoixNameWithoutInt() #>)this;
-            return new(value.Value * (newBorder / this.Border), newBorder);
+            return new(value.Value * (newBorder / value.Border), newBorder);
         }
 <#  } #>
 

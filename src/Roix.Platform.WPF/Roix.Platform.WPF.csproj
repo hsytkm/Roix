@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>myoga</Authors>
     <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

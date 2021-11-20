@@ -27,7 +27,9 @@ namespace Roix.Wpf
             : this(new RoixIntLine(borderPoint.Point, point), borderPoint.Border) { }
         #endregion
 
+        #region implicit
         public static implicit operator RoixBorderLine(in RoixBorderIntLine borderLine) => new(borderLine.Line, borderLine.Border);
+        #endregion
 
         #region operator
         public static RoixBorderIntLine operator +(in RoixBorderIntLine borderLine, in RoixIntVector vector) => new(borderLine.Line + vector, borderLine.Border);

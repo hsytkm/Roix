@@ -15,6 +15,10 @@ namespace Roix.Wpf
 
         internal RoixPoint Value => Point;
 
+        #region implicit
+        public static implicit operator RoixBorderIntPoint(in RoixBorderPoint borderPoint) => new(borderPoint.Point.ToRoixInt(), borderPoint.Border.ToRoixInt());
+        #endregion
+
         #region operator
         public static RoixBorderPoint operator +(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point + vector, borderPoint.Border);
         public static RoixBorderPoint operator -(in RoixBorderPoint borderPoint, in RoixVector vector) => new(borderPoint.Point - vector, borderPoint.Border);

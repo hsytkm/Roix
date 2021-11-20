@@ -15,6 +15,10 @@ namespace Roix.Wpf
 
         internal RoixSize Value => Size;
 
+        #region implicit
+        public static implicit operator RoixBorderIntSize(in RoixBorderSize borderSize) => new(borderSize.Size.ToRoixInt(), borderSize.Border.ToRoixInt());
+        #endregion
+
         public RoixRatioXY ToRoixRatio() => Size / Border;
 
         /// <summary>Size の最小サイズを指定値で制限します</summary>

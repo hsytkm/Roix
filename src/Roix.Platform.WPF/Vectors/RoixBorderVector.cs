@@ -15,6 +15,10 @@ namespace Roix.Wpf
 
         internal RoixVector Value => Vector;
 
+        #region implicit
+        public static implicit operator RoixBorderIntVector(in RoixBorderVector borderVector) => new(borderVector.Vector.ToRoixInt(), borderVector.Border.ToRoixInt());
+        #endregion
+
         public RoixRatioXY ToRoixRatio() => Vector / (RoixVector)Border;
 
     }

@@ -43,6 +43,10 @@ namespace Roix.Wpf
             : this(new RoixRect(borderPoint.Point, borderPoint.Point + vector), borderPoint.Border) { }
         #endregion
 
+        #region implicit
+        public static implicit operator RoixBorderIntRect(in RoixBorderRect borderRect) => new(borderRect.Roi.ToRoixInt(), borderRect.Border.ToRoixInt());
+        #endregion
+
         #region operator
         // ◆Generatorに押し込みたい
         public static RoixBorderRect operator +(in RoixBorderRect borderRect, in RoixVector vector)

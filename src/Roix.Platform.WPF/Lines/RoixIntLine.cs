@@ -30,7 +30,6 @@ namespace Roix.Wpf
         #region operator
         public static RoixIntLine operator +(in RoixIntLine line, RoixIntVector vector) => new(line.Point1 + vector, line.Point2 + vector);
         public static RoixIntLine operator -(in RoixIntLine line, RoixIntVector vector) => new(line.Point1 + (-vector), line.Point2 + (-vector));
-
         #endregion
 
         #region Properties
