@@ -3,7 +3,7 @@ using System;
 
 namespace Roix.Wpf
 {
-    [RoixStructGenerator(RoixStructGeneratorOptions.Validate)]
+    [RoixStructGenerator]
     public readonly partial struct RoixRatioXY
     {
         readonly struct SourceValues
@@ -13,14 +13,7 @@ namespace Roix.Wpf
             public SourceValues(double x, double y) => (X, Y) = (x, y);
         }
 
-        #region ctor
         public RoixRatioXY(double d) : this(d, d) { }
-
-        private partial void Validate(in RoixRatioXY value)
-        {
-            if (value.IsIncludeNegative) throw new ArgumentException(ExceptionMessages.CannotBeNegativeValue);
-        }
-        #endregion
 
         public bool IsIncludeZero => X == 0 || Y == 0;
         public bool IsIncludeNegative => X < 0 || Y < 0;
