@@ -13,36 +13,22 @@
     mc:Ignorable="d">
 
     <TabControl Margin="5">
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:SelectLimitedRectPage}"
-            Header="LimitedRect" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:CirclePage}" Header="Circle" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:ResizeRectanglePage}"
-            Header="Resize" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:SelectLimitedRectPage}" Header="LimitedRect" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:MoveRectanglePage}"
-            Header="Move" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:ResizeRectanglePage}" Header="Resize" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:SelectLinePage}"
-            Header="Line" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:MoveRectanglePage}" Header="Move" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:ImageRatioPage}"
-            Header="Ratio" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:SelectLinePage}" Header="Line" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:SelectFixRectPage}"
-            Header="FixRect" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:ImageRatioPage}" Header="Ratio" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:SelectPointPage}"
-            Header="Point" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:SelectFixRectPage}" Header="FixRect" />
 
-        <ctrl:LazyTabItem
-            ContentType="{x:Type local:SelectRectanglePage}"
-            Header="Rect" />
+        <ctrl:LazyTabItem ContentType="{x:Type local:SelectPointPage}" Header="Point" />
+
+        <ctrl:LazyTabItem ContentType="{x:Type local:SelectRectanglePage}" Header="Rect" />
     </TabControl>
 </Window>
