@@ -10,28 +10,30 @@ namespace RoixApp.Wpf.Converters
     [ValueConversion(typeof(RoixLine), typeof(Geometry))]
     class ArrowLineConverter : GenericValueConverter<RoixLine, Geometry?>
     {
-        private const double _arrowAngle = 35d;
-        private const double _arrowLengthMinDefault = 20d;
-        private const double _startEllipseRadius = 3d;
+        const double ArrowAngle = 35d;
+        const double ArrowLengthMinDefault = 20d;
+        const double StartEllipseRadius = 3d;
 
         public override Geometry? Convert(RoixLine line, object parameter, CultureInfo culture)
         {
             if (line.IsSamePoints) return null;
 
-            var arrowLength = Math.Min(line.GetDistance(), _arrowLengthMinDefault);
+            var arrowLength = Math.Min(line.GetDistance(), ArrowLengthMinDefault);
             var geometries = new Geometry[]
             {
                 new LineGeometry(line.Point1, line.Point2),
-                GetArrowPoint(line.Point1, line.Point2, arrowLength, _arrowAngle),
-                GetArrowPoint(line.Point1, line.Point2, arrowLength, -_arrowAngle),
-                new EllipseGeometry(line.Point1, _startEllipseRadius, _startEllipseRadius)
+                GetArrowPoint(line.Point1, line.Point2, arrowLength, ArrowAngle),
+                GetArrowPoint(line.Point1, line.Point2, arrowLength, -ArrowAngle),
+                new EllipseGeometry(line.Point1, StartEllipseRadius, StartEllipseRadius)
             };
 
             var group = new GeometryGroup();
             foreach (var geometry in geometries)
             {
+                geometry.Freeze();
                 group.Children.Add(geometry);
             }
+            group.Freeze();
             return group;
 
             static LineGeometry GetArrowPoint(in RoixPoint point1, in RoixPoint point2, double arrowLength, double angle)
